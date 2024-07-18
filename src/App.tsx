@@ -38,7 +38,7 @@ function App() {
               >
                 <Routes>
                   {/* Write Here */}
-                  {/* <Route index element={<WelcomePage />} /> */}
+                  <Route index element={<WelcomePage />} />
                 </Routes>
                 <RefineKbar />
                 <UnsavedChangesNotifier />
