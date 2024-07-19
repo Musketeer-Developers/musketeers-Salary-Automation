@@ -1,15 +1,12 @@
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
 import { useGetIdentity } from "@refinedev/core";
-import {
-  Layout as AntdLayout,
-  Avatar,
-  Space,
-  Switch,
-  theme,
-  Typography,
-} from "antd";
+import { Layout as AntdLayout, Avatar, Space, Switch, Typography, Button, Input, Flex,theme } from "antd";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
+import logo from '../../../public/logo.png'; // Ensure the logo path is correct
+import './style.css';
+import {IconMoon} from './icons/icon-moon.tsx';
+import {IconSun} from './icons/icon-sun.tsx';
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -27,35 +24,26 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
 
-  const headerStyles: React.CSSProperties = {
-    backgroundColor: token.colorBgElevated,
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    padding: "0px 24px",
-    height: "64px",
-  };
-
-  if (sticky) {
-    headerStyles.position = "sticky";
-    headerStyles.top = 0;
-    headerStyles.zIndex = 1;
-  }
+  const toggleMode = () => setMode(mode === 'light' ? 'dark' : 'light');
 
   return (
-    <AntdLayout.Header style={headerStyles}>
-      <Space>
-        <Switch
-          checkedChildren="🌛"
-          unCheckedChildren="🔆"
-          onChange={() => setMode(mode === "light" ? "dark" : "light")}
-          defaultChecked={mode === "dark"}
-        />
-        <Space style={{ marginLeft: "8px" }} size="middle">
-          {user?.name && <Text strong>{user.name}</Text>}
-          {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
+    <AntdLayout.Header className={`header ${mode}`}>
+      <div className="header-content">
+        <Space>
+          <img src={logo} alt="Logo" style={{ height: '40px' }} />
+          <Text strong className="title">Automator</Text>
         </Space>
-      </Space>
+        <Flex horizontal gap="50px" justify="flex-end">
+          <Input.Search placeholder="Search..." style={{ width: 200 }} />
+          <Button
+            className="mode-toggle-button"
+            shape="circle"
+            onClick={toggleMode}
+            icon={mode === 'dark' ? <IconSun /> : <IconMoon />}
+          />
+          <Button type="primary" onClick={() => console.log('Logout')} danger>Logout</Button>
+        </Flex>
+      </div>
     </AntdLayout.Header>
   );
 };
