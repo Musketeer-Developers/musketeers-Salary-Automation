@@ -16,10 +16,12 @@ import { authProvider, axiosInstance } from "./authProvider";
 import { API_URL } from "./constants";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 
+import {Header} from "./components/index";
+
 function App() {
   return (
     <BrowserRouter>
-      <GitHubBanner />
+      {/* <GitHubBanner /> */}
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
@@ -37,6 +39,7 @@ function App() {
                 }}
               >
                 <Routes>
+                  <Route index element={<Header />} />
                   {/* Write Here */}
                   {/* <Route index element={<WelcomePage />} /> */}
                 </Routes>
