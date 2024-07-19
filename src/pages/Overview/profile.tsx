@@ -1,6 +1,6 @@
 
 
-export const Profile = () => {
+export const employeeProfile = () => {
     
     return (
         <div>
