@@ -2,7 +2,7 @@ import { GitHubBanner, Refine, WelcomePage } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
-import { useNotificationProvider } from "@refinedev/antd";
+import { ThemedLayoutV2, useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
 import routerBindings, {
@@ -11,15 +11,17 @@ import routerBindings, {
 } from "@refinedev/react-router-v6";
 import { DataProvider } from "@refinedev/strapi-v4";
 import { App as AntdApp } from "antd";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { authProvider, axiosInstance } from "./authProvider";
 import { API_URL } from "./constants";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 
+import { ShowProduct } from "./pages/Overview/show";
+import { OverviewPageList } from "./pages/Overview/list";
+
 function App() {
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
@@ -36,6 +38,17 @@ function App() {
                   projectId: "5BDGdF-zJCTf9-YjUmiY",
                 }}
               >
+                <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                  <div
+                    style={{
+                      maxWidth: "1280px",
+                      padding: "24px",
+                      margin: "0 auto",
+                    }}
+                  >
+                    <OverviewPageList/>
+                  </div>
+                </ThemedLayoutV2>
                 <Routes>
                   {/* Write Here */}
                   {/* <Route index element={<WelcomePage />} /> */}
