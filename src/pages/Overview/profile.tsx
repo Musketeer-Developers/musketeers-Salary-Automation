@@ -50,7 +50,8 @@ export const EmployeeProfile = () => {
                   <Typography.Text>Account info</Typography.Text>
                 </Flex>
               }
-            ></Card>
+            >
+            </Card>
             </Col>
           </Row>
         </Form>
