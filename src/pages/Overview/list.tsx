@@ -2,26 +2,16 @@ import type { PropsWithChildren } from "react";
 import { getDefaultFilter, useGo } from "@refinedev/core";
 import {
   CreateButton,
-  // EditButton,
-  // FilterDropdown,
+  EditButton,
   List,
-  // NumberField,
-  // NumberField,
-  // getDefaultSortOrder,
-  // useSelect,
-  // useTable,
+  NumberField,
   Show,
   useForm,
 } from "@refinedev/antd";
-import { EyeOutlined, SearchOutlined,BookOutlined } from "@ant-design/icons";
+import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
+import { Col, Row, Avatar, Flex, Input, Select, Table, Form, Card, Typography } from "antd";
 
-import { Col, Row } from "antd";
-
-import { Avatar, Flex, Input, Select, Table, Form, Card, Typography } from "antd";
-// import { Table,Form } from "antd";
-// import { API_URL } from "@/utils/constants";
-
-
+// Sample data
 const data = [
   {
     id: 1,
@@ -70,7 +60,7 @@ const data = [
   },
 ];
 
-export const OverviewPageList = ({ children }: PropsWithChildren) => {
+export const OverviewPageList = ({ children }: PropsWithChildren) => {  
   return (
     <>
       <List
@@ -87,10 +77,27 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
           <Table.Column title="Status" dataIndex="status" key="status" width={80} />
           <Table.Column title="Hours" dataIndex="hours" key="hours" width={80} />
           <Table.Column title="Income" dataIndex="income" key="income" width={80} align="center" />
-          <Table.Column title="Actions" key="actions" width={80} />
+          <Table.Column
+            title="Actions"
+            key="actions"
+            fixed="right"
+            align="center"
+            width={80}
+            render={() => {
+              return (
+                <Flex align="center" gap={8}>
+                  <EditButton
+                    hideText
+                    // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+                    icon={<EyeOutlined />}
+                  />
+                </Flex>
+              );
+            }}
+          />
         </Table>
       </List>
-      
+
       {children}
     </>
   );
