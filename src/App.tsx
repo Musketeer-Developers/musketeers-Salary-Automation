@@ -17,8 +17,9 @@ import { API_URL } from "./constants";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 
 import { ShowProduct } from "./pages/Overview/show";
+import { employeeProfile } from "./pages/Overview/profile";
 import { OverviewPageList } from "./pages/Overview/list";
-import {Header} from "./components/index";
+import { Header } from "./components/index";
 
 function App() {
   return (
@@ -39,7 +40,10 @@ function App() {
                   projectId: "5BDGdF-zJCTf9-YjUmiY",
                 }}
               >
-                <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                <Routes>
+                  <Route index element={<Header />} />
+                </Routes>
+                <ThemedLayoutV2 Sider={() => null}>
                   <div
                     style={{
                       maxWidth: "1280px",
@@ -47,14 +51,9 @@ function App() {
                       margin: "0 auto",
                     }}
                   >
-                    <OverviewPageList/>
+                    <OverviewPageList />
                   </div>
                 </ThemedLayoutV2>
-                <Routes>
-                  <Route index element={<Header />} />
-                  {/* Write Here */}
-                  {/* <Route index element={<WelcomePage />} /> */}
-                </Routes>
                 <RefineKbar />
                 <UnsavedChangesNotifier />
                 <DocumentTitleHandler />
