@@ -3,35 +3,15 @@ import { getDefaultFilter, useGo } from "@refinedev/core";
 import {
   CreateButton,
   EditButton,
-  // FilterDropdown,
   List,
   NumberField,
-  // getDefaultSortOrder,
-  // useSelect,
-  // useTable,
   Show,
   useForm,
 } from "@refinedev/antd";
 import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
+import { Col, Row, Avatar, Flex, Input, Select, Table, Form, Card, Typography } from "antd";
 
-import { Col, Row } from "antd";
-
-import {
-  Avatar,
-  Flex,
-  Input,
-  Select,
-  Table,
-  Form,
-  Card,
-  Typography,
-} from "antd";
-// import { Table,Form } from "antd";
-// import { API_URL } from "@/utils/constants";
-
-<<<<<<< Updated upstream
-export const OverviewPageList = ({ children }: PropsWithChildren) => {
-=======
+// Sample data
 const data = [
   {
     id: 1,
@@ -40,7 +20,7 @@ const data = [
     email: "john.doe@example.com",
     status: "Active",
     hours: 40,
-    income: "5000",
+    income: "$5000",
   },
   {
     id: 2,
@@ -49,7 +29,7 @@ const data = [
     email: "jane.smith@example.com",
     status: "Active",
     hours: 35,
-    income: "7000",
+    income: "$7000",
   },
   {
     id: 3,
@@ -58,7 +38,7 @@ const data = [
     email: "emily.johnson@example.com",
     status: "Inactive",
     hours: 20,
-    income: "3000",
+    income: "$3000",
   },
   {
     id: 4,
@@ -67,7 +47,7 @@ const data = [
     email: "michael.brown@example.com",
     status: "Active",
     hours: 40,
-    income: "4500",
+    income: "$4500",
   },
   {
     id: 5,
@@ -76,12 +56,11 @@ const data = [
     email: "sophia.williams@example.com",
     status: "Active",
     hours: 30,
-    income: "4000",
+    income: "$4000",
   },
 ];
 
 export const OverviewPageList = ({ children }: PropsWithChildren) => {  
->>>>>>> Stashed changes
   return (
     <>
       <List
@@ -90,51 +69,14 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
           return <CreateButton size="large">Add new account</CreateButton>;
         }}
       >
-<<<<<<< Updated upstream
-        <Table>
-          <Table.Column title="ID" width={80} sorter />
-          <Table.Column title="Name" width={80} />
-          <Table.Column title="Designation" width={80} />
-          <Table.Column title="Email" width={80} />
-          <Table.Column title="Status" width={80} />
-          <Table.Column title="Hours" width={80} />
-          <Table.Column title="Income" width={80} align="center" />
-          <Table.Column title="Actions" width={80} />
-=======
         <Table dataSource={data} rowKey="id">
           <Table.Column title="ID" dataIndex="id" key="id" width={80} sorter />
           <Table.Column title="Name" dataIndex="name" key="name" width={80} />
-          <Table.Column
-            title="Designation"
-            dataIndex="designation"
-            key="designation"
-            width={80}
-          />
-          <Table.Column
-            title="Email"
-            dataIndex="email"
-            key="email"
-            width={80}
-          />
-          <Table.Column
-            title="Status"
-            dataIndex="status"
-            key="status"
-            width={80}
-          />
-          <Table.Column
-            title="Hours"
-            dataIndex="hours"
-            key="hours"
-            width={80}
-          />
-          <Table.Column
-            title="Income"
-            dataIndex="income"
-            key="income"
-            width={80}
-            align="center"
-          />
+          <Table.Column title="Designation" dataIndex="designation" key="designation" width={80} />
+          <Table.Column title="Email" dataIndex="email" key="email" width={80} />
+          <Table.Column title="Status" dataIndex="status" key="status" width={80} />
+          <Table.Column title="Hours" dataIndex="hours" key="hours" width={80} />
+          <Table.Column title="Income" dataIndex="income" key="income" width={80} align="center" />
           <Table.Column
             title="Actions"
             key="actions"
@@ -153,7 +95,6 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
               );
             }}
           />
->>>>>>> Stashed changes
         </Table>
       </List>
 
