@@ -18,6 +18,7 @@ import { ColorModeContextProvider } from "./contexts/color-mode";
 
 import { ShowProduct } from "./pages/Overview/show";
 import { OverviewPageList } from "./pages/Overview/list";
+import {Header} from "./components/index";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
                   </div>
                 </ThemedLayoutV2>
                 <Routes>
+                  <Route index element={<Header />} />
                   {/* Write Here */}
                   {/* <Route index element={<WelcomePage />} /> */}
                 </Routes>
