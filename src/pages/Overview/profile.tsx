@@ -108,15 +108,6 @@ export const EmployeeProfile = () => {
                 </Flex>
               }
             >
-<<<<<<< Updated upstream
-            </Card>
-            </Col>
-          </Row>
-        </Form>
-      </Show>
-    )
-}
-=======
               <FormItemEditableInputText
                 formItemProps={{
                   name: "id",
@@ -482,4 +473,3 @@ export const EmployeeProfile = () => {
     </Show>
   );
 };
->>>>>>> Stashed changes

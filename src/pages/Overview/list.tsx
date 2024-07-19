@@ -20,7 +20,7 @@ const data = [
     email: "john.doe@example.com",
     status: "Active",
     hours: 40,
-    income: "$5000",
+    income: "5000",
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ const data = [
     email: "jane.smith@example.com",
     status: "Active",
     hours: 35,
-    income: "$7000",
+    income: "7000",
   },
   {
     id: 3,
@@ -38,7 +38,7 @@ const data = [
     email: "emily.johnson@example.com",
     status: "Inactive",
     hours: 20,
-    income: "$3000",
+    income: "3000",
   },
   {
     id: 4,
@@ -47,7 +47,7 @@ const data = [
     email: "michael.brown@example.com",
     status: "Active",
     hours: 40,
-    income: "$4500",
+    income: "4500",
   },
   {
     id: 5,
@@ -56,7 +56,7 @@ const data = [
     email: "sophia.williams@example.com",
     status: "Active",
     hours: 30,
-    income: "$4000",
+    income: "4000",
   },
 ];
 
