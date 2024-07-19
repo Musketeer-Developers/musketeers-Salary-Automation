@@ -1,21 +1,11 @@
 import {
-  CreateButton,
-  // EditButton,
-  // FilterDropdown,
-  List,
-  // NumberField,
-  // NumberField,
-  // getDefaultSortOrder,
-  // useSelect,
-  // useTable,
   Show,
-  useForm,
 } from "@refinedev/antd";
-import { EyeOutlined, SearchOutlined,BookOutlined } from "@ant-design/icons";
+import { BookOutlined } from "@ant-design/icons";
 
 import { Col, Row } from "antd";
 
-import { Avatar, Flex, Input, Select, Table, Form, Card, Typography } from "antd";
+import { Flex, Form, Card, Typography } from "antd";
 
 export const EmployeeProfile = () => {
     

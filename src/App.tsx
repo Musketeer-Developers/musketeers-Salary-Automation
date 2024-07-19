@@ -1,4 +1,4 @@
-import { GitHubBanner, Refine, WelcomePage } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
@@ -16,7 +16,6 @@ import { authProvider, axiosInstance } from "./authProvider";
 import { API_URL } from "./constants";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 
-import { ShowProduct } from "./pages/Overview/show";
 import { Header, OverviewPageList, EmployeeProfile } from "./components/index";
 
 function App() {
@@ -38,10 +37,10 @@ function App() {
                   projectId: "5BDGdF-zJCTf9-YjUmiY",
                 }}
               >
-                <Header/>
+                {/* <Header/> */}
                 <Routes>
                   <Route index  element={
-                    <ThemedLayoutV2 Sider={() => null}>
+                    <ThemedLayoutV2 Header={() => <Header />} Sider={() => null}>
                     <div
                       style={{
                         maxWidth: "1280px",
@@ -49,11 +48,25 @@ function App() {
                         margin: "0 auto",
                       }}
                     >
-                      <OverviewPageList />
+                      <OverviewPageList>
+                        <Outlet />
+                      </OverviewPageList>
                     </div>
                   </ThemedLayoutV2>
                   } />
-                  <Route path="/profile" element={<EmployeeProfile />} />
+                  <Route path="/profile" element={
+                    <ThemedLayoutV2 Header={() => <Header />} Sider={() => null}>
+                    <div
+                      style={{
+                        maxWidth: "1280px",
+                        padding: "24px",
+                        margin: "0 auto",
+                      }}
+                    >
+                      <EmployeeProfile/>
+                    </div>
+                  </ThemedLayoutV2>
+                    } />
                 </Routes>
                 
                 <RefineKbar />
