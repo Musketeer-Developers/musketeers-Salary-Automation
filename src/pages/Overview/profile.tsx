@@ -24,7 +24,7 @@ import { Col, Row } from "antd";
 
 import { Flex, Form, Card, Divider, Typography, Table } from "antd";
 import { PostShow } from "../../components/index";
-import { FormItemEditableInputText } from "../../components/forms/ShowForm";
+import { ShowTextAndIcon } from "../../components/forms/ShowForm";
 export const EmployeeProfile = () => {
   return (
     <Show
@@ -102,7 +102,6 @@ export const EmployeeProfile = () => {
               title={
                 <Flex justify="space-between">
                   <Flex gap={12} align="center">
-                    {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
                     <BookOutlined />
                     <Typography.Text>Employee info</Typography.Text>
                   </Flex>
@@ -112,7 +111,7 @@ export const EmployeeProfile = () => {
                 </Flex>
               }
             >
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "id",
                   label: "Employee ID",
@@ -123,7 +122,7 @@ export const EmployeeProfile = () => {
                 loading={false}
               />
               <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "email",
                   label: "Employee Email",
@@ -134,7 +133,7 @@ export const EmployeeProfile = () => {
                 loading={false}
               />
               <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "phone",
                   label: "Phone #",
@@ -145,7 +144,7 @@ export const EmployeeProfile = () => {
                 loading={false}
               />
               <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "designation",
                   label: "Designation",
@@ -157,7 +156,7 @@ export const EmployeeProfile = () => {
               />
 
               <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "employement_status",
                   label: "Employement Status",
@@ -168,7 +167,7 @@ export const EmployeeProfile = () => {
                 loading={false}
               />
               <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "hubstaff_status",
                   label: "Hubstaff Status",
@@ -179,7 +178,7 @@ export const EmployeeProfile = () => {
                 loading={false}
               />
               <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "current_salary",
                   label: "Current Salary",
@@ -190,7 +189,7 @@ export const EmployeeProfile = () => {
                 loading={false}
               />
               <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "date_of_joining",
                   label: "Date of Joining",
@@ -201,7 +200,7 @@ export const EmployeeProfile = () => {
                 loading={false}
               />
               <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "date_of_permanent_staus",
                   label: "Date of Permanent Status",
@@ -212,7 +211,7 @@ export const EmployeeProfile = () => {
                 loading={false}
               />
               <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
+              <ShowTextAndIcon
                 formItemProps={{
                   name: "date_of_last_working_day",
                   label: "Date of Last Working Day",
@@ -223,7 +222,7 @@ export const EmployeeProfile = () => {
                 loading={false}
               />
             </Card>
-            <PostShow />
+            <PostShow /> {/*See Bank Details*/}
             <DeleteButton
               size="large"
               type="text"
@@ -242,7 +241,6 @@ export const EmployeeProfile = () => {
               bordered={false}
               title={
                 <Flex gap={12} align="center">
-                  {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
                   <ClockCircleOutlined />
                   <Typography.Text>Yesterday's Report</Typography.Text>
                 </Flex>
@@ -287,7 +285,6 @@ export const EmployeeProfile = () => {
               bordered={false}
               title={
                 <Flex gap={12} align="center">
-                  {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
                   <CalendarOutlined />
                   <Typography.Text>Monthly Report</Typography.Text>
                 </Flex>
@@ -346,7 +343,7 @@ export const EmployeeProfile = () => {
                     return (
                       <ShowButton
                         hideText
-                        // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+                        
                         icon={<ExportOutlined />}
                       />
                     );
@@ -359,7 +356,6 @@ export const EmployeeProfile = () => {
               bordered={false}
               title={
                 <Flex gap={12} align="center">
-                  {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
                   <ContainerOutlined />
                   <Typography.Text>Previous Records</Typography.Text>
                 </Flex>
@@ -402,7 +398,7 @@ export const EmployeeProfile = () => {
                     return (
                       <ShowButton
                         hideText
-                        // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
+                        
                         icon={<ExportOutlined />}
                       />
                     );
