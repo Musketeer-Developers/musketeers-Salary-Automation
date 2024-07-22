@@ -11,6 +11,12 @@ import {
 import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
 import { Col, Row, Avatar, Flex, Input, Select, Table, Form, Card, Typography } from "antd";
 
+// const api = axios.create({
+//   baseURL:'http://localhost:1337/api/employees'
+// })
+
+
+
 // Sample data
 const data = [
   {
@@ -60,7 +66,7 @@ const data = [
   },
 ];
 
-export const OverviewPageList = ({ children }: PropsWithChildren) => {  
+export const OverviewPageList = ({ children }: PropsWithChildren) => { 
   return (
     <>
       <List
