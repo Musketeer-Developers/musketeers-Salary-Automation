@@ -8,34 +8,31 @@ const strapiAuthHelper = AuthHelper(API_URL + "/api");
 
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
-    const { data, status } = await strapiAuthHelper.login(email, password);
-    if (status === 200) {
-      localStorage.setItem(TOKEN_KEY, data.jwt);
+    // Simulated login logic with hardcoded credentials
+    const hardcodedUser = {
+      email: 'demo@demo.com',
+      password: 'demodemo',
+      jwt: 'fake-jwt-token-12345'
+    };
 
-      // set header axios instance
-      axiosInstance.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${data.jwt}`;
-
+    if (email === hardcodedUser.email && password === hardcodedUser.password) {
+      localStorage.setItem(TOKEN_KEY, hardcodedUser.jwt);
+      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${hardcodedUser.jwt}`;
+      return { success: true, redirectTo: "/" };
+    } else {
       return {
-        success: true,
-        redirectTo: "/",
+        success: false,
+        error: {
+          message: "Login failed",
+          name: "Invalid email or password",
+        },
       };
     }
-    return {
-      success: false,
-      error: {
-        message: "Login failed",
-        name: "Invalid email or password",
-      },
-    };
   },
   logout: async () => {
     localStorage.removeItem(TOKEN_KEY);
-    return {
-      success: true,
-      redirectTo: "/login",
-    };
+    delete axiosInstance.defaults.headers.common["Authorization"];
+    return { success:true,redirectTo: "/login" };
   },
   onError: async (error) => {
     console.error(error);

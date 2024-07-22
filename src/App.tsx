@@ -1,14 +1,19 @@
-import { Refine } from "@refinedev/core";
+import { Authenticated, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-
-import { ThemedLayoutV2, useNotificationProvider } from "@refinedev/antd";
+import routerProvider, { NavigateToResource } from "@refinedev/react-router-v6";
+import { ThemedLayoutV2, useNotificationProvider, ErrorComponent } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
 import routerBindings, {
   DocumentTitleHandler,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
+
+import {
+  CatchAllNavigate,
+} from "@refinedev/react-router-v6";
+
 import { DataProvider } from "@refinedev/strapi-v4";
 import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
@@ -17,6 +22,8 @@ import { API_URL } from "./constants";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 
 import { Header, OverviewPageList, EmployeeProfile } from "./components/index";
+
+import { Login } from "./pages/Overview/login";
 
 function App() {
   return (
@@ -39,36 +46,73 @@ function App() {
               >
                 {/* <Header/> */}
                 <Routes>
-                  <Route index  element={
-                    <ThemedLayoutV2 Header={() => <Header />} Sider={() => null}>
-                    <div
-                      style={{
-                        maxWidth: "1280px",
-                        padding: "24px",
-                        margin: "0 auto",
-                      }}
-                    >
-                      <OverviewPageList>
-                        <Outlet />
-                      </OverviewPageList>
-                    </div>
-                  </ThemedLayoutV2>
-                  } />
-                  <Route path="/profile" element={
-                    <ThemedLayoutV2 Header={() => <Header />} Sider={() => null}>
-                    <div
-                      style={{
-                        maxWidth: "1280px",
-                        padding: "24px",
-                        margin: "0 auto",
-                      }}
-                    >
-                      <EmployeeProfile/>
-                    </div>
-                  </ThemedLayoutV2>
+                  <Route
+                    element={
+                      <Authenticated
+                        key="authenticated-routes"
+                        fallback={<CatchAllNavigate to="/login" />}
+                      >
+                        <ThemedLayoutV2
+                          Header={() => <Header />}
+                          Sider={() => null}
+                        >
+                          <div
+                            style={{
+                              maxWidth: "1280px",
+                              padding: "24px",
+                              margin: "0 auto",
+                            }}
+                          >
+                            <Outlet />
+                          </div>
+                        </ThemedLayoutV2>
+                      </Authenticated>
+                    }
+                  >
+                    <Route path='/' element={
+                      <ThemedLayoutV2 Sider={() => null}>
+                        <div
+                          style={{
+                            maxWidth: "1280px",
+                            padding: "24px",
+                            margin: "0 auto",
+                          }}
+                        >
+                          <OverviewPageList>
+                            <Outlet />
+                          </OverviewPageList>
+                        </div>
+                      </ThemedLayoutV2>
                     } />
+                    <Route path="/profile" element={
+                      <ThemedLayoutV2 Sider={() => null}>
+                        <div
+                          style={{
+                            maxWidth: "1280px",
+                            padding: "24px",
+                            margin: "0 auto",
+                          }}
+                        >
+                          <EmployeeProfile />
+                        </div>
+                      </ThemedLayoutV2>
+                    } />
+                    <Route path="*" element={<ErrorComponent />} />
+                  </Route>
+
+                  <Route
+                    element={
+                      <Authenticated key="auth-pages" fallback={<Outlet />}>
+                        <NavigateToResource />
+                      </Authenticated>
+                    }
+                  >
+                    <Route
+                      path="/login"
+                      element={<Login />}
+                    />
+                  </Route>
                 </Routes>
-                
                 <RefineKbar />
                 <UnsavedChangesNotifier />
                 <DocumentTitleHandler />
@@ -78,7 +122,7 @@ function App() {
           </AntdApp>
         </ColorModeContextProvider>
       </RefineKbarProvider>
-    </BrowserRouter>
+    </BrowserRouter >
   );
 }
 
