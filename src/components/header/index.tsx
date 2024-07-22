@@ -3,10 +3,11 @@ import { useGetIdentity } from "@refinedev/core";
 import { Layout as AntdLayout, Avatar, Space, Switch, Typography, Button, Input, Flex,theme } from "antd";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
-import logo from '../../../public/logo.png'; // Ensure the logo path is correct
+import logo from '../../logo.png';
 import './style.css';
-import {IconMoon} from './icons/icon-moon.tsx';
-import {IconSun} from './icons/icon-sun.tsx';
+import {IconMoon} from './icons/icon-moon';
+import {IconSun} from './icons/icon-sun';
+import { useLogout } from "@refinedev/core";
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -23,6 +24,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   const { token } = useToken();
   const { data: user } = useGetIdentity<IUser>();
   const { mode, setMode } = useContext(ColorModeContext);
+  const { mutate, isLoading } = useLogout();
 
   const toggleMode = () => setMode(mode === 'light' ? 'dark' : 'light');
 
@@ -33,7 +35,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
           <img src={logo} alt="Logo" style={{ height: '40px' }} />
           <Text strong className="title">Automator</Text>
         </Space>
-        <Flex horizontal gap="50px" justify="flex-end">
+        <Flex gap="50px" justify="flex-end">
           <Input.Search placeholder="Search..." style={{ width: 200 }} />
           <Button
             className="mode-toggle-button"
@@ -41,7 +43,11 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
             onClick={toggleMode}
             icon={mode === 'dark' ? <IconSun /> : <IconMoon />}
           />
-          <Button type="primary" onClick={() => console.log('Logout')} danger>Logout</Button>
+          <Button type="primary" onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.preventDefault();
+                mutate();
+            }}
+            disabled={isLoading} danger>Logout</Button>
         </Flex>
       </div>
     </AntdLayout.Header>
