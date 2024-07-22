@@ -67,8 +67,9 @@ export const EmployeeProfile = () => {
                   // })
                   // }
                 >
-                  Add Manual Hours
+                  Add Manual Hr
                 </CreateButton>
+
                 <CreateButton
                   size="large"
                   style={{
@@ -264,9 +265,9 @@ export const EmployeeProfile = () => {
                     <DateField value={date} format="D MMM YYYY" />
                   )}
                 />
-                <Table.Column title="Total Hours" />
-                <Table.Column title="Hubstaff Hours" />
-                <Table.Column title="Manual Hours" />
+                <Table.Column title="Total Hr" />
+                <Table.Column title="Hubstaff Hr" />
+                <Table.Column title="Manual Hr" />
                 <Table.Column title="Hour Rate" />
                 <Table.Column
                   title="Earned Amount"
@@ -310,18 +311,24 @@ export const EmployeeProfile = () => {
                     <DateField value={date} format="MMMM YYYY" />
                   )}
                 />
-                <Table.Column title="Required Hours" dataIndex="id" key="id" />
-                <Table.Column title="Worked Hours" dataIndex="id" key="id" />
+                <Table.Column title="Required Hr" dataIndex="id" key="id" />
+                <Table.Column title="Worked Hr" dataIndex="id" key="id" />
                 <Table.Column title="Absences" dataIndex="id" key="id" />
                 <Table.Column
-                  title="Remaining Paid leaves"
+                  title="Paid Leaves"
+                  align="center"
                   dataIndex="id"
                   key="id"
                 />
-                <Table.Column title="Late Count" dataIndex="id" key="id" />
+                <Table.Column
+                  title="Late Count"
+                  align="center"
+                  dataIndex="id"
+                  key="id"
+                />
 
                 <Table.Column
-                  title="Earned Amount"
+                  title="Earned"
                   dataIndex="total"
                   key="total"
                   render={(total) => (
@@ -332,7 +339,7 @@ export const EmployeeProfile = () => {
                   )}
                 />
                 <Table.Column
-                  title="Daily Details"
+                  title="Details"
                   key="actions"
                   width={64}
                   render={() => {

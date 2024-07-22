@@ -1,5 +1,5 @@
 import { Show, useModalForm } from "@refinedev/antd";
-import { Modal, Button, Typography, Divider } from "antd";
+import { Modal, Button, Typography } from "antd";
 import { BankOutlined } from "@ant-design/icons";
 type Action = "create" | "edit" | "clone" | "show";
 
