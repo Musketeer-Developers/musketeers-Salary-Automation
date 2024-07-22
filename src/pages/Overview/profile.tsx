@@ -13,6 +13,7 @@ import {
 
 import {
   CreateButton,
+  EditButton,
   DeleteButton,
   DateField,
   NumberField,
@@ -25,6 +26,9 @@ import { Col, Row } from "antd";
 import { Flex, Form, Card, Divider, Typography, Table } from "antd";
 import { PostShow } from "../../components/index";
 import { ShowTextAndIcon } from "../../components/forms/ShowForm";
+
+
+
 export const EmployeeProfile = () => {
   return (
     <Show
@@ -106,7 +110,7 @@ export const EmployeeProfile = () => {
                     <Typography.Text>Employee info</Typography.Text>
                   </Flex>
                   <Flex>
-                    <EditOutlined />
+                    <EditButton size="small" hideText color="transparent" onClick={() => { console.log("Edit clicked") }} />
                   </Flex>
                 </Flex>
               }
