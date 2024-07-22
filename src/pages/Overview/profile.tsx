@@ -167,21 +167,7 @@ export const EmployeeProfile = () => {
                   console.log("save");
                 }}
               />
-              <Divider style={{ margin: 0 }} />
-              <FormItemEditableInputText
-                formItemProps={{
-                  name: "id",
-                  label: "Id",
-                }}
-                placeholder="Musk-22-101"
-                icon={<BookOutlined />}
-                variant="text"
-                loading={false}
-                onCancelClick={() => {}}
-                onSave={() => {
-                  console.log("save");
-                }}
-              />
+              
               <Divider style={{ margin: 0 }} />
               <FormItemEditableInputText
                 formItemProps={{

@@ -14,7 +14,7 @@ import { Col, Row, Avatar, Flex, Input, Select, Table, Form, Card, Typography } 
 // Sample data
 const data = [
   {
-    id: 1,
+    id: "1",
     name: "John Doe",
     designation: "Software Engineer",
     email: "john.doe@example.com",
@@ -23,7 +23,7 @@ const data = [
     income: "5000",
   },
   {
-    id: 2,
+    id: "2",
     name: "Jane Smith",
     designation: "Project Manager",
     email: "jane.smith@example.com",
@@ -32,7 +32,7 @@ const data = [
     income: "7000",
   },
   {
-    id: 3,
+    id: "3",
     name: "Emily Johnson",
     designation: "Data Scientist",
     email: "emily.johnson@example.com",
@@ -41,7 +41,7 @@ const data = [
     income: "3000",
   },
   {
-    id: 4,
+    id: "4",
     name: "Michael Brown",
     designation: "UX Designer",
     email: "michael.brown@example.com",
@@ -50,7 +50,7 @@ const data = [
     income: "4500",
   },
   {
-    id: 5,
+    id: "5",
     name: "Sophia Williams",
     designation: "HR Specialist",
     email: "sophia.williams@example.com",
