@@ -204,8 +204,7 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
     console.log('Received values from form:', values);
   };
 
-
-
+  
   return (
     <>
       <List
