@@ -32,7 +32,7 @@ export const Monthlylog = ({ children }: PropsWithChildren) => {
                     bordered={false}
                     title={
                         <Flex gap={12} align="center">
-                            {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
+                            
                             <CalendarOutlined />
                             <Typography.Text>Monthly Overview</Typography.Text>
                         </Flex>
@@ -62,7 +62,7 @@ export const Monthlylog = ({ children }: PropsWithChildren) => {
                     bordered={false}
                     title={
                         <Flex gap={12} align="center">
-                            {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
+                            
                             <DollarOutlined />
                             <Typography.Text>Salary Details</Typography.Text>
                         </Flex>
