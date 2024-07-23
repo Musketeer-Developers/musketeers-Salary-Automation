@@ -101,7 +101,6 @@ export const EmployeeProfile = () => {
               title={
                 <Flex justify="space-between">
                   <Flex gap={12} align="center">
-                    {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
                     <BookOutlined />
                     <Typography.Text>Employee info</Typography.Text>
                   </Flex>
@@ -241,7 +240,6 @@ export const EmployeeProfile = () => {
               bordered={false}
               title={
                 <Flex gap={12} align="center">
-                  {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
                   <ClockCircleOutlined />
                   <Typography.Text>Yesterday's Report</Typography.Text>
                 </Flex>
@@ -286,7 +284,6 @@ export const EmployeeProfile = () => {
               bordered={false}
               title={
                 <Flex gap={12} align="center">
-                  {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
                   <CalendarOutlined />
                   <Typography.Text>Monthly Report</Typography.Text>
                 </Flex>
@@ -339,7 +336,6 @@ export const EmployeeProfile = () => {
                     return (
                       <ShowButton
                         hideText
-                        // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
                         icon={<ExportOutlined />}
                       />
                     );
@@ -352,7 +348,6 @@ export const EmployeeProfile = () => {
               bordered={false}
               title={
                 <Flex gap={12} align="center">
-                  {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
                   <ContainerOutlined />
                   <Typography.Text>Previous Records</Typography.Text>
                 </Flex>
@@ -395,7 +390,6 @@ export const EmployeeProfile = () => {
                     return (
                       <ShowButton
                         hideText
-                        // @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66
                         icon={<ExportOutlined />}
                       />
                     );

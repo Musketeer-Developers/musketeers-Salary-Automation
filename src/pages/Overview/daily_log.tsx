@@ -54,7 +54,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                             bordered={false}
                             title={
                                 <Flex gap={12} align="center">
-                                    {/* @ts-expect-error Ant Design Icon's v5.0.1 has an issue with @types/react@^18.2.66 */}
+    
                                     <ClockCircleOutlined />
                                     <Typography.Text>Daily Details</Typography.Text>
                                 </Flex>
