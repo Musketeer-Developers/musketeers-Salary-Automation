@@ -8,6 +8,7 @@ import './style.css';
 import {IconMoon} from './icons/icon-moon';
 import {IconSun} from './icons/icon-sun';
 import { useLogout } from "@refinedev/core";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -28,12 +29,18 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
 
   const toggleMode = () => setMode(mode === 'light' ? 'dark' : 'light');
 
+  const navigate = useNavigate();
+  const goToHomePage = () => {
+    console.log("goToprofile clicked");
+    navigate('/');
+  };
+
   return (
     <AntdLayout.Header className={`header ${mode}`}>
       <div className="header-content">
         <Space>
-          <img src={logo} alt="Logo" style={{ height: '40px' }} />
-          <Text strong className="title">Automator</Text>
+          <img src={logo} alt="Logo" onClick={goToHomePage} style={{ cursor: 'pointer', height: '40px' }} />
+          <Text strong className="title" onClick={goToHomePage} style={{ cursor: 'pointer' }}>Automator</Text>
         </Space>
         <Flex gap="50px" justify="flex-end">
           <Input.Search placeholder="Search..." style={{ width: 200 }} />

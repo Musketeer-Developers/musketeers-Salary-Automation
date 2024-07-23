@@ -1,92 +1,62 @@
 import type { PropsWithChildren } from "react";
-import { getDefaultFilter, useGo } from "@refinedev/core";
+import { CreateButton, EditButton, List } from "@refinedev/antd";
+import { useState, ChangeEvent, useEffect } from "react";
+import { EyeOutlined } from "@ant-design/icons";
 import {
-  CreateButton,
-  EditButton,
-  List,
-  NumberField,
-  Show,
-  useForm,
-} from "@refinedev/antd";
-import { useState, ChangeEvent } from "react";
-import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
-import { Col, Row, Avatar, Flex, Input, Select, Table, Form, Card, message, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
-import { PlusOutlined } from '@ant-design/icons';
+  Flex,
+  Input,
+  Select,
+  Table,
+  Form,
+  message,
+  Switch,
+  Modal,
+  Button,
+  Upload,
+  InputNumber,
+  DatePicker,
+} from "antd";
 import axios from "axios";
-import moment from 'moment';
+import moment from "moment";
+import { Navigate, useNavigate } from "react-router-dom";
 
-
-
-
-async function getData() {
-  const data = await axios.get("http://localhost:1337/api/employees",
-    {
-      headers: {
-        'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
-        'Content-Type': "application/json"
-      }
-    })
-  console.log(data);
-}
-
-
-
-
-// Sample data
-const data = [
-  {
-    id: "1",
-    name: "John Doe",
-    designation: "Software Engineer",
-    email: "john.doe@example.com",
-    status: "Active",
-    hours: 40,
-    income: "5000",
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    designation: "Project Manager",
-    email: "jane.smith@example.com",
-    status: "Active",
-    hours: 35,
-    income: "7000",
-  },
-  {
-    id: "3",
-    name: "Emily Johnson",
-    designation: "Data Scientist",
-    email: "emily.johnson@example.com",
-    status: "Inactive",
-    hours: 20,
-    income: "3000",
-  },
-  {
-    id: "4",
-    name: "Michael Brown",
-    designation: "UX Designer",
-    email: "michael.brown@example.com",
-    status: "Active",
-    hours: 40,
-    income: "4500",
-  },
-  {
-    id: "5",
-    name: "Sophia Williams",
-    designation: "HR Specialist",
-    email: "sophia.williams@example.com",
-    status: "Active",
-    hours: 30,
-    income: "4000",
-  },
-];
+const token =
+  "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
 
 export const OverviewPageList = ({ children }: PropsWithChildren) => {
-  getData();
-
+  // getData();
+  const [data, setData] = useState<any[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          "http://localhost:1337/api/employees",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log(response);
+        // Extract the data from the response
+        const employees = response.data.data.map((item: any) => {
+          return {
+            id: item.id,
+            ...item.attributes,
+          };
+        });
+
+        setData(employees);
+      } catch (error) {
+        console.log("Error while fetching data", error);
+      }
+    }
+    fetchData();
+  }, []);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -96,17 +66,23 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
     setIsModalVisible(false);
   };
 
+  const navigate = useNavigate();
+  const goToprofile = () => {
+    console.log("goToprofile clicked");
+    navigate('/profile');
+  };
+
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      console.log('Received values of form: ', values);
+      console.log("Received values of form: ", values);
       // Here you would typically send a request to your backend API to add the new employee
       setIsModalVisible(false);
       postData(values);
       // Optionally reset form
       form.resetFields();
     } catch (error) {
-      console.error('Validation Failed:', error);
+      console.error("Validation Failed:", error);
     }
   };
 
@@ -121,18 +97,19 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
 
   const [fileList, setFileList] = useState<any[]>([]);
 
-  const handleChange = ({ fileList: newFileList }: any) => setFileList(newFileList);
+  const handleChange = ({ fileList: newFileList }: any) =>
+    setFileList(newFileList);
 
   const beforeUpload = (file: any) => {
-    const isImage = file.type.startsWith('image/');
+    const isImage = file.type.startsWith("image/");
     if (!isImage) {
-      message.error('You can only upload image files!');
+      message.error("You can only upload image files!");
       return Upload.LIST_IGNORE;
     }
 
     const isAlreadyOneFile = fileList.length >= 1;
     if (isAlreadyOneFile) {
-      message.error('You can only upload one file!');
+      message.error("You can only upload one file!");
       return Upload.LIST_IGNORE;
     }
     return isImage;
@@ -144,12 +121,12 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
     Designation: string;
     email: string;
     phoneNo: string;
-    employementStatus: 'intern' | 'probation' | 'permanent';
+    employementStatus: "intern" | "probation" | "permanent";
     hubstaffEnabled: boolean;
     salarySlipRequired: boolean;
     leavesRemaining: number;
     grossSalary: number;
-    joinDate: moment.Moment;  // Using moment.js if your DatePicker is configured with it
+    joinDate: moment.Moment; // Using moment.js if your DatePicker is configured with it
     permanentDate?: moment.Moment;
     lastWorkingDay?: moment.Moment;
     prefix: string;
@@ -161,35 +138,42 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
         empNo: formData.EmpNo,
         Name: formData.Name,
         Designation: formData.Designation,
-        joinDate: formData.joinDate.format('YYYY-MM-DD'),
-        permanentDate: formData.permanentDate?.format('YYYY-MM-DD'),
+        joinDate: formData.joinDate.format("YYYY-MM-DD"),
+        permanentDate: formData.permanentDate?.format("YYYY-MM-DD"),
         hubstaffEnabled: formData.hubstaffEnabled,
         employementStatus: formData.employementStatus,
         grossSalary: formData.grossSalary,
         leavesRemaining: formData.leavesRemaining,
         salarySlipRequired: formData.salarySlipRequired,
-        lastWorkingDay: formData.lastWorkingDay?.format('YYYY-MM-DD'),
-        phoneNo: ("0" + formData.phoneNo),
+        lastWorkingDay: formData.lastWorkingDay?.format("YYYY-MM-DD"),
+        phoneNo: "0" + formData.phoneNo,
         // formData.prefix
-        email: formData.email
-      }
+        email: formData.email,
+      },
     };
     console.log(formattedData);
     try {
-      const response = await axios.post('http://localhost:1337/api/employees', JSON.stringify(formattedData),
+      const response = await axios.post(
+        "http://localhost:1337/api/employees",
+        JSON.stringify(formattedData),
         {
           headers: {
-            'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
-            'Content-Type': "application/json"
-          }
-        });
-      console.log('Response:', response.data);
-    } catch (error) {
-      console.error('Error posting data:', error.response ? error.response.data : error);
+            Authorization:
+              "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Response:", response.data);
+    } catch (error: any) {
+      console.error(
+        "Error posting data:",
+        error.response ? error.response.data : error
+      );
     }
   }
 
-  const [inputValue, setInputValue] = useState('MUSK-')
+  const [inputValue, setInputValue] = useState("MUSK-");
   const handleChange2 = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const partialRegex = new RegExp(`^MUSK-\\d{0,2}-?\\d{0,4}$`);
@@ -201,31 +185,62 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
   };
 
   const onfinish = (values: any) => {
-    console.log('Received values from form:', values);
+    console.log("Received values from form:", values);
   };
 
-  
   return (
     <>
       <List
         title="Overview"
         headerButtons={() => {
-          return <CreateButton
-            size="large"
-            onClick={showModal}
-          >
-            Add new account
-          </CreateButton>
+          return (
+            <CreateButton size="large" onClick={showModal}>
+              Add new account
+            </CreateButton>
+          );
         }}
       >
         <Table dataSource={data} rowKey="id">
-          <Table.Column title="ID" dataIndex="id" key="id" width={80} sorter />
-          <Table.Column title="Name" dataIndex="name" key="name" width={80} />
-          <Table.Column title="Designation" dataIndex="designation" key="designation" width={80} />
-          <Table.Column title="Email" dataIndex="email" key="email" width={80} />
-          <Table.Column title="Status" dataIndex="status" key="status" width={80} />
-          <Table.Column title="Hours" dataIndex="hours" key="hours" width={80} />
-          <Table.Column title="Income" dataIndex="income" key="income" width={80} align="center" />
+          {/* <Table.Column title="ID" dataIndex="id" key="id" width={80} sorter /> */}
+          <Table.Column
+            title="empNo"
+            dataIndex="empNo"
+            key="empNo"
+            width={80}
+            sorter
+          />
+          <Table.Column title="Name" dataIndex="Name" key="Name" width={80} />
+          <Table.Column
+            title="Designation"
+            dataIndex="Designation"
+            key="Designation"
+            width={80}
+          />
+          <Table.Column
+            title="Email"
+            dataIndex="email"
+            key="email"
+            width={80}
+          />
+          <Table.Column
+            title="Hubstaff"
+            dataIndex="hubstaffEnabled"
+            key="hubstaffEnabled"
+            width={80}
+          />
+          <Table.Column
+            title="Hours"
+            dataIndex="hours"
+            key="hours"
+            width={80}
+          />
+          <Table.Column
+            title="Income"
+            dataIndex="income"
+            key="income"
+            width={80}
+            align="center"
+          />
           <Table.Column
             title="Actions"
             key="actions"
@@ -235,10 +250,7 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
             render={() => {
               return (
                 <Flex align="center" gap={8}>
-                  <EditButton
-                    hideText
-                    icon={<EyeOutlined />}
-                  />
+                  <EditButton onClick={goToprofile} hideText icon={<EyeOutlined />} />
                 </Flex>
               );
             }}
@@ -257,20 +269,27 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
           </Button>,
           <Button key="submit" type="primary" onClick={handleOk}>
             Submit
-          </Button>
+          </Button>,
         ]}
       >
-        <Form form={form} layout="vertical" initialValues={{
-          salarySlipRequired: false,
-          hubstaffEnabled: false,
-        }} onFinish={onfinish}
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{
+            salarySlipRequired: false,
+            hubstaffEnabled: false,
+          }}
+          onFinish={onfinish}
         >
           <Form.Item
             name="EmpNo"
             label="Employee ID"
             rules={[
-              { required: true, message: 'Please input the employee ID!' },
-              { pattern: new RegExp(`^MUSK-\\d{2}-\\d{4}$`), message: 'Employee ID must follow the MUSK-YY-NNNN format!' }
+              { required: true, message: "Please input the employee ID!" },
+              {
+                pattern: new RegExp(`^MUSK-\\d{2}-\\d{4}$`),
+                message: "Employee ID must follow the MUSK-YY-NNNN format!",
+              },
             ]}
           >
             <Input
@@ -280,27 +299,40 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
               minLength={12}
               maxLength={12}
             />
-            <span style={{ marginLeft: "5px", fontSize: "small" }}>Employee ID i.e MUSK-{new Date().getFullYear().toString().slice(-2)}-1234</span>
+            <span style={{ marginLeft: "5px", fontSize: "small" }}>
+              Employee ID i.e MUSK-
+              {new Date().getFullYear().toString().slice(-2)}-1234
+            </span>
           </Form.Item>
 
           <Form.Item
             name="Name"
             label="Name"
-            rules={[{ required: true, message: 'Please input the employee name!' }]}
+            rules={[
+              { required: true, message: "Please input the employee name!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="Designation"
             label="Designation"
-            rules={[{ required: true, message: 'Please input the designation!' }]}
+            rules={[
+              { required: true, message: "Please input the designation!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="email"
             label="Email"
-            rules={[{ required: true, type: 'email', message: 'Please input a valid email!' }]}
+            rules={[
+              {
+                required: true,
+                type: "email",
+                message: "Please input a valid email!",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -308,19 +340,21 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
             name="phoneNo"
             label="Phone Number"
             rules={[
-              { required: true, message: 'Please input your phone number!' },
+              { required: true, message: "Please input your phone number!" },
               {
                 pattern: new RegExp(/^\d{10}$/),
-                message: 'Phone number must be exactly 10 digits!'
-              }
+                message: "Phone number must be exactly 10 digits!",
+              },
             ]}
           >
-            <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
+            <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             name="employementStatus"
             label="Employee Status"
-            rules={[{ required: true, message: 'Please select employee status!' }]}
+            rules={[
+              { required: true, message: "Please select employee status!" },
+            ]}
           >
             <Select placeholder="Emploee Status">
               <Option value="Intern">Intern</Option>
@@ -328,10 +362,18 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
               <Option value="Permanent">Permanent</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="hubstaffEnabled" label="Hubstaff Enabled" valuePropName="checked">
+          <Form.Item
+            name="hubstaffEnabled"
+            label="Hubstaff Enabled"
+            valuePropName="checked"
+          >
             <Switch />
           </Form.Item>
-          <Form.Item name="salarySlipRequired" label="Salary Slip Required" valuePropName="checked">
+          <Form.Item
+            name="salarySlipRequired"
+            label="Salary Slip Required"
+            valuePropName="checked"
+          >
             <Switch />
           </Form.Item>
           <Form.Item name="leavesRemaining" label="Leaves Remaining">
@@ -342,8 +384,12 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
             name="grossSalary"
             label="Salary"
             rules={[
-              { required: true, message: 'Please input the salary!' },
-              { type: 'number', min: 0, message: 'Salary must be a non-negative number!' }
+              { required: true, message: "Please input the salary!" },
+              {
+                type: "number",
+                min: 0,
+                message: "Salary must be a non-negative number!",
+              },
             ]}
           >
             {/* Using InputNumber for better control over numerical input */}
@@ -352,7 +398,9 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
           <Form.Item
             name="joinDate"
             label="Date of Joining"
-            rules={[{ required: true, message: 'Please enter the date of joining' }]}
+            rules={[
+              { required: true, message: "Please enter the date of joining" },
+            ]}
           >
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
