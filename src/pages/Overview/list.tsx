@@ -8,7 +8,7 @@ import {
   Show,
   useForm,
 } from "@refinedev/antd";
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
 import { Col, Row, Avatar, Flex, Input, Select, Table, Form, Card, message, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
@@ -189,6 +189,23 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
     }
   }
 
+  const [inputValue, setInputValue] = useState('MUSK-')
+  const handleChange2 = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const partialRegex = new RegExp(`^MUSK-\\d{0,2}-?\\d{0,4}$`);
+    const fullRegex = new RegExp(`^MUSK-\\d{2}-\\d{4}$`);
+
+    if (partialRegex.test(value) || fullRegex.test(value)) {
+      setInputValue(value);
+    }
+  };
+
+  const onfinish = (values: any) => {
+    console.log('Received values from form:', values);
+  };
+
+
+
   return (
     <>
       <List
@@ -246,15 +263,25 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
       >
         <Form form={form} layout="vertical" initialValues={{
           salarySlipRequired: false,
-          hubstaffEnabled:false
-        }}
+          hubstaffEnabled: false,
+        }} onFinish={onfinish}
         >
           <Form.Item
             name="EmpNo"
             label="Employee ID"
-            rules={[{ required: true, message: 'Please input the employee ID!' }]}
+            rules={[
+              { required: true, message: 'Please input the employee ID!' },
+              { pattern: new RegExp(`^MUSK-\\d{2}-\\d{4}$`), message: 'Employee ID must follow the MUSK-YY-NNNN format!' }
+            ]}
           >
-            <Input />
+            <Input
+              placeholder="MUSK-YY-NNNN"
+              value={inputValue}
+              onChange={handleChange2}
+              minLength={12}
+              maxLength={12}
+            />
+            <span style={{ marginLeft: "5px", fontSize: "small" }}>Employee ID i.e MUSK-{new Date().getFullYear().toString().slice(-2)}-1234</span>
           </Form.Item>
 
           <Form.Item
