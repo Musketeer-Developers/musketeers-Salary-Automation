@@ -347,7 +347,6 @@ export const EmployeeProfile = () => {
                     return (
                       <ShowButton
                         hideText
-                        
                         icon={<ExportOutlined />}
                       />
                     );
@@ -402,7 +401,6 @@ export const EmployeeProfile = () => {
                     return (
                       <ShowButton
                         hideText
-                        
                         icon={<ExportOutlined />}
                       />
                     );
