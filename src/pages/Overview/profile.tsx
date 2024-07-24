@@ -20,13 +20,36 @@ import {
   Show,
 } from "@refinedev/antd";
 
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { Col, Row } from "antd";
 
 import { Flex, Form, Card, Divider, Typography, Table } from "antd";
 import { PostShow } from "../../components/index";
 import { ShowTextAndIcon } from "../../components/forms/ShowForm";
 
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { Button } from "antd"; // Assuming you're using antd for UI components
 
+import { useParams } from "react-router-dom";
+
+
+const BackButton = () => {
+  const navigate = useNavigate();
+
+  return (
+    <Button
+      type="link"
+      icon={<ArrowLeftOutlined />}
+      onClick={() => navigate(-1)}
+    >
+      {/* Back */}
+    </Button>
+  );
+};
+
+const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
 
 export const EmployeeProfile = () => {
   return (
