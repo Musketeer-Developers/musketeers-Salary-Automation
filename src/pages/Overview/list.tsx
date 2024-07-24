@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from "react";
+import { Account } from "../../types";
 import { CreateButton, EditButton, List } from "@refinedev/antd";
 import { useState, ChangeEvent, useEffect } from "react";
 import { EyeOutlined } from "@ant-design/icons";
@@ -33,7 +34,7 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
     async function fetchData() {
       try {
         const response = await axios.get(
-          "http://localhost:1337/api/employees",
+          "http://localhost:1337/api/employees?populate=*",
           {
             headers: {
               Authorization: "Bearer " + token,
@@ -44,9 +45,12 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
         console.log(response);
         // Extract the data from the response
         const employees = response.data.data.map((item: any) => {
+          const attributes = item.attributes;
+          const imageUrl = attributes.image?.data?.attributes?.url;
           return {
             id: item.id,
-            ...item.attributes,
+            ...attributes,
+            imageUrl,
           };
         });
 
@@ -69,7 +73,7 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
   const navigate = useNavigate();
   const goToprofile = () => {
     console.log("goToprofile clicked");
-    navigate('/profile');
+    navigate("/profile");
   };
 
   const handleOk = async () => {
@@ -209,7 +213,28 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
             width={80}
             sorter
           />
-          <Table.Column title="Name" dataIndex="Name" key="Name" width={80} />
+          <Table.Column
+            title="Name"
+            dataIndex="Name"
+            key="Name"
+            width={80}
+            sorter
+            render={(text: string, record: Account) => (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={`http://localhost:1337${record.imageUrl}`}
+                  alt="Avatar"
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    marginRight: "10px",
+                    borderRadius: "50%",
+                  }}
+                />
+                <span>{text}</span>
+              </div>
+            )}
+          />
           <Table.Column
             title="Designation"
             dataIndex="Designation"
@@ -250,7 +275,11 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
             render={() => {
               return (
                 <Flex align="center" gap={8}>
-                  <EditButton onClick={goToprofile} hideText icon={<EyeOutlined />} />
+                  <EditButton
+                    onClick={goToprofile}
+                    hideText
+                    icon={<EyeOutlined />}
+                  />
                 </Flex>
               );
             }}
