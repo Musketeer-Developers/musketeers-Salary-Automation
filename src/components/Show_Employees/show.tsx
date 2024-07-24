@@ -1,25 +1,17 @@
 import type { PropsWithChildren } from "react";
-import { getDefaultFilter, useGo } from "@refinedev/core";
-import {
-  CreateButton,
-  EditButton,
-  List,
-  NumberField,
-  Show,
-  useForm,
-} from "@refinedev/antd";
-import { useState, ChangeEvent,useEffect, } from "react";
-import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
-import { Flex,Table,} from "antd";
+import { CreateButton, EditButton, List } from "@refinedev/antd";
+import { useState, useEffect } from "react";
+import { EyeOutlined } from "@ant-design/icons";
+import { Flex, Table } from "antd";
 import axios from "axios";
-import { useModal } from '../../contexts/context-modal';
+import { useModal } from "../../contexts/context-modal";
 import { useNavigate } from "react-router-dom";
 import { Account } from "../../types";
 
-const token = "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
+const token =
+  "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
 
 export const ShowEmployees = ({ children }: PropsWithChildren) => {
-
   const { showModal } = useModal();
   const [data, setData] = useState<any[]>([]);
   useEffect(() => {
@@ -49,7 +41,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             id: item.id,
             ...attributes,
             imageUrl,
-            hubstaffEnable
+            hubstaffEnable,
           };
         });
 
@@ -62,13 +54,13 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
   }, []);
 
   const navigate = useNavigate();
-  const goToprofile = (id : number) => {
+  const goToprofile = (id: number) => {
     console.log(`goToprofile of ${id} clicked`);
     navigate(`/profile/${id}`);
   };
   return (
     <>
-        <List
+      <List
         title="Overview"
         headerButtons={() => {
           return (
@@ -84,7 +76,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             title="empNo"
             dataIndex="empNo"
             key="empNo"
-            width={80}
+            width={100}
             sorter
           />
           <Table.Column
@@ -128,10 +120,10 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             width={80}
           />
           <Table.Column
-            title="Hours"
+            title="Hours Logged"
             dataIndex="hours"
             key="hours"
-            width={80}
+            width={100}
           />
           <Table.Column
             title="Income"
@@ -145,7 +137,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             key="actions"
             fixed="right"
             align="center"
-            width={80}
+            width={40}
             render={(record) => {
               return (
                 <Flex align="center" gap={8}>

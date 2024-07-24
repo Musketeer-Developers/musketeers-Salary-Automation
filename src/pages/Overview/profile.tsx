@@ -19,6 +19,7 @@ import {
   ShowButton,
   Show,
 } from "@refinedev/antd";
+import { ErrorComponent } from "@refinedev/antd";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -84,7 +85,7 @@ export const EmployeeProfile = () => {
   }, [id]);
 
   if (!person) {
-    return <div>Loading...</div>; // Added loading state
+    return <ErrorComponent />; // Added error page
   }
 
   return (
