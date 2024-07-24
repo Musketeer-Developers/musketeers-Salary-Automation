@@ -71,9 +71,9 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
   };
 
   const navigate = useNavigate();
-  const goToprofile = () => {
-    console.log("goToprofile clicked");
-    navigate("/profile");
+  const goToprofile = (id : number) => {
+    console.log(`goToprofile of ${id} clicked`);
+    navigate(`/profile/${id}`);
   };
 
   const handleOk = async () => {
@@ -272,11 +272,13 @@ export const OverviewPageList = ({ children }: PropsWithChildren) => {
             fixed="right"
             align="center"
             width={80}
-            render={() => {
+            render={(record) => {
               return (
                 <Flex align="center" gap={8}>
                   <EditButton
-                    onClick={goToprofile}
+                    onClick={() => {
+                      goToprofile(record.id);
+                    }}
                     hideText
                     icon={<EyeOutlined />}
                   />

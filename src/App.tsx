@@ -20,9 +20,7 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { authProvider, axiosInstance } from "./authProvider";
 import { API_URL } from "./constants";
 import { ColorModeContextProvider } from "./contexts/color-mode";
-
 import { Header, OverviewPageList, EmployeeProfile, Dailylog } from "./components/index";
-
 import { Login } from "./pages/Overview/login";
 
 function App() {
@@ -84,7 +82,7 @@ function App() {
                         </div>
                       </ThemedLayoutV2>
                     } />
-                    <Route path="/profile" element={
+                    <Route path="/profile/:id" element={
                       <ThemedLayoutV2 Sider={() => null}>
                         <div
                           style={{

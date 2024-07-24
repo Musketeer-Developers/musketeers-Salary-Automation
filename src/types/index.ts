@@ -10,7 +10,6 @@ export type Account = {
     employementStatus: "intern" | "probation" | "permanent";
     grossSalary: number;
     hubstaffEnabled: boolean;
-    image?: image;
     joinDate: string;
     lastWorkingDay: string;
     leavesRemaining: number;
