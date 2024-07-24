@@ -1,17 +1,46 @@
 import { PropsWithChildren, useState } from "react";
 import { List } from "@refinedev/antd";
 import { Col, Row, Flex, Table, Card, Typography } from "antd";
-import { DatePicker, Space } from "antd";
+import { DatePicker, Space, Button } from "antd";
 import { Monthlylog } from "../../components/index";
 
-import { ClockCircleOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+
+const BackButton = () => {
+  const navigate = useNavigate();
+
+  return (
+    <Button
+      type="link"
+      icon={<ArrowLeftOutlined />}
+      onClick={() => navigate(-1)}
+    >
+      {/* Back */}
+    </Button>
+  );
+};
 
 export const Dailylog = ({ children }: PropsWithChildren) => {
   const { RangePicker } = DatePicker;
-  const [active, setActive] = useState(false);
+  const [active] = useState(false);
   return (
     <>
-      <List title="Details">
+      <List
+        title={
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <BackButton />
+            <span style={{ marginLeft: "10px" }}>Details</span>
+          </div>
+        }
+        contentProps={{
+          style: {
+            padding: 0,
+            background: "transparent",
+            boxShadow: "none",
+          },
+        }}
+      >
         <Row>
           <Col span={24}>
             <Flex
