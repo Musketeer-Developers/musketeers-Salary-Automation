@@ -14,6 +14,7 @@ import { Flex,Table,} from "antd";
 import axios from "axios";
 import { useModal } from '../../contexts/context-modal';
 import { useNavigate } from "react-router-dom";
+import { Account } from "../../types";
 
 const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
 
