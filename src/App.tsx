@@ -1,7 +1,7 @@
 import { Authenticated, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-import routerProvider, { NavigateToResource } from "@refinedev/react-router-v6";
+import { NavigateToResource } from "@refinedev/react-router-v6";
 import { ThemedLayoutV2, useNotificationProvider, ErrorComponent } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 

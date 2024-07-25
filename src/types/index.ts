@@ -3,7 +3,7 @@ export type Account = {
     id: number;
     createdAt: string;
     updatedAt: string;
-    name: string;
+    Name: string;
     email: string;
     empNo: string;
     Designation: string;
@@ -17,4 +17,10 @@ export type Account = {
     phoneNo: string;
     salarySlipRequired: boolean;
     imageUrl: string;
+    bankDetails: {
+      accountTitle: string;
+      accountIBAN: string;
+      bankName: string;
+    }
   };
+
