@@ -34,6 +34,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "antd"; // Assuming you're using antd for UI components
 
 import { useParams } from "react-router-dom";
+// import Item from "antd/es/list/Item";
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -56,6 +57,9 @@ const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29
 export const EmployeeProfile = () => {
   const { id } = useParams<{ id: string }>();
   const [person, setPerson] = useState<Account | null>(null);
+  const [monthSalary, setMonthSalary] = useState<any[]>([]);
+  const [dailyData, setdailyData] = useState<any>(null);
+  // const [monthlyReporting, setMonthlyReport] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchPerson = async () => {
@@ -70,19 +74,100 @@ export const EmployeeProfile = () => {
           }
         );
         const attributes = response.data.data.attributes;
-        const imageUrl =
-          "http://localhost:1337" + attributes.image?.data?.attributes?.url;
         const bankDetails =
           response.data.data.attributes.bank_detail?.data?.attributes;
-        console.log(bankDetails);
-        console.log(response);
+        const imageUrl =
+          "http://localhost:1337" + attributes.image?.data?.attributes?.url;
         setPerson({ ...attributes, imageUrl, bankDetails });
       } catch (error) {
         console.log("Error while fetching person", error);
       }
     };
 
+    const fetchMonth = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:1337/api/employees/${id}?populate=*`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const attributes = response.data.data.attributes;
+        const monthlySalaries = attributes.monthly_salaries?.data;
+
+        const monthlySalariesWithNames = await Promise.all(
+          monthlySalaries.map(async (item: any) => {
+            const response2 = await axios.get(
+              `http://localhost:1337/api/months-data/${item.id}`,
+              {
+                headers: {
+                  Authorization: "Bearer " + token,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            return {
+              // month is equal to Capitalized month name
+              month:
+                response2.data.data.attributes.month.charAt(0).toUpperCase() +
+                response2.data.data.attributes.month.slice(1),
+              ...item.attributes,
+            };
+          })
+        );
+        setMonthSalary(monthlySalariesWithNames || []);
+      } catch (error) {
+        console.log("Error while fetching month", error);
+      }
+    };
+
+    
+    const fetchDailyWork = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:1337/api/employees/${id}?populate=*`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const attributes = response.data.data.attributes;
+        const monthlySalaries = attributes.monthly_salaries?.data;
+
+        const dailyWorkData = await Promise.all(
+          monthlySalaries.map(async (item: any) => {
+            const response2 = await axios.get(
+              `http://localhost:1337/api/daily-works/${item.id}`,
+              {
+                headers: {
+                  Authorization: "Bearer " + token,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            console.log("Daily Work");
+            console.log(response2.data.data.attributes);
+            const dailyDataAttributes = response2.data.data.attributes;
+            return { ...dailyDataAttributes,...item.attributes };
+          })
+        );
+        console.log("dailyWorkData");
+        console.log(dailyWorkData[length]);
+        setdailyData(dailyWorkData || []);
+      } catch (error) {
+        console.log("Error while fetching daily", error);
+      }
+    };
+
+    fetchDailyWork();
     fetchPerson();
+    fetchMonth();
   }, [id]);
 
   if (!person) {
@@ -338,19 +423,19 @@ export const EmployeeProfile = () => {
                 },
               }}
             >
-              <Table rowKey={"id"}>
+              <Table dataSource={dailyData} rowKey={"id"} pagination={false}>
                 <Table.Column
                   title="Date"
-                  dataIndex="date"
-                  key="date"
+                  dataIndex="workDate"
+                  key="workDate"
                   render={(date) => (
                     <DateField value={date} format="D MMM YYYY" />
                   )}
                 />
-                <Table.Column title="Total Hours" />
-                <Table.Column title="Hubstaff Hours" />
-                <Table.Column title="Manual Hours" />
-                <Table.Column title="Hour Rate" />
+                <Table.Column title="Total Hours" dataIndex="totalHours" key="totalHours" />
+                <Table.Column title="Hubstaff Hours" dataIndex="hubstaffHours" key="hubstaffHours" />
+                <Table.Column title="Manual Hours" dataIndex="manualHours" key="manualHours" />
+                <Table.Column title="Hour Rate" dataIndex="monthlyRate" key="monthlyRate" />
                 <Table.Column
                   title="Earned Amount"
                   dataIndex="total"
@@ -383,17 +468,18 @@ export const EmployeeProfile = () => {
                 },
               }}
             >
-              <Table>
+              <Table rowKey={"month"} pagination={false}>
+                <Table.Column title="Month" dataIndex="month" key="month" />
                 <Table.Column
-                  title="Month"
-                  dataIndex="date"
-                  key="date"
-                  render={(date) => (
-                    <DateField value={date} format="MMMM YYYY" />
-                  )}
+                  title="Required Hours"
+                  dataIndex="TotalHoursMonth"
+                  key="TotalHoursMonth"
                 />
-                <Table.Column title="Required Hr" dataIndex="id" key="id" />
-                <Table.Column title="Worked Hr" dataIndex="id" key="id" />
+                <Table.Column
+                  title="Worked Hours"
+                  dataIndex="hoursLogged"
+                  key="hoursLogged"
+                />
                 <Table.Column title="Absences" dataIndex="id" key="id" />
                 <Table.Column
                   title="Paid Leaves"
@@ -410,8 +496,9 @@ export const EmployeeProfile = () => {
 
                 <Table.Column
                   title="Earned"
-                  dataIndex="total"
-                  key="total"
+                  dataIndex="grossSalaryEarned"
+                  key="grossSalaryEarned"
+                  width={150}
                   render={(total) => (
                     <NumberField
                       value={total}
@@ -448,19 +535,22 @@ export const EmployeeProfile = () => {
                 },
               }}
             >
-              <Table>
+              <Table dataSource={monthSalary}>
+                <Table.Column title="Month" dataIndex="month" key="month" />
                 <Table.Column
-                  title="Month"
-                  render={(date) => (
-                    <DateField value={date} format="MMMM YYYY" />
-                  )}
+                  title="Required Hours"
+                  dataIndex="TotalHoursMonth"
+                  key="TotalHoursMonth"
                 />
-                <Table.Column title="Required Hours" dataIndex="id" key="id" />
-                <Table.Column title="Worked Hours" dataIndex="id" key="id" />
+                <Table.Column
+                  title="Worked Hours"
+                  dataIndex="hoursLogged"
+                  key="hoursLogged"
+                />
                 <Table.Column
                   title="Net Salary"
-                  dataIndex="total"
-                  key="total"
+                  dataIndex="grossSalaryEarned"
+                  key="grossSalaryEarned"
                   render={(total) => (
                     <NumberField
                       value={total}

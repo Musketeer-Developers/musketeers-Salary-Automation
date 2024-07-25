@@ -32,7 +32,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
           const attributes = item.attributes;
           const imageUrl = attributes.image?.data?.attributes?.url;
           let hubstaffEnable = "";
-          if (!attributes.hubstaffEnabled) {
+          if (attributes.hubstaffEnabled) {
             hubstaffEnable = "Enabled";
           } else {
             hubstaffEnable = "Exempt";
@@ -44,7 +44,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             hubstaffEnable,
           };
         });
-
+        console.log(employees);
         setData(employees);
       } catch (error) {
         console.log("Error while fetching data", error);
@@ -71,7 +71,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
         }}
       >
         <Table dataSource={data} rowKey="id">
-          {/* <Table.Column title="ID" dataIndex="id" key="id" width={80} sorter /> */}
+          <Table.Column title="ID" dataIndex="id" key="id" width={80} sorter />
           <Table.Column
             title="empNo"
             dataIndex="empNo"
