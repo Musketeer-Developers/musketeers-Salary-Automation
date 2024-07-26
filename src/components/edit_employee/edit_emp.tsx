@@ -1,54 +1,79 @@
-import type { PropsWithChildren } from "react";
-import { getDefaultFilter, useGo } from "@refinedev/core";
-import {
-    CreateButton,
-    EditButton,
-    List,
-    NumberField,
-    Show,
-    useForm,
-} from "@refinedev/antd";
-import { useState, ChangeEvent, useEffect } from "react";
-import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
+import React from 'react';
+import { useState, ChangeEvent, useEffect, useRef } from "react";
+import { notification } from 'antd';
 import { Col, Row, Avatar, Divider, Flex, Input, Select, Table, Form, Card, message, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
-import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
-import axios from "axios";
-import moment from 'moment';
-import { useModal } from '../../contexts/context-modal';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import { PlusOutlined } from '@ant-design/icons';
+import { EditButton } from '@refinedev/antd';
+import type { UploadProps } from 'antd';
+import { useParams } from "react-router-dom";
 
-export const AddnewEmployee = () => {
-    const { isModalOpen, hideModal } = useModal();
+interface Employee {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    Name: string;
+    email: string;
+    empNo: string;
+    Designation: string;
+    employementStatus: "Intern" | "Probation" | "Permanent";
+    grossSalary: number;
+    hubstaffEnabled: boolean;
+    joinDate: string;
+    lastWorkingDay: string;
+    leavesRemaining: number;
+    permanentDate: string;
+    phoneNo: string;
+    salarySlipRequired: boolean;
+    imageUrl: string;
+    bankDetailsID:number;
+    bankDetails: {
+        accountTitle: string;
+        accountIBAN: string;
+        bankName: string;
+    }
+}
+
+interface FormData {
+    EmpNo: string;
+    Name: string;
+    Designation: string;
+    email: string;
+    phoneNo: string;
+    employementStatus: 'intern' | 'probation' | 'permanent';
+    hubstaffEnabled: boolean;
+    salarySlipRequired: boolean;
+    leavesRemaining: number;
+    grossSalary: number;
+    joinDate: moment.Moment;
+    permanentDate?: moment.Moment;
+    lastWorkingDay?: moment.Moment;
+    prefix: string;
+    image: number;
+    bankName: string,
+    accountTitle: string,
+    accountIBAN: string
+}
+
+export const EditEmployee = (props: Employee) => {
+    const { id } = useParams<{ id: string }>();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+    const switchRef = useRef(null);
     const [form] = Form.useForm();
     const { Option } = Select;
-    const [ImageID, setImageID] = useState(54);
-    const [isDisable, setisDisable] = useState(false);
+    const [ImageID, setImageID] = useState();
+    const [isDisable, setisDisable] = useState(true);
     const [isCash, setisCash] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
-    let isImage:boolean = false;
-    const MuskImageID: number = 54;
-
-    interface FormData {
-        EmpNo: string;
-        Name: string;
-        Designation: string;
-        email: string;
-        phoneNo: string;
-        employementStatus: 'intern' | 'probation' | 'permanent';
-        hubstaffEnabled: boolean;
-        salarySlipRequired: boolean;
-        leavesRemaining: number;
-        grossSalary: number;
-        joinDate: moment.Moment;
-        permanentDate?: moment.Moment;
-        lastWorkingDay?: moment.Moment;
-        prefix: string;
-        image: number;
-        bankName: string,
-        accountTitle: string,
-        accountIBAN: string
-    }
 
     const handleStatusChange = (value: string): void => {
         setisDisable(value !== "Permanent");
@@ -65,15 +90,15 @@ export const AddnewEmployee = () => {
     useEffect(() => {
         isCash ?
             form.setFieldsValue({ accountTitle: "Cash Salary", accountIBAN: ".......Cash Salary......", bankName: "Cash Salary" })
-            : form.setFieldsValue({ accountTitle: "", accountIBAN: "", bankName: "" })
+            : form.setFieldsValue({ accountTitle: props.bankDetails.accountTitle, accountIBAN: props.bankDetails.accountIBAN, bankName: props.bankDetails.bankName })
     }, [isCash])
 
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
             console.log('Received values of form: ', values);
-            hideModal();
-            postData(values);
+            handleCancel();
+            putData(values);
             form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);
@@ -95,63 +120,6 @@ export const AddnewEmployee = () => {
             </Select>
         </Form.Item>
     );
-
-    async function postData(formData: FormData) {
-        const EmployeeData = {
-            data: {
-                empNo: formData.EmpNo,
-                Name: formData.Name,
-                Designation: formData.Designation,
-                joinDate: formData.joinDate.format('YYYY-MM-DD'),
-                permanentDate: formData.permanentDate?.format('YYYY-MM-DD'),
-                hubstaffEnabled: formData.hubstaffEnabled,
-                employementStatus: formData.employementStatus,
-                grossSalary: formData.grossSalary,
-                leavesRemaining: formData.leavesRemaining,
-                salarySlipRequired: formData.salarySlipRequired,
-                lastWorkingDay: formData.lastWorkingDay?.format('YYYY-MM-DD'),
-                phoneNo: (formData.prefix + formData.phoneNo),
-                email: formData.email,
-                image: ImageID
-            }
-        };
-        console.log(EmployeeData);
-        try {
-            const response = await axios.post('http://localhost:1337/api/employees', JSON.stringify(EmployeeData),
-                {
-                    headers: {
-                        'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
-                        'Content-Type': "application/json"
-                    }
-                });
-            console.log('Response:', response.data);
-            console.log(response.data.data.id);
-            const formattedData = {
-                data: {
-                    emp_no: response.data.data.id,
-                    bankName: formData.bankName,
-                    accountTitle: formData.accountTitle,
-                    accountIBAN: formData.accountIBAN
-                }
-            };
-            console.log(formattedData);
-            try {
-                const response = await axios.post('http://localhost:1337/api/bank-details', JSON.stringify(formattedData),
-                    {
-                        headers: {
-                            'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
-                            'Content-Type': "application/json"
-                        }
-                    });
-                console.log('Response:', response.data);
-            } catch (error) {
-                console.error('Error posting data:', error.response ? error.response.data : error);
-            }
-        } catch (error) {
-            console.error('Error posting data:', error.response ? error.response.data : error);
-        }
-    }
-
 
     const handleChange2 = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
@@ -184,6 +152,7 @@ export const AddnewEmployee = () => {
     const customUpload = async ({ file, onSuccess, onError }: any) => {
         const formData = new FormData();
         formData.append('files', file);
+        console.log(file)
         try {
             const response = await axios.post("http://localhost:1337/api/upload", formData, {
                 headers: {
@@ -192,22 +161,118 @@ export const AddnewEmployee = () => {
                 }
             });
             onSuccess(response.data);
+            console.log(response.data);
             setImageID(response.data[0].id);
         } catch (error) {
             onError(error);
         }
     };
 
+    useEffect(() => {
+        form.setFieldsValue({
+            EmpNo: props.empNo,
+            Name: props.Name,
+            Designation: props.Designation,
+            email: props.email,
+            phoneNo: props.phoneNo.slice(3, 14),
+            employementStatus: props.employementStatus,
+            hubstaffEnabled: props.hubstaffEnabled,
+            salarySlipRequired: props.salarySlipRequired,
+            leavesRemaining: props.leavesRemaining,
+            grossSalary: props.grossSalary,
+            joinDate: props.joinDate ? dayjs(props.joinDate, "YYYY-MM-DD") : null,
+            permanentDate: props.permanentDate ? dayjs(props.joinDate, "YYYY-MM-DD") : null,
+            lastWorkingDay: props.permanentDate ? dayjs(props.joinDate, "YYYY-MM-DD") : null,
+            image: props.imageUrl,
+            bankName: props.bankDetails.bankName,
+            accountTitle: props.bankDetails.accountTitle,
+            accountIBAN: props.bankDetails.accountIBAN
+        });
+        props.bankDetails.bankName == "Cash Salary" ? setisCash(true) : setisCash(false)
+        props.employementStatus === "Permanent" ? setisDisable(false) : null
+    }, [])
+
+    const imageprops: UploadProps = {
+        defaultFileList: [{
+            uid: '1',
+            name: 'xxx.png',
+            status: 'done',
+            url: props.imageUrl,
+        }]
+    };
+
+    async function putData(formData: FormData) {
+        const EmployeeData = {
+            data: {
+                empNo: formData.EmpNo,
+                Name: formData.Name,
+                Designation: formData.Designation,
+                joinDate: formData.joinDate.format('YYYY-MM-DD'),
+                permanentDate: formData.permanentDate?.format('YYYY-MM-DD'),
+                hubstaffEnabled: formData.hubstaffEnabled,
+                employementStatus: formData.employementStatus,
+                grossSalary: formData.grossSalary,
+                leavesRemaining: formData.leavesRemaining,
+                salarySlipRequired: formData.salarySlipRequired,
+                lastWorkingDay: formData.lastWorkingDay?.format('YYYY-MM-DD'),
+                phoneNo: (formData.prefix + formData.phoneNo),
+                email: formData.email,
+                image: ImageID
+            }
+        };
+        console.log(EmployeeData);
+        try {
+            const response = await axios.put(`http://localhost:1337/api/employees/${id}`, JSON.stringify(EmployeeData),
+                {
+                    headers: {
+                        'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
+                        'Content-Type': "application/json"
+                    }
+                });
+            console.log('Response:', response.data);
+            const formattedData = {
+                data: {
+                    emp_no: props.id,
+                    bankName: formData.bankName,
+                    accountTitle: formData.accountTitle,
+                    accountIBAN: formData.accountIBAN
+                }
+            };
+            console.log(formattedData);
+            try {
+                const response = await axios.put(`http://localhost:1337/api/bank-details/${props.bankDetailsID}`, JSON.stringify(formattedData),
+                    {
+                        headers: {
+                            'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
+                            'Content-Type': "application/json"
+                        }
+                    });
+                console.log('Response:', response.data);
+            } catch (error) {
+                console.error('Error posting data:', error.response ? error.response.data : error);
+            }
+        } catch (error) {
+            console.error('Error posting data:', error.response ? error.response.data : error);
+        }
+    }
+
     return (
         <>
+            <EditButton
+                size="small"
+                hideText
+                color="transparent"
+                onClick={showModal}
+            />
+
             <Modal
                 forceRender
-                title="Add New Employee"
+                title="Edit Employee"
                 open={isModalOpen}
                 onOk={handleOk}
-                onCancel={hideModal}
+                onCancel={handleCancel}
                 footer={[
-                    <Button key="back" onClick={hideModal}>
+                    <Button key="back" onClick={handleCancel}>
                         Cancel
                     </Button>,
                     <Button key="submit" type="primary" onClick={handleOk}>
@@ -266,7 +331,7 @@ export const AddnewEmployee = () => {
                                     listType="picture-card"
                                     maxCount={1}
                                     accept="image/*"
-                                    onRemove={()=>setImageID(MuskImageID)}
+                                    {...imageprops}
                                 >
                                     <button style={{ border: 0, background: 'none' }} type="button">
                                         <PlusOutlined />
@@ -386,6 +451,14 @@ export const AddnewEmployee = () => {
                                     <DatePicker style={{ width: "100%" }} />
                                 </Form.Item>
                             </Form.Item>
+                            <Form.Item label="Last Working Day">
+                                <Form.Item
+                                    name="lastWorkingDay"
+                                    noStyle
+                                >
+                                    <DatePicker style={{ width: "100%" }} />
+                                </Form.Item>
+                            </Form.Item>
                         </Flex>
                         <Flex vertical gap={"small"} style={{ width: "100%" }}>
                             <Form.Item label="Salary" style={{ width: "100%" }}>
@@ -393,7 +466,7 @@ export const AddnewEmployee = () => {
                                     name="grossSalary"
                                     rules={[
                                         { required: true, message: 'Please input the salary!' },
-                                        { type: 'number', min: 0, message: 'Salary must be a non-negative number!' }
+                                        // { type: 'number', min: 0, message: 'Salary must be a non-negative number!' }
                                     ]}
                                     noStyle
                                 >
@@ -424,14 +497,14 @@ export const AddnewEmployee = () => {
                             </Form.Item>
                             <Form.Item label="Date of Permanent Status">
                                 <Form.Item name="permanentDate" noStyle>
-                                    <DatePicker style={{ width: "100%" }} disabled={!isDisable}/>
+                                    <DatePicker style={{ width: "100%" }} />
                                 </Form.Item>
                             </Form.Item>
                         </Flex>
                     </Flex>
                     <Divider orientation="left"><Title level={4}>Bank Details</Title></Divider>
                     <Form.Item name="cashSalary" valuePropName="checked" noStyle>
-                        <Title level={5}>For Cash Salary <Switch onChange={onSwtichChange} /></Title>
+                        <Title level={5}>For Cash Salary <Switch checked={isCash} onChange={onSwtichChange} /></Title>
                     </Form.Item>
                     <Flex gap={"large"} style={{ width: "100%", marginTop: "20px" }}>
                         <Flex vertical gap={"small"} style={{ width: "100%" }}>
@@ -467,5 +540,6 @@ export const AddnewEmployee = () => {
                 </Form>
             </Modal>
         </>
-    );
-};
+    )
+
+}

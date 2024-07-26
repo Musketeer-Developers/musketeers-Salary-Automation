@@ -34,6 +34,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "antd"; // Assuming you're using antd for UI components
 
 import { useParams } from "react-router-dom";
+import { EditEmployee } from "../../components/index";
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ const BackButton = () => {
 //   "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
 
 const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
+
 export const EmployeeProfile = () => {
   const { id } = useParams<{ id: string }>();
   const [person, setPerson] = useState<Account | null>(null);
@@ -74,9 +76,12 @@ export const EmployeeProfile = () => {
           "http://localhost:1337" + attributes.image?.data?.attributes?.url;
         const bankDetails =
           response.data.data.attributes.bank_detail?.data?.attributes;
+          const bankDetailsID =
+          response.data.data.attributes.bank_detail?.data?.id;
+        console.log(response.data.data.attributes.image?.data?.attributes)
         console.log(bankDetails);
         console.log(response);
-        setPerson({ ...attributes, imageUrl, bankDetails });
+        setPerson({ ...attributes, imageUrl, bankDetails,bankDetailsID});
       } catch (error) {
         console.log("Error while fetching person", error);
       }
@@ -182,14 +187,7 @@ export const EmployeeProfile = () => {
                     <Typography.Text>Employee info</Typography.Text>
                   </Flex>
                   <Flex>
-                    <EditButton
-                      size="small"
-                      hideText
-                      color="transparent"
-                      onClick={() => {
-                        console.log("Edit clicked");
-                      }}
-                    />
+                    <EditEmployee {...person}/>
                   </Flex>
                 </Flex>
               }

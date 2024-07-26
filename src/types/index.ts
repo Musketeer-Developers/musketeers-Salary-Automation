@@ -7,7 +7,7 @@ export type Account = {
     email: string;
     empNo: string;
     Designation: string;
-    employementStatus: "intern" | "probation" | "permanent";
+    employementStatus: "Intern" | "Probation" | "Permanent";
     grossSalary: number;
     hubstaffEnabled: boolean;
     joinDate: string;
@@ -17,6 +17,7 @@ export type Account = {
     phoneNo: string;
     salarySlipRequired: boolean;
     imageUrl: string;
+    bankDetailsID: number;
     bankDetails: {
       accountTitle: string;
       accountIBAN: string;
