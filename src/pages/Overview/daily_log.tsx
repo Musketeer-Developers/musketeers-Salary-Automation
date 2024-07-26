@@ -14,7 +14,7 @@ const BackButton = () => {
     <Button
       type="link"
       icon={<ArrowLeftOutlined />}
-      onClick={() => navigate(-1)}
+      // onClick={() => navigate(`/profile/${id}`)}
     >
       {/* Back */}
     </Button>
@@ -23,7 +23,7 @@ const BackButton = () => {
 
 export const Dailylog = ({ children }: PropsWithChildren) => {
   const { RangePicker } = DatePicker;
-  const [active] = useState(false);
+  const [active] = useState(true);
   return (
     <>
       <List
