@@ -36,7 +36,6 @@ import { Button } from "antd"; // Assuming you're using antd for UI components
 import { useParams } from "react-router-dom";
 import { EditEmployee } from "../../components/index";
 
-
 const BackButton = () => {
   const navigate = useNavigate();
 
@@ -83,17 +82,11 @@ export const EmployeeProfile = () => {
     const fetchPerson = async () => {
       try {
         const attributes = await fetchEmployee();
-        const bankDetails = attributes.bank_detail?.data?.attributes;
         const imageUrl =
           "http://localhost:1337" + attributes.image?.data?.attributes?.url;
-        const bankDetails =
-          response.data.data.attributes.bank_detail?.data?.attributes;
-          const bankDetailsID =
-          response.data.data.attributes.bank_detail?.data?.id;
-        console.log(response.data.data.attributes.image?.data?.attributes)
-        console.log(bankDetails);
-        console.log(response);
-        setPerson({ ...attributes, imageUrl, bankDetails,bankDetailsID});
+        const bankDetails = attributes.bank_detail?.data?.attributes;
+        const bankDetailsID = attributes.bank_detail?.data?.id;
+        setPerson({ ...attributes, imageUrl, bankDetails, bankDetailsID });
       } catch (error) {
         console.log("Error while fetching person", error);
       }
@@ -192,7 +185,12 @@ export const EmployeeProfile = () => {
           requiredHours = attributesDaily.length * 8;
         }
 
-        return { ...attributesEmployee, ...attributesDaily, requiredHours, monthName };
+        return {
+          ...attributesEmployee,
+          ...attributesDaily,
+          requiredHours,
+          monthName,
+        };
       } catch (error) {
         console.log("Error while fetching All monthly report", error);
       }
@@ -201,15 +199,12 @@ export const EmployeeProfile = () => {
     const fetchSignleRowMonthlyReport = async () => {
       try {
         const attributesReport = await fetchAllMonthlyReport();
-        console.log("attributesReport : ", attributesReport);
 
         setMonthlyReport([attributesReport]);
       } catch (error) {
         console.log("Error while fetching Single monthly report", error);
       }
-    }
-
-
+    };
 
     fetchDailyWork();
     fetchPerson();
@@ -316,7 +311,7 @@ export const EmployeeProfile = () => {
                     <Typography.Text>Employee info</Typography.Text>
                   </Flex>
                   <Flex>
-                    <EditEmployee {...person}/>
+                    <EditEmployee {...person} />
                   </Flex>
                 </Flex>
               }
@@ -465,7 +460,11 @@ export const EmployeeProfile = () => {
                 },
               }}
             >
-              <Table dataSource={dailyData || []} rowKey={"id"} pagination={false}>
+              <Table
+                dataSource={dailyData || []}
+                rowKey={"id"}
+                pagination={false}
+              >
                 <Table.Column
                   title="Date"
                   dataIndex="workDate"
@@ -526,8 +525,16 @@ export const EmployeeProfile = () => {
                 },
               }}
             >
-              <Table dataSource={monthlyReporting || [] } rowKey={"month"} pagination={false}>
-                <Table.Column title="Month" dataIndex="monthName" key="monthName" />
+              <Table
+                dataSource={monthlyReporting || []}
+                rowKey={"month"}
+                pagination={false}
+              >
+                <Table.Column
+                  title="Month"
+                  dataIndex="monthName"
+                  key="monthName"
+                />
                 <Table.Column
                   title="Required Hours"
                   dataIndex="requiredHours"
@@ -538,7 +545,11 @@ export const EmployeeProfile = () => {
                   dataIndex="workedHours"
                   key="workedHours"
                 />
-                <Table.Column title="Absences" dataIndex="absent" key="absent" />
+                <Table.Column
+                  title="Absences"
+                  dataIndex="absent"
+                  key="absent"
+                />
                 <Table.Column
                   title="Paid Leaves"
                   align="center"
