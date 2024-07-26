@@ -14,7 +14,7 @@ const BackButton = () => {
     <Button
       type="link"
       icon={<ArrowLeftOutlined />}
-      onClick={() => navigate(-1)}
+      // onClick={() => navigate(`/profile/${id}`)}
     >
       {/* Back */}
     </Button>

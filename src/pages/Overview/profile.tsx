@@ -20,11 +20,11 @@ import {
   Show,
 } from "@refinedev/antd";
 import { ErrorComponent } from "@refinedev/antd";
-
+import { API_URL } from "../../constants";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Col, Row } from "antd";
-import { Account } from "../../types";
+import { Account, EmployeeAttributes } from "../../types";
 import { Flex, Form, Card, Divider, Typography, Table } from "antd";
 import { PostShow } from "../../components/index";
 import { ShowTextAndIcon } from "../../components/forms/ShowForm";
@@ -43,7 +43,7 @@ const BackButton = () => {
     <Button
       type="link"
       icon={<ArrowLeftOutlined />}
-      onClick={() => navigate(-1)}
+      onClick={() => navigate("/")}
     >
       {/* Back */}
     </Button>
@@ -59,14 +59,14 @@ export const EmployeeProfile = () => {
   const { id } = useParams<{ id: string }>();
   const [person, setPerson] = useState<Account | null>(null);
   const [monthSalary, setMonthSalary] = useState<any[]>([]);
-  const [dailyData, setdailyData] = useState<any>(null);
-  // const [monthlyReporting, setMonthlyReport] = useState<any[]>([]);
+  const [dailyData, setdailyData] = useState<any[] | null>([]);
+  const [monthlyReporting, setMonthlyReport] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchPerson = async () => {
+    const fetchEmployee = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:1337/api/employees/${id}?populate=*`,
+          `${API_URL}employees/${id}?populate=*`,
           {
             headers: {
               Authorization: "Bearer " + token,
@@ -74,9 +74,15 @@ export const EmployeeProfile = () => {
             },
           }
         );
-        const attributes = response.data.data.attributes;
-        const bankDetails =
-          response.data.data.attributes.bank_detail?.data?.attributes;
+        return response.data.data.attributes;
+      } catch (error) {
+        console.log("Error while fetching employee", error);
+      }
+    };
+    const fetchPerson = async () => {
+      try {
+        const attributes = await fetchEmployee();
+        const bankDetails = attributes.bank_detail?.data?.attributes;
         const imageUrl =
           "http://localhost:1337" + attributes.image?.data?.attributes?.url;
         setPerson({ ...attributes, imageUrl, bankDetails });
@@ -87,22 +93,13 @@ export const EmployeeProfile = () => {
 
     const fetchMonth = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:1337/api/employees/${id}?populate=*`,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const attributes = response.data.data.attributes;
+        const attributes = await fetchEmployee();
         const monthlySalaries = attributes.monthly_salaries?.data;
 
         const monthlySalariesWithNames = await Promise.all(
           monthlySalaries.map(async (item: any) => {
             const response2 = await axios.get(
-              `http://localhost:1337/api/months-data/${item.id}`,
+              `${API_URL}months-data/${item.id}`,
               {
                 headers: {
                   Authorization: "Bearer " + token,
@@ -126,25 +123,15 @@ export const EmployeeProfile = () => {
       }
     };
 
-    
     const fetchDailyWork = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:1337/api/employees/${id}?populate=*`,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const attributes = response.data.data.attributes;
+        // const attributes = response.data.data.attributes;
+        const attributes = await fetchEmployee();
         const monthlySalaries = attributes.monthly_salaries?.data;
-
         const dailyWorkData = await Promise.all(
           monthlySalaries.map(async (item: any) => {
             const response2 = await axios.get(
-              `http://localhost:1337/api/daily-works/${item.id}`,
+              `${API_URL}daily-works/${item.id}?populate=*`,
               {
                 headers: {
                   Authorization: "Bearer " + token,
@@ -152,23 +139,76 @@ export const EmployeeProfile = () => {
                 },
               }
             );
-            console.log("Daily Work");
-            console.log(response2.data.data.attributes);
             const dailyDataAttributes = response2.data.data.attributes;
-            return { ...dailyDataAttributes,...item.attributes };
+            const hourRate =
+              dailyDataAttributes.salaryMonth?.data?.attributes?.monthlyRate;
+            const totalHours =
+              dailyDataAttributes.hubstaffHours +
+              dailyDataAttributes.manualHours;
+            const earnedAmount = totalHours * hourRate;
+            return {
+              ...dailyDataAttributes,
+              hourRate,
+              totalHours,
+              earnedAmount,
+            };
           })
         );
-        console.log("dailyWorkData");
-        console.log(dailyWorkData[length]);
-        setdailyData(dailyWorkData || []);
+
+        return dailyWorkData || [];
       } catch (error) {
         console.log("Error while fetching daily", error);
       }
     };
 
+    const fetchLastDayWork = async () => {
+      try {
+        const allDayWork = await fetchDailyWork();
+        let lastDayWork = [];
+        if (allDayWork) {
+          lastDayWork = allDayWork[allDayWork.length - 1];
+        }
+        setdailyData([lastDayWork]);
+      } catch (error) {
+        console.log("Error while fetching daily", error);
+      }
+    };
+
+    const fetchAllMonthlyReport = async () => {
+      try {
+        const attributesEmployee: EmployeeAttributes = await fetchEmployee();
+        const monthName = monthSalary[monthSalary.length - 1].month;
+        const attributesDaily = await fetchDailyWork();
+        let requiredHours = 0;
+        if (attributesDaily) {
+          requiredHours = attributesDaily.length * 8;
+        }
+
+        return { ...attributesEmployee, ...attributesDaily, requiredHours, monthName };
+      } catch (error) {
+        console.log("Error while fetching All monthly report", error);
+      }
+    };
+
+    const fetchSignleRowMonthlyReport = async () => {
+      try {
+        const attributesReport = await fetchAllMonthlyReport();
+        console.log("attributesReport : ", attributesReport);
+
+        setMonthlyReport([attributesReport]);
+      } catch (error) {
+        console.log("Error while fetching Single monthly report", error);
+      }
+    }
+
+
+
     fetchDailyWork();
     fetchPerson();
     fetchMonth();
+    fetchAllMonthlyReport();
+    fetchLastDayWork();
+    fetchSignleRowMonthlyReport();
   }, [id]);
 
   if (!person) {
@@ -424,7 +464,7 @@ export const EmployeeProfile = () => {
                 },
               }}
             >
-              <Table dataSource={dailyData} rowKey={"id"} pagination={false}>
+              <Table dataSource={dailyData || []} rowKey={"id"} pagination={false}>
                 <Table.Column
                   title="Date"
                   dataIndex="workDate"
@@ -433,14 +473,30 @@ export const EmployeeProfile = () => {
                     <DateField value={date} format="D MMM YYYY" />
                   )}
                 />
-                <Table.Column title="Total Hours" dataIndex="totalHours" key="totalHours" />
-                <Table.Column title="Hubstaff Hours" dataIndex="hubstaffHours" key="hubstaffHours" />
-                <Table.Column title="Manual Hours" dataIndex="manualHours" key="manualHours" />
-                <Table.Column title="Hour Rate" dataIndex="monthlyRate" key="monthlyRate" />
+                <Table.Column
+                  title="Total Hours"
+                  dataIndex="totalHours"
+                  key="totalHours"
+                />
+                <Table.Column
+                  title="Hubstaff Hours"
+                  dataIndex="hubstaffHours"
+                  key="hubstaffHours"
+                />
+                <Table.Column
+                  title="Manual Hours"
+                  dataIndex="manualHours"
+                  key="manualHours"
+                />
+                <Table.Column
+                  title="Hour Rate"
+                  dataIndex="hourRate"
+                  key="hourRate"
+                />
                 <Table.Column
                   title="Earned Amount"
-                  dataIndex="total"
-                  key="total"
+                  dataIndex="earnedAmount"
+                  key="earnedAmount"
                   render={(total) => (
                     <NumberField
                       value={total}
@@ -469,36 +525,36 @@ export const EmployeeProfile = () => {
                 },
               }}
             >
-              <Table rowKey={"month"} pagination={false}>
-                <Table.Column title="Month" dataIndex="month" key="month" />
+              <Table dataSource={monthlyReporting || [] } rowKey={"month"} pagination={false}>
+                <Table.Column title="Month" dataIndex="monthName" key="monthName" />
                 <Table.Column
                   title="Required Hours"
-                  dataIndex="TotalHoursMonth"
-                  key="TotalHoursMonth"
+                  dataIndex="requiredHours"
+                  key="requiredHours"
                 />
                 <Table.Column
                   title="Worked Hours"
-                  dataIndex="hoursLogged"
-                  key="hoursLogged"
+                  dataIndex="workedHours"
+                  key="workedHours"
                 />
-                <Table.Column title="Absences" dataIndex="id" key="id" />
+                <Table.Column title="Absences" dataIndex="absent" key="absent" />
                 <Table.Column
                   title="Paid Leaves"
                   align="center"
-                  dataIndex="id"
-                  key="id"
+                  dataIndex="paidLeaves"
+                  key="paidLeaves"
                 />
                 <Table.Column
                   title="Late Count"
                   align="center"
-                  dataIndex="id"
-                  key="id"
+                  dataIndex="late"
+                  key="late"
                 />
 
                 <Table.Column
                   title="Earned"
-                  dataIndex="grossSalaryEarned"
-                  key="grossSalaryEarned"
+                  dataIndex="toalEarned"
+                  key="toalEarned"
                   width={150}
                   render={(total) => (
                     <NumberField

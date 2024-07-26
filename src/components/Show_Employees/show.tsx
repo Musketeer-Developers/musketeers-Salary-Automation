@@ -7,6 +7,7 @@ import axios from "axios";
 import { useModal } from "../../contexts/context-modal";
 import { useNavigate } from "react-router-dom";
 import { Account } from "../../types";
+import { API_URL } from "../../constants";
 
 const token =
   "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
@@ -18,7 +19,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
     async function fetchData() {
       try {
         const response = await axios.get(
-          "http://localhost:1337/api/employees?populate=*",
+          `${API_URL}employees?populate=*`,
           {
             headers: {
               Authorization: "Bearer " + token,
