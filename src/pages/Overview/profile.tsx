@@ -34,7 +34,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "antd"; // Assuming you're using antd for UI components
 
 import { useParams } from "react-router-dom";
-// import Item from "antd/es/list/Item";
+import { EditEmployee } from "../../components/index";
+
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -85,7 +86,14 @@ export const EmployeeProfile = () => {
         const bankDetails = attributes.bank_detail?.data?.attributes;
         const imageUrl =
           "http://localhost:1337" + attributes.image?.data?.attributes?.url;
-        setPerson({ ...attributes, imageUrl, bankDetails });
+        const bankDetails =
+          response.data.data.attributes.bank_detail?.data?.attributes;
+          const bankDetailsID =
+          response.data.data.attributes.bank_detail?.data?.id;
+        console.log(response.data.data.attributes.image?.data?.attributes)
+        console.log(bankDetails);
+        console.log(response);
+        setPerson({ ...attributes, imageUrl, bankDetails,bankDetailsID});
       } catch (error) {
         console.log("Error while fetching person", error);
       }
@@ -308,14 +316,7 @@ export const EmployeeProfile = () => {
                     <Typography.Text>Employee info</Typography.Text>
                   </Flex>
                   <Flex>
-                    <EditButton
-                      size="small"
-                      hideText
-                      color="transparent"
-                      onClick={() => {
-                        console.log("Edit clicked");
-                      }}
-                    />
+                    <EditEmployee {...person}/>
                   </Flex>
                 </Flex>
               }
