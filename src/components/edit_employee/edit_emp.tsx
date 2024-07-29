@@ -8,6 +8,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { EditButton } from '@refinedev/antd';
 import type { UploadProps } from 'antd';
 import { useParams } from "react-router-dom";
+import {useNotification} from '@refinedev/core';
 
 interface Employee {
     id: number;
@@ -28,6 +29,7 @@ interface Employee {
     salarySlipRequired: boolean;
     imageUrl: string;
     bankDetailsID:number;
+    imageID:number;
     bankDetails: {
         accountTitle: string;
         accountIBAN: string;
@@ -57,6 +59,7 @@ interface FormData {
 }
 
 export const EditEmployee = (props: Employee) => {
+    const {open,close} = useNotification();
     const { id } = useParams<{ id: string }>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
@@ -68,12 +71,13 @@ export const EditEmployee = (props: Employee) => {
     const switchRef = useRef(null);
     const [form] = Form.useForm();
     const { Option } = Select;
-    const [ImageID, setImageID] = useState();
+    const [ImageID, setImageID] = useState(props.imageID);
     const [isDisable, setisDisable] = useState(true);
     const [isCash, setisCash] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
+    const MuskImageID: number = 54;
 
     const handleStatusChange = (value: string): void => {
         setisDisable(value !== "Permanent");
@@ -149,10 +153,10 @@ export const EditEmployee = (props: Employee) => {
         console.log('Received values from form:', values);
     };
 
-    const token =
-  "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
+//     const token =
+//   "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
 
-// const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
+const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
 
 
     const customUpload = async ({ file, onSuccess, onError }: any) => {
@@ -187,8 +191,8 @@ export const EditEmployee = (props: Employee) => {
             leavesRemaining: props.leavesRemaining,
             grossSalary: props.grossSalary,
             joinDate: props.joinDate ? dayjs(props.joinDate, "YYYY-MM-DD") : null,
-            permanentDate: props.permanentDate ? dayjs(props.joinDate, "YYYY-MM-DD") : null,
-            lastWorkingDay: props.permanentDate ? dayjs(props.joinDate, "YYYY-MM-DD") : null,
+            permanentDate: props.permanentDate ? dayjs(props.permanentDate, "YYYY-MM-DD") : null,
+            lastWorkingDay: props.lastWorkingDay ? dayjs(props.lastWorkingDay, "YYYY-MM-DD") : null,
             image: props.imageUrl,
             bankName: props.bankDetails.bankName,
             accountTitle: props.bankDetails.accountTitle,
@@ -245,6 +249,7 @@ export const EditEmployee = (props: Employee) => {
                 }
             };
             console.log(formattedData);
+            open?.( {type:'success',message: 'Success!',description: 'Employee details successfully updated!'});
             try {
                 const response = await axios.put(`http://localhost:1337/api/bank-details/${props.bankDetailsID}`, JSON.stringify(formattedData),
                     {
@@ -254,11 +259,14 @@ export const EditEmployee = (props: Employee) => {
                         }
                     });
                 console.log('Response:', response.data);
-            } catch (error) {
-                console.error('Error posting data:', error.response ? error.response.data : error);
+                open?.( {type:'success',message: 'Success!',description: 'Employee bank details successfully updated!'});
+            } catch (error:any) {
+                console.error('Error posting data:', error);
+                open?.( {type:'error',message: `Error!`,description: `${(error?.response?.data?.error?.message)}`});
             }
-        } catch (error) {
-            console.error('Error posting data:', error.response ? error.response.data : error);
+        } catch (error:any) {
+            console.error('Error posting data:', error);
+            open?.( {type:'error',message: `Error!`,description: `${(error?.response?.data?.error?.message)}`});
         }
     }
 
@@ -338,6 +346,7 @@ export const EditEmployee = (props: Employee) => {
                                     maxCount={1}
                                     accept="image/*"
                                     {...imageprops}
+                                    onRemove={()=>setImageID(MuskImageID)}
                                 >
                                     <button style={{ border: 0, background: 'none' }} type="button">
                                         <PlusOutlined />
@@ -503,7 +512,7 @@ export const EditEmployee = (props: Employee) => {
                             </Form.Item>
                             <Form.Item label="Date of Permanent Status">
                                 <Form.Item name="permanentDate" noStyle>
-                                    <DatePicker style={{ width: "100%" }} />
+                                    <DatePicker style={{ width: "100%" }} disabled={isDisable} />
                                 </Form.Item>
                             </Form.Item>
                         </Flex>
@@ -543,6 +552,7 @@ export const EditEmployee = (props: Employee) => {
                             </Form.Item>
                         </Form.Item>
                     </Flex>
+                    <Divider></Divider>
                 </Form>
             </Modal>
         </>
