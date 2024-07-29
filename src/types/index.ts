@@ -17,6 +17,7 @@ export type Account = {
     salarySlipRequired: boolean;
     imageUrl: string;
     bankDetailsID: number;
+    imageID:number;
     bankDetails: {
       accountTitle: string;
       accountIBAN: string;

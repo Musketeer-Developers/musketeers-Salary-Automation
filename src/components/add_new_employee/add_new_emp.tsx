@@ -12,12 +12,14 @@ import { useState, ChangeEvent, useEffect } from "react";
 import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
 import { Col, Row, Avatar, Divider, Flex, Input, Select, Table, Form, Card, message, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
 import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import moment from 'moment';
 import { useModal } from '../../contexts/context-modal';
-import { API_URL } from "../../constants";
+import { useNotification } from "@refinedev/core"; 
+
 
 export const AddnewEmployee = () => {
+    const {open,close} = useNotification();
     const { isModalOpen, hideModal } = useModal();
     const [form] = Form.useForm();
     const { Option } = Select;
@@ -27,7 +29,7 @@ export const AddnewEmployee = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
-    let isImage:boolean = false;
+    let isImage: boolean = false;
     const MuskImageID: number = 54;
 
     interface FormData {
@@ -118,6 +120,7 @@ export const AddnewEmployee = () => {
         };
         console.log(EmployeeData);
         try {
+
             const response = await axios.post(`${API_URL}/employees`, JSON.stringify(EmployeeData),
                 {
                     headers: {
@@ -126,6 +129,7 @@ export const AddnewEmployee = () => {
                     }
                 });
             console.log('Response:', response.data);
+            open?.( {type:'success',message: 'Success!',description: 'Employee details successfully added!'});
             console.log(response.data.data.id);
             const formattedData = {
                 data: {
@@ -145,11 +149,14 @@ export const AddnewEmployee = () => {
                         }
                     });
                 console.log('Response:', response.data);
-            } catch (error) {
-                console.error('Error posting data:', error.response ? error.response.data : error);
+                open?.( {type:'success',message: 'Success!',description: 'Employee bank details successfully added!'});
+            } catch (error:any) {
+                console.error('Error posting data:', error);
+                open?.( {type:'error',message: `Error!`,description: `${error?.response?.data?.error?.message}`});
             }
-        } catch (error) {
-            console.error('Error posting data:', error.response ? error.response.data : error);
+        } catch (error:any) {
+            console.error('Error posting data:', error);
+            open?.( {type:'error',message: `Error!`,description: `${(error?.response?.data?.error?.message)}`});
         }
     }
 
@@ -186,6 +193,7 @@ export const AddnewEmployee = () => {
         const formData = new FormData();
         formData.append('files', file);
         try {
+
             const response = await axios.post(`${API_URL}/upload`, formData, {
                 headers: {
                     'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
@@ -267,7 +275,7 @@ export const AddnewEmployee = () => {
                                     listType="picture-card"
                                     maxCount={1}
                                     accept="image/*"
-                                    onRemove={()=>setImageID(MuskImageID)}
+                                    onRemove={() => setImageID(MuskImageID)}
                                 >
                                     <button style={{ border: 0, background: 'none' }} type="button">
                                         <PlusOutlined />
@@ -425,7 +433,7 @@ export const AddnewEmployee = () => {
                             </Form.Item>
                             <Form.Item label="Date of Permanent Status">
                                 <Form.Item name="permanentDate" noStyle>
-                                    <DatePicker style={{ width: "100%" }} disabled={!isDisable}/>
+                                    <DatePicker style={{ width: "100%" }} disabled={isDisable} />
                                 </Form.Item>
                             </Form.Item>
                         </Flex>
@@ -465,6 +473,7 @@ export const AddnewEmployee = () => {
                             </Form.Item>
                         </Form.Item>
                     </Flex>
+                    <Divider></Divider>
                 </Form>
             </Modal>
         </>
