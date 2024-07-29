@@ -95,7 +95,7 @@ function App() {
                         </div>
                       </ThemedLayoutV2>
                     } />
-                    <Route path='/daily' element={
+                    <Route path='/daily/:id/:monthID/:activeParam' element={
                       <ThemedLayoutV2 Sider={() => null}>
                         <div
                           style={{
