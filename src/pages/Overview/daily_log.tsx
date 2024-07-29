@@ -23,7 +23,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
     monthID: string;
     activeParam: string;
   }>();
-  const [dailyData, setdailyData] = useState<any[] | null>([]);
+  const [dailyData, setdailyData] = useState<any[] | null>([]); 
   const [person, setPerson] = useState<Account | null>(null);
 
   const BackButton = () => {
@@ -112,6 +112,9 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
     fetchPerson();
     fetchDailyWork();
   }, [id]);
+
+
+  console.log("activeParam : ",activeParam);
 
   const { RangePicker } = DatePicker;
   return (
@@ -221,7 +224,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
               </Table>
             </Card>
           </Space>
-          {activeParam ? <Monthlylog /> : null}
+          {activeParam === "true" ? <Monthlylog /> : null}
         </Col>
       </List>
 

@@ -74,7 +74,8 @@ export const EmployeeProfile = () => {
 
   const navigate = useNavigate();
   const goToDailyLogs = (monthID: number, activeParam: string) => {
-    navigate(`/daily/${id}/${monthID}/${activeParam}`);
+    console.log(monthID, activeParam);  
+    navigate(`/daily/${id}/${monthID}/${encodeURIComponent(activeParam)}`);
   };
 
   const fetchEmployee = async () => {
@@ -617,7 +618,7 @@ export const EmployeeProfile = () => {
                     <ShowButton
                       size="small"
                       onClick={() =>
-                        goToDailyLogs(records.monthID, false)
+                        goToDailyLogs(records.monthID, "false")
                       }
                       hideText
                       icon={<ExportOutlined />}
@@ -676,7 +677,7 @@ export const EmployeeProfile = () => {
                   width={64}
                   render={(records) => {
                     return <ShowButton
-                    onClick={() => goToDailyLogs(records.id, true)}
+                    onClick={() => goToDailyLogs(records.id, "true")}
                      hideText icon={<ExportOutlined />} />;
                   }}
                 />
