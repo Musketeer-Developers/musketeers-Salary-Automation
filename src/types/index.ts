@@ -24,14 +24,15 @@ export type Account = {
     }
 };
 
-export type MonthSalaries = {
-  month: string;
-  year: string;
-  workingDays: number;
-  monthlyRate: number;
-  TotalHoursMonth: number;
-  grossSalaryEarned: number;
-  hoursLogged: number;
+export type lastMonth = {
+  monthName: string;
+  requiredHours : number;
+  workedHours : number;
+  absences : number;
+  paidLeaves : number;
+  lateCount : number;
+  monthlyEarnedAmount : number;
+  monthID : number;
 };
 
 export type DailyLog = {

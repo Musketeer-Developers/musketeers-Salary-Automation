@@ -4,7 +4,7 @@ import axios from "axios";
 import { API_URL, TOKEN_KEY } from "./constants";
 
 export const axiosInstance = axios.create();
-const strapiAuthHelper = AuthHelper(API_URL + "/api");
+const strapiAuthHelper = AuthHelper(API_URL);
 
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
