@@ -1,30 +1,12 @@
-import type { PropsWithChildren } from "react";
-import { getDefaultFilter, useGo } from "@refinedev/core";
-import {
-    CreateButton,
-    EditButton,
-    List,
-    NumberField,
-    Show,
-    useForm,
-} from "@refinedev/antd";
-import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
-import { Col, Row, Avatar, Flex, Input, Select, Table, Form, Card, Typography } from "antd";
-import { DatePicker, Space } from 'antd';
+import { Flex, Table, Card, Typography } from "antd";
+import { Space } from 'antd';
 
 import {
-    MailOutlined,
-    PhoneOutlined,
-    ExportOutlined,
-    ContainerOutlined,
-    ClockCircleOutlined,
-    KeyOutlined,
     DollarOutlined,
     CalendarOutlined,
-    EditOutlined,
 } from "@ant-design/icons";
 
-export const Monthlylog = ({ children }: PropsWithChildren) => {
+export const Monthlylog = () => {
     return (
         <>
             <Space direction="vertical" size={16} style={{ width: '100%', marginBottom: "30px" }}>

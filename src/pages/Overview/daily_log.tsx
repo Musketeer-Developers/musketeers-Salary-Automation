@@ -4,7 +4,7 @@ import { Col, Row, Flex, Table, Card, Typography } from "antd";
 import { DatePicker, Space, Button } from "antd";
 import { Monthlylog } from "../../components/index";
 
-import { ClockCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, ArrowLeftOutlined, ControlOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -23,7 +23,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
     monthID: string;
     activeParam: string;
   }>();
-  const [dailyData, setdailyData] = useState<any[] | null>([]); 
+  const [dailyData, setdailyData] = useState<any[] | null>([]);
   const [person, setPerson] = useState<Account | null>(null);
 
   const BackButton = () => {
@@ -40,7 +40,6 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
     );
   };
 
-  
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
@@ -63,9 +62,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
       try {
         const attributes = await fetchEmployee();
         const imageUrl = "http://localhost:1337" + attributes.image?.url;
-        const bankDetails = attributes.bank_detail;
-        const bankDetailsID = attributes.bank_detail?.id;
-        setPerson({ ...attributes, imageUrl, bankDetails, bankDetailsID });
+        setPerson({ ...attributes, imageUrl });
       } catch (error) {
         console.log("Error while fetching person", error);
       }
@@ -75,10 +72,17 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
       try {
         const attributes = await fetchEmployee();
         const monthlySalaries = attributes.monthly_salaries;
-        const dailyWorkData = await Promise.all(
-          monthlySalaries.map(async (item: any) => {
-            const response2 = await axios.get(
-              `${API_URL}/daily-works/${item.id}?populate=*`,
+    
+        let dailyWorkData = [];
+    
+        if (monthID !== undefined) {
+          const selectedMonth = monthlySalaries.find(item => item.id == monthID);
+          console.log("selectedMonth:", selectedMonth);
+    
+          if (selectedMonth) {
+            // Fetch all daily work records associated with the selected month
+            const response = await axios.get(
+              `${API_URL}/daily-works?filters[salaryMonth][id][$eq]=${selectedMonth.id}&populate=*`,
               {
                 headers: {
                   Authorization: "Bearer " + token,
@@ -86,35 +90,82 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                 },
               }
             );
-            const dailyDataAttributes = response2.data.data;
-            const hourRate = dailyDataAttributes.salaryMonth?.monthlyRate;
-            const totalHours =
-              dailyDataAttributes.hubstaffHours +
-              dailyDataAttributes.manualHours;
-            const earnedAmount = totalHours * hourRate;
-            return {
-              ...dailyDataAttributes,
-              hourRate,
-              totalHours,
-              earnedAmount,
-            };
-          })
-        );
-
+    
+            const dailyRecords = response.data.data;
+            dailyWorkData = dailyRecords.map(dailyDataAttributes => {
+              const manualHours = dailyDataAttributes.manualHours;
+              const hubstaffHours = dailyDataAttributes.hubstaffHours;
+              const date = dailyDataAttributes.workDate;
+              const hourRate = dailyDataAttributes.salaryMonth?.monthlyRate;
+              const totalHours = dailyDataAttributes.hubstaffHours + dailyDataAttributes.manualHours;
+              const earnedAmount = totalHours * hourRate;
+    
+              return {
+                manualHours,
+                hubstaffHours,
+                date,
+                hourRate,
+                totalHours,
+                earnedAmount,
+              };
+            });
+          }
+        } else {
+          // Fetch data for all months
+          dailyWorkData = await Promise.all(
+            monthlySalaries.map(async (item) => {
+              const response = await axios.get(
+                `${API_URL}/daily-works?filters[salaryMonth][id][$eq]=${item.id}&populate=*`,
+                {
+                  headers: {
+                    Authorization: "Bearer " + token,
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
+    
+              const dailyRecords = response.data.data;
+              return dailyRecords.map(dailyDataAttributes => {
+                const manualHours = dailyDataAttributes.manualHours;
+                const hubstaffHours = dailyDataAttributes.hubstaffHours;
+                const date = dailyDataAttributes.workDate;
+                const hourRate = dailyDataAttributes.salaryMonth?.monthlyRate;
+                const totalHours = dailyDataAttributes.hubstaffHours + dailyDataAttributes.manualHours;
+                const earnedAmount = totalHours * hourRate;
+    
+                return {
+                  manualHours,
+                  hubstaffHours,
+                  date,
+                  hourRate,
+                  totalHours,
+                  earnedAmount,
+                };
+              });
+            })
+          );
+    
+          // Flatten the nested arrays
+          dailyWorkData = dailyWorkData.flat();
+        }
+    
+        console.log("dailyWorkData:", dailyWorkData);
         setdailyData(dailyWorkData || []);
-        return dailyWorkData;
       } catch (error) {
         console.log("Error while fetching daily", error);
       }
     };
-
-
+    
+    fetchPerson();
+    fetchDailyWork();
+    
+    
+    fetchPerson();
+    fetchDailyWork();
+    
     fetchPerson();
     fetchDailyWork();
   }, [id]);
-
-
-  console.log("activeParam : ",activeParam);
 
   const { RangePicker } = DatePicker;
   return (
@@ -186,8 +237,8 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
               <Table dataSource={dailyData || []} rowKey="id">
                 <Table.Column
                   title="Date"
-                  dataIndex="workDate"
-                  key="workDate"
+                  dataIndex="date"
+                  key="date"
                   width={80}
                   sorter
                 />
@@ -224,7 +275,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
               </Table>
             </Card>
           </Space>
-          {activeParam === "true" ? <Monthlylog /> : null}
+          {activeParam === "true" ? <Monthlylog  /> : null}
         </Col>
       </List>
 
