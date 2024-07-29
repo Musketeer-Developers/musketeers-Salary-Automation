@@ -10,11 +10,7 @@ import { Account } from "../../types";
 import { API_URL } from "../../constants";
 import Holiday from "../add_buttons/add_holiday";
 import Month from "../add_buttons/add_month";
-
-const token =
-  "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
-
-// const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
+import {token} from "../../constants";
 
 export const ShowEmployees = ({ children }: PropsWithChildren) => {
   const [visibleModal, setVisibleModal] = useState('');
@@ -23,23 +19,6 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
   const handleClose = () => {
     setVisibleModal('');
   };
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios.get(
-          `${API_URL}employees?populate=*`,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log(response);
-        // Extract the data from the response
-        const employees = response.data.data.map((item: any) => {
-          const attributes = item;
-          const imageUrl = attributes.image?.url;
 
   const fetchEmployee = async (id : number) => {
     try {

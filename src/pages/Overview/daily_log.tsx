@@ -4,18 +4,14 @@ import { Col, Row, Flex, Table, Card, Typography } from "antd";
 import { DatePicker, Space, Button } from "antd";
 import { Monthlylog } from "../../components/index";
 
-import { ClockCircleOutlined, ArrowLeftOutlined, ControlOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 import { API_URL } from "../../constants";
 import { Account } from "../../types";
-
-const token =
-  "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
-
-// const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
+import { token } from "../../constants";
 
 export const Dailylog = ({ children }: PropsWithChildren) => {
   const { id, monthID, activeParam } = useParams<{
@@ -72,13 +68,14 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
       try {
         const attributes = await fetchEmployee();
         const monthlySalaries = attributes.monthly_salaries;
-    
+
         let dailyWorkData = [];
-    
+
         if (monthID !== undefined) {
-          const selectedMonth = monthlySalaries.find(item => item.id == monthID);
-          console.log("selectedMonth:", selectedMonth);
-    
+          const selectedMonth = monthlySalaries.find(
+            (item) => item.id == monthID
+          );
+
           if (selectedMonth) {
             // Fetch all daily work records associated with the selected month
             const response = await axios.get(
@@ -90,16 +87,18 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                 },
               }
             );
-    
+
             const dailyRecords = response.data.data;
-            dailyWorkData = dailyRecords.map(dailyDataAttributes => {
+            dailyWorkData = dailyRecords.map((dailyDataAttributes) => {
               const manualHours = dailyDataAttributes.manualHours;
               const hubstaffHours = dailyDataAttributes.hubstaffHours;
               const date = dailyDataAttributes.workDate;
               const hourRate = dailyDataAttributes.salaryMonth?.monthlyRate;
-              const totalHours = dailyDataAttributes.hubstaffHours + dailyDataAttributes.manualHours;
+              const totalHours =
+                dailyDataAttributes.hubstaffHours +
+                dailyDataAttributes.manualHours;
               const earnedAmount = totalHours * hourRate;
-    
+
               return {
                 manualHours,
                 hubstaffHours,
@@ -110,59 +109,13 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
               };
             });
           }
-        } else {
-          // Fetch data for all months
-          dailyWorkData = await Promise.all(
-            monthlySalaries.map(async (item) => {
-              const response = await axios.get(
-                `${API_URL}/daily-works?filters[salaryMonth][id][$eq]=${item.id}&populate=*`,
-                {
-                  headers: {
-                    Authorization: "Bearer " + token,
-                    "Content-Type": "application/json",
-                  },
-                }
-              );
-    
-              const dailyRecords = response.data.data;
-              return dailyRecords.map(dailyDataAttributes => {
-                const manualHours = dailyDataAttributes.manualHours;
-                const hubstaffHours = dailyDataAttributes.hubstaffHours;
-                const date = dailyDataAttributes.workDate;
-                const hourRate = dailyDataAttributes.salaryMonth?.monthlyRate;
-                const totalHours = dailyDataAttributes.hubstaffHours + dailyDataAttributes.manualHours;
-                const earnedAmount = totalHours * hourRate;
-    
-                return {
-                  manualHours,
-                  hubstaffHours,
-                  date,
-                  hourRate,
-                  totalHours,
-                  earnedAmount,
-                };
-              });
-            })
-          );
-    
-          // Flatten the nested arrays
-          dailyWorkData = dailyWorkData.flat();
         }
-    
-        console.log("dailyWorkData:", dailyWorkData);
         setdailyData(dailyWorkData || []);
       } catch (error) {
         console.log("Error while fetching daily", error);
       }
     };
-    
-    fetchPerson();
-    fetchDailyWork();
-    
-    
-    fetchPerson();
-    fetchDailyWork();
-    
+
     fetchPerson();
     fetchDailyWork();
   }, [id]);
@@ -275,7 +228,8 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
               </Table>
             </Card>
           </Space>
-          {activeParam === "true" ? <Monthlylog  /> : null}
+          {activeParam === "true" ? <Monthlylog id={id || ""} monthID={monthID || ""} /> : null}
+
         </Col>
       </List>
 
