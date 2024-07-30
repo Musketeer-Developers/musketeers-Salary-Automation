@@ -11,21 +11,18 @@ import { API_URL } from "../../constants";
 import Holiday from "../add_buttons/add_holiday";
 import Month from "../add_buttons/add_month";
 import HubstaffFile from "../add_buttons/add_hubstaffFile";
-
-// const token =
-//   "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
-
-const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
+import { token } from "../../constants";
+import { EmployeeAttributes } from "../../types";
 
 export const ShowEmployees = ({ children }: PropsWithChildren) => {
-  const [visibleModal, setVisibleModal] = useState('');
+  const [visibleModal, setVisibleModal] = useState("");
   const { showModal } = useModal();
   const [data, setData] = useState<any[]>([]);
   const handleClose = () => {
-    setVisibleModal('');
+    setVisibleModal("");
   };
 
-  const fetchEmployee = async (id : number) => {
+  const fetchEmployee = async (id) => {
     try {
       const response = await axios.get(
         `${API_URL}/employees/${id}?populate=*`,
@@ -42,70 +39,13 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const fetchDailyWork = async (id : number) => {
+  const fetchDailyWork = async (id) => {
     try {
-      // const attributes = response.data.data;
       const attributes = await fetchEmployee(id);
-      const monthlySalaries = attributes.monthly_salaries;
-      const dailyWorkData = await Promise.all(
-        monthlySalaries.map(async (item: any) => {
-          const response2 = await axios.get(
-            `${API_URL}/daily-works/${item.id}?populate=*`,
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          const dailyDataAttributes = response2.data.data;
-          const monthID = dailyDataAttributes.salaryMonth?.data?.id;
-          const hourRate = dailyDataAttributes.salaryMonth?.monthlyRate;
-          const totalHours =
-            dailyDataAttributes.hubstaffHours + dailyDataAttributes.manualHours;
-          const earnedAmount = totalHours * hourRate;
-          return {
-            ...dailyDataAttributes,
-            hourRate,
-            totalHours,
-            earnedAmount,
-            monthID,
-          };
-        })
-      );
-
-      return dailyWorkData || [];
-    } catch (error) {
-      console.log("Error while fetching daily", error);
-    }
-  };
-
-  const fetchAllMonthlyReport = async (id : number) => {
-    try {
-      const attributesDaily = await fetchDailyWork(id);
-      const workedHoursOfAll: number[] = [];
-      const EarnedAmountOfAll: number[] = [];
-      if (attributesDaily) {
-        for (let i = 0; i < attributesDaily.length; i++) {
-          workedHoursOfAll.push(attributesDaily[i].totalHours);
-          EarnedAmountOfAll.push(attributesDaily[i].earnedAmount);
-        }
-      }
-      const workedHours = workedHoursOfAll.reduce((a, b) => a + b, 0);
-      const monthlyEarnedAmount = EarnedAmountOfAll.reduce((a, b) => a + b, 0);
-      const report = {
-        workedHours,
-        monthlyEarnedAmount,
-      };
-      return report;
-    } catch (error) {
-      console.log("Error while fetching All monthly report", error);
-    }
-  };
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/employees?populate=*`,
+      const monthlySalariesID =
+        attributes.monthly_salaries[attributes.monthly_salaries.length - 1]?.id;
+      const resp = await axios.get(
+        `${API_URL}/monthly-salaries/${monthlySalariesID}?populate=*`,
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -113,14 +53,60 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
           },
         }
       );
-      console.log("response:",response);
-      // Extract the data from the response
+      const msAttribtes = resp.data.data;
+      const dailyData = await Promise.all(
+        msAttribtes.dailyWorks.map(async (item) => {
+          const hubstaffHours = item.hubstaffHours || 0;
+          const manualHours = item.manualHours || 0;
+          const totalHours = hubstaffHours + manualHours;
+          const hourRate = msAttribtes.monthlyRate;
+          return {
+            ...item,
+            totalHours,
+            earnedAmount: totalHours * hourRate,
+            hourRate,
+          };
+        })
+      );
+      return { dailyData };
+    } catch (error) {
+      console.log("Error while fetching daily", error);
+    }
+  };
+  const fetchAllMonthlyReport = async (id) => {
+    try {
+      const attributesDaily = await fetchDailyWork(id);
+      if (attributesDaily) {
+        const workedHours = attributesDaily.dailyData.reduce(
+          (total, item) => total + item.totalHours,
+          0
+        );
+        return workedHours;
+      } else {
+        throw new Error("Failed to fetch daily work data");
+      }
+    } catch (error) {
+      console.log("Error while fetching all monthly report", error);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/employees?populate=*`, {
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      });
       const employees = await Promise.all(
-        response.data.data.map(async (item: any) => {
+        response.data.data.map(async (item) => {
           const imageUrl = item.image?.url;
-          const monthlyy = await fetchAllMonthlyReport(item.id);
-          const hoursLogged = monthlyy?.workedHours;
-          const income = monthlyy?.monthlyEarnedAmount;
+          const monthlyData = item.monthly_salaries;
+          const report = (await fetchAllMonthlyReport(item.id)) || 0;
+          const hoursLogged = report; // Assign the report value to hoursLogged
+          const income =
+            monthlyData[monthlyData.length - 1]?.hoursLogged *
+              monthlyData[monthlyData.length - 1]?.monthlyRate || 0;
           let hubstaffEnable = "";
           if (item.hubstaffEnabled) {
             hubstaffEnable = "Enabled";
@@ -131,21 +117,16 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             ...item,
             imageUrl,
             hubstaffEnable,
-            monthlyy,
             hoursLogged,
-            income
+            income,
           };
         })
       );
-
-      // console.log("employees : ",employees);
-
-
       setData(employees);
     } catch (error) {
       console.log("Error while fetching data", error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchData();
@@ -183,20 +164,13 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
         }}
       >
         <Table dataSource={data} rowKey="id">
-          <Table.Column title="ID" dataIndex="id" key="id" width={80} sorter />
-          <Table.Column
-            title="empNo"
-            dataIndex="empNo"
-            key="empNo"
-            width={100}
-            sorter
-          />
+          <Table.Column title="ID" dataIndex="id" key="id" width={20} />
+          <Table.Column title="ID" dataIndex="empNo" key="empNo" width={120} />
           <Table.Column
             title="Name"
             dataIndex="Name"
             key="Name"
-            width={80}
-            sorter
+            width={180}
             render={(text: string, record: Account) => (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <img
@@ -212,30 +186,35 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
                 <span>{text}</span>
               </div>
             )}
+            align="center"
           />
           <Table.Column
             title="Designation"
             dataIndex="Designation"
             key="Designation"
             width={80}
+            align="center"
           />
           <Table.Column
             title="Email"
             dataIndex="email"
             key="email"
             width={80}
+            align="center"
           />
           <Table.Column
             title="Hubstaff"
             dataIndex="hubstaffEnable"
             key="hubstaffEnable"
             width={80}
+            align="center"
           />
           <Table.Column
             title="Hours Logged"
             dataIndex="hoursLogged"
             key="hoursLogged"
-            width={100}
+            width={60}
+            align="center"
           />
           <Table.Column
             title="Income"
@@ -245,14 +224,14 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             align="center"
           />
           <Table.Column
-            title="Actions"
+            title="Profile"
             key="actions"
             fixed="right"
             align="center"
             width={40}
             render={(record) => {
               return (
-                <Flex align="center" gap={8}>
+                <Flex align="center" justify="center" gap={8}>
                   <EditButton
                     onClick={() => {
                       goToprofile(record.id);

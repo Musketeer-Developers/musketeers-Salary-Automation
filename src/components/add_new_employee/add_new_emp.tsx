@@ -15,9 +15,8 @@ import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
 import axios, { AxiosError } from "axios";
 import moment from 'moment';
 import { useModal } from '../../contexts/context-modal';
-import { useNotification } from "@refinedev/core"; 
-import { API_URL } from "../../constants";
-
+import { useNotification } from "@refinedev/core";
+import { API_URL,token } from "../../constants";
 
 export const AddnewEmployee = () => {
     const {open,close} = useNotification();
@@ -125,7 +124,7 @@ export const AddnewEmployee = () => {
             const response = await axios.post(`${API_URL}/employees`, JSON.stringify(EmployeeData),
                 {
                     headers: {
-                        'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': "application/json"
                     }
                 });
@@ -146,7 +145,7 @@ export const AddnewEmployee = () => {
                 const response = await axios.post(`${API_URL}/bank-details`, JSON.stringify(formattedData),
                     {
                         headers: {
-                            'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
+                            'Authorization': `Bearer ${token}`,
                             'Content-Type': "application/json"
                         }
                     });
@@ -168,7 +167,7 @@ export const AddnewEmployee = () => {
         const { value } = e.target;
         const base = "MUSK-";
         let formattedInput = base;
-        let digitsPart = value.replace(/[^0-9]/g, '');
+        const digitsPart = value.replace(/[^0-9]/g, '');
         if (digitsPart.length > 0) {
             formattedInput += digitsPart.slice(0, 2);
             if (digitsPart.length == 2) {
@@ -198,7 +197,7 @@ export const AddnewEmployee = () => {
         try {
             const response = await axios.post(`${API_URL}/upload`, formData, {
                 headers: {
-                    'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': "multipart/form-data"
                 }
             });

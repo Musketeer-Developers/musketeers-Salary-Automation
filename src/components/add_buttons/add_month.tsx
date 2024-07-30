@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Form, Divider, Typography, Select, DatePicker, InputNumber } from 'antd';
+import { Modal, Button, Form, Divider, Select, DatePicker, InputNumber } from 'antd';
 import axios from 'axios';
 import { useNotification } from "@refinedev/core";
 
@@ -15,9 +15,8 @@ interface FormData {
 }
 
 const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
-    const { open, close } = useNotification();
+    const { open } = useNotification();
     const [form] = Form.useForm();
-    const { Title } = Typography;
 
     const handleOk = async () => {
         try {
@@ -42,7 +41,7 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
             const response = await axios.post('http://localhost:1337/api/month-data/initializeMonthData', JSON.stringify(MonthData),
                 {
                     headers: {
-                        'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': "application/json"
                     }
                 });

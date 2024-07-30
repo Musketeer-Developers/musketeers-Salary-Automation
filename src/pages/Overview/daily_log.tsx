@@ -1,5 +1,5 @@
 import { PropsWithChildren, useState } from "react";
-import { List } from "@refinedev/antd";
+import { List, NumberField } from "@refinedev/antd";
 import { Col, Row, Flex, Table, Card, Typography } from "antd";
 import { DatePicker, Space, Button } from "antd";
 import { Monthlylog } from "../../components/index";
@@ -11,11 +11,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { API_URL } from "../../constants";
 import { Account } from "../../types";
-
-const token =
-  "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
-
-// const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
+import { token } from "../../constants";
 
 export const Dailylog = ({ children }: PropsWithChildren) => {
   const { id, monthID, activeParam } = useParams<{
@@ -23,7 +19,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
     monthID: string;
     activeParam: string;
   }>();
-  const [dailyData, setdailyData] = useState<any[] | null>([]); 
+  const [dailyData, setdailyData] = useState<any[] | null>([]);
   const [person, setPerson] = useState<Account | null>(null);
 
   const BackButton = () => {
@@ -40,7 +36,6 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
     );
   };
 
-  
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
@@ -63,9 +58,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
       try {
         const attributes = await fetchEmployee();
         const imageUrl = "http://localhost:1337" + attributes.image?.url;
-        const bankDetails = attributes.bank_detail;
-        const bankDetailsID = attributes.bank_detail?.id;
-        setPerson({ ...attributes, imageUrl, bankDetails, bankDetailsID });
+        setPerson({ ...attributes, imageUrl });
       } catch (error) {
         console.log("Error while fetching person", error);
       }
@@ -75,10 +68,18 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
       try {
         const attributes = await fetchEmployee();
         const monthlySalaries = attributes.monthly_salaries;
-        const dailyWorkData = await Promise.all(
-          monthlySalaries.map(async (item: any) => {
-            const response2 = await axios.get(
-              `${API_URL}/daily-works/${item.id}?populate=*`,
+
+        let dailyWorkData = [];
+
+        if (monthID !== undefined) {
+          const selectedMonth = monthlySalaries.find(
+            (item) => item.id == monthID
+          );
+
+          if (selectedMonth) {
+            // Fetch all daily work records associated with the selected month
+            const response = await axios.get(
+              `${API_URL}/daily-works?filters[salaryMonth][id][$eq]=${selectedMonth.id}&populate=*`,
               {
                 headers: {
                   Authorization: "Bearer " + token,
@@ -86,37 +87,40 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                 },
               }
             );
-            const dailyDataAttributes = response2.data.data;
-            const hourRate = dailyDataAttributes.salaryMonth?.monthlyRate;
-            const totalHours =
-              dailyDataAttributes.hubstaffHours +
-              dailyDataAttributes.manualHours;
-            const earnedAmount = totalHours * hourRate;
-            return {
-              ...dailyDataAttributes,
-              hourRate,
-              totalHours,
-              earnedAmount,
-            };
-          })
-        );
 
+            const dailyRecords = response.data.data;
+            dailyWorkData = dailyRecords.map((dailyDataAttributes) => {
+              const manualHours = dailyDataAttributes.manualHours;
+              const hubstaffHours = dailyDataAttributes.hubstaffHours;
+              const date = dailyDataAttributes.workDate;
+              const hourRate = dailyDataAttributes.salaryMonth?.monthlyRate;
+              const totalHours =
+                dailyDataAttributes.hubstaffHours +
+                dailyDataAttributes.manualHours;
+              const earnedAmount = totalHours * hourRate;
+
+              return {
+                manualHours,
+                hubstaffHours,
+                date,
+                hourRate,
+                totalHours,
+                earnedAmount,
+              };
+            });
+          }
+        }
         setdailyData(dailyWorkData || []);
-        return dailyWorkData;
       } catch (error) {
         console.log("Error while fetching daily", error);
       }
     };
 
-
     fetchPerson();
     fetchDailyWork();
   }, [id]);
 
-
-  console.log("activeParam : ",activeParam);
-
-  const { RangePicker } = DatePicker;
+  // const { RangePicker } = DatePicker;
   return (
     <>
       <List
@@ -153,10 +157,10 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                 />
                 <h1>{person?.Name || "Name of Employee"}</h1>
               </Flex>
-              <Space direction="vertical" size={12}>
+              {/* <Space direction="vertical" size={12}>
                 <h3>Select:</h3>
                 <RangePicker />
-              </Space>
+              </Space> */}
             </Flex>
           </Col>
         </Row>
@@ -186,10 +190,9 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
               <Table dataSource={dailyData || []} rowKey="id">
                 <Table.Column
                   title="Date"
-                  dataIndex="workDate"
-                  key="workDate"
+                  dataIndex="date"
+                  key="date"
                   width={80}
-                  sorter
                 />
                 <Table.Column
                   title="Total Hours"
@@ -214,17 +217,30 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                   dataIndex="hourRate"
                   key="hourRate"
                   width={80}
+                  render={(total) => (
+                    <NumberField
+                      value={total}
+                      options={{ style: "currency", currency: "pkr" }}
+                    />
+                  )}
                 />
                 <Table.Column
                   title="Earned Amount"
                   dataIndex="earnedAmount"
                   key="earnedAmount"
                   width={80}
+                  render={(total) => (
+                    <NumberField
+                      value={total}
+                      options={{ style: "currency", currency: "pkr" }}
+                    />
+                  )}
                 />
               </Table>
             </Card>
           </Space>
-          {activeParam === "true" ? <Monthlylog /> : null}
+          {activeParam === "true" ? <Monthlylog id={id || ""} monthID={monthID || ""} /> : null}
+
         </Col>
       </List>
 

@@ -11,7 +11,6 @@ import {
 } from "@ant-design/icons";
 
 import {
-  CreateButton,
   DeleteButton,
   DateField,
   NumberField,
@@ -31,10 +30,11 @@ import { ShowTextAndIcon } from "../../components/forms/ShowForm";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { Button } from "antd"; // Assuming you're using antd for UI components
-
+import { token } from "../../constants";
 import { useParams } from "react-router-dom";
 import { EditEmployee } from "../../components/index";
 import ButtonsComponent from "../../components/add_buttons/Buttons";
+import HubstaffHours from "../../components/add_buttons/add_hubstaff";
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -48,11 +48,6 @@ const BackButton = () => {
     </Button>
   );
 };
-
-// const token =
-//   "04d155e0017ee802a2dac456300b42b8bff2698e093c26ae76037c76d07bc6b7c85a396f2eb82ef62c9a86cebd12baeaa35416a2274790e87a80845df9caf983132cfa60460dec70db95ce3260fc294fef311efabdf31aa4ce7f5e32b59b93a1935c7e9fa5b73b730ca3953388fe8984a3f86fde6969ea94ee956f13ea1271a5";
-
-const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1";
 
 export const EmployeeProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -75,7 +70,7 @@ export const EmployeeProfile = () => {
 
   const navigate = useNavigate();
   const goToDailyLogs = (monthID: number, activeParam: string) => {
-    console.log(monthID, activeParam);  
+    console.log(monthID, activeParam);
     navigate(`/daily/${id}/${monthID}/${encodeURIComponent(activeParam)}`);
   };
 
@@ -111,18 +106,22 @@ export const EmployeeProfile = () => {
     try {
       const attributes = await fetchEmployee();
       const monthlySalaries = attributes.monthly_salaries;
-
+      const resp = await axios.get(`${API_URL}/monthly-salaries?populate=*`, {
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      });
+      const msAttribtes = resp.data.data;
+      const mID = msAttribtes[msAttribtes.length - 1].month_data.id;
       const monthlySalariesWithNames = await Promise.all(
         monthlySalaries.map(async (item: any) => {
-          const response2 = await axios.get(
-            `${API_URL}/months-data/${item.id}`,
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          const response2 = await axios.get(`${API_URL}/months-data/${mID}`, {
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          });
           return {
             id: item.id, // Ensure id is returned
             month:
@@ -139,41 +138,43 @@ export const EmployeeProfile = () => {
     }
   };
 
-    
   const fetchDailyWork = async () => {
     try {
-      // const attributes = response.data.data;
       const attributes = await fetchEmployee();
-      const monthlySalaries = attributes.monthly_salaries;
-      const dailyWorkData = await Promise.all(
-        monthlySalaries.map(async (item: any) => {
-          const response2 = await axios.get(
-            `${API_URL}/daily-works/${item.id}?populate=*`,
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          const dailyDataAttributes = response2.data.data;
-          const monthID = dailyDataAttributes.salaryMonth?.data?.id;
-          // console.log(monthID);
-          const hourRate = dailyDataAttributes.salaryMonth?.monthlyRate;
-          const totalHours =
-            dailyDataAttributes.hubstaffHours + dailyDataAttributes.manualHours;
+      const monthlySalariesID = attributes.monthly_salaries[attributes.monthly_salaries.length - 1]?.id;
+      const resp = await axios.get(`${API_URL}/monthly-salaries/${monthlySalariesID}?populate=*`, {
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      });
+      const msAttribtes = resp.data.data;
+      const dailyData = await Promise.all(
+        msAttribtes.dailyWorks.map(async (item: any) => {
+          const workDate = item.workDate;
+          const hubstaffHours =  item.hubstaffHours || 0;
+          const manualHours =  item.manualHours || 0;
+          const totalHours = hubstaffHours + manualHours;
+          const hourRate = msAttribtes.monthlyRate;
           const earnedAmount = totalHours * hourRate;
           return {
-            ...dailyDataAttributes,
-            hourRate,
+            ...item,
+            monthID: msAttribtes.month_data.id,
+            month: msAttribtes.month_data.month.charAt(0).toUpperCase() +
+            msAttribtes.month_data.month.slice(1),
+            workDate,
             totalHours,
             earnedAmount,
-            monthID,
-          };
+            hubstaffHours,
+            manualHours,
+            hourRate,
+          }
         })
-      );
-
-      return dailyWorkData || [];
+      )
+      // console.log("dailyData : ",dailyData);
+      return {
+          dailyData
+      }
     } catch (error) {
       console.log("Error while fetching daily", error);
     }
@@ -182,49 +183,39 @@ export const EmployeeProfile = () => {
   const fetchLastDayWork = async () => {
     try {
       const allDayWork = await fetchDailyWork();
-      let lastDayWork = [];
-      if (allDayWork) {
-        lastDayWork = allDayWork[allDayWork.length - 1];
-      }
+      const lastDayWork = allDayWork?.dailyData[allDayWork.dailyData.length - 1];
       setdailyData([lastDayWork]);
+      return lastDayWork;
     } catch (error) {
       console.log("Error while fetching daily", error);
     }
   };
+  
 
   const fetchAllMonthlyReport = async () => {
     try {
       const attributesEmployee: EmployeeAttributes = await fetchEmployee();
-      const fetchedMonth = await fetchMonth();
-      let monthName = [];
-      let monthID = 0;
-      if (fetchedMonth && fetchedMonth.length > 0) {
-        const lastMonthData = fetchedMonth[fetchedMonth.length - 1];
-        monthName = lastMonthData.month;
-        monthID = lastMonthData.id;
-      }
       const attributesDaily = await fetchDailyWork();
+      const monthAttributes = await fetchLastDayWork();
+      const monthName = monthAttributes?.month;
       let requiredHours = 0;
       const workedHoursOfAll: number[] = [];
       const EarnedAmountOfAll: number[] = [];
       if (attributesDaily) {
-        requiredHours = attributesDaily.length * 8;
-        for (let i = 0; i < attributesDaily.length; i++) {
-          workedHoursOfAll.push(attributesDaily[i].totalHours);
-          EarnedAmountOfAll.push(attributesDaily[i].earnedAmount);
+        requiredHours = attributesDaily?.dailyData.length * 8;
+        for (let i = 0; i < attributesDaily?.dailyData.length; i++) {
+          workedHoursOfAll.push(attributesDaily?.dailyData[i].totalHours);
+          EarnedAmountOfAll.push(attributesDaily?.dailyData[i].earnedAmount);
         }
       }
       const workedHours = workedHoursOfAll.reduce((a, b) => a + b, 0);
       const monthlyEarnedAmount = EarnedAmountOfAll.reduce((a, b) => a + b, 0);
       const paidLeaves = attributesEmployee.leavesRemaining;
       const emp = await fetchEmployee();
-      const monthlyy = emp.monthly_salaries;
-      let absences = 0;
-      let lateCount = 0;
-      if (monthlyy.length > 0 && monthlyy[monthlyy.length - 1].id === monthID) {
-        absences = monthlyy[monthlyy.length - 1].absentCount;
-        lateCount = monthlyy[monthlyy.length - 1].lateCount;
-      }
+      const monthID = emp.monthly_salaries[emp.monthly_salaries.length - 1].id;
+      const monthlyy = emp.monthly_salaries[emp.monthly_salaries.length - 1];
+      const absences = monthlyy.absentCount;
+      const lateCount = monthlyy.lateCount;
       const report = {
         monthName,
         requiredHours,
@@ -233,7 +224,7 @@ export const EmployeeProfile = () => {
         paidLeaves,
         lateCount,
         monthlyEarnedAmount,
-        monthID,
+        monthID
       };
       setMonthlyReporting([report]);
       return report;
@@ -296,7 +287,7 @@ export const EmployeeProfile = () => {
                 <h1>{person.Name || "Name of Employee"}</h1>
               </Flex>
               <Flex gap={16}>
-                <ButtonsComponent/>
+                <ButtonsComponent />
               </Flex>
             </Flex>
           </Col>
@@ -476,6 +467,7 @@ export const EmployeeProfile = () => {
                   title="Date"
                   dataIndex="workDate"
                   key="workDate"
+                  align="center"
                   render={(date) => (
                     <DateField value={date} format="D MMM YYYY" />
                   )}
@@ -484,26 +476,31 @@ export const EmployeeProfile = () => {
                   title="Total Hours"
                   dataIndex="totalHours"
                   key="totalHours"
+                  align="center"
                 />
                 <Table.Column
                   title="Hubstaff Hours"
                   dataIndex="hubstaffHours"
                   key="hubstaffHours"
+                  align="center"
                 />
                 <Table.Column
                   title="Manual Hours"
                   dataIndex="manualHours"
                   key="manualHours"
+                  align="center"
                 />
                 <Table.Column
                   title="Hour Rate"
                   dataIndex="hourRate"
                   key="hourRate"
+                  align="center"
                 />
                 <Table.Column
                   title="Earned Amount"
                   dataIndex="earnedAmount"
                   key="earnedAmount"
+                  align="center"
                   render={(total) => (
                     <NumberField
                       value={total}
@@ -537,26 +534,30 @@ export const EmployeeProfile = () => {
                 rowKey={"monthID"}
                 pagination={false}
               >
-                <Table.Column title="ID" dataIndex="monthID" key="monthID" />
+                {/* <Table.Column title="ID" dataIndex="monthID" key="monthID" align="center" /> */}
                 <Table.Column
                   title="Month"
                   dataIndex="monthName"
                   key="monthName"
+                  align="center"
                 />
                 <Table.Column
                   title="Required Hours"
                   dataIndex="requiredHours"
                   key="requiredHours"
+                  align="center"
                 />
                 <Table.Column
                   title="Worked Hours"
                   dataIndex="workedHours"
                   key="workedHours"
+                  align="center"
                 />
                 <Table.Column
                   title="Absences"
                   dataIndex="absences"
                   key="absences"
+                  align="center"
                 />
                 <Table.Column
                   title="Paid Leaves"
@@ -574,6 +575,7 @@ export const EmployeeProfile = () => {
                   title="Earned"
                   dataIndex="monthlyEarnedAmount"
                   key="monthlyEarnedAmount"
+                  align="center"
                   width={150}
                   render={(total) => (
                     <NumberField
@@ -585,13 +587,12 @@ export const EmployeeProfile = () => {
                 <Table.Column
                   title="Details"
                   key="actions"
+                  align="center"
                   width={64}
                   render={(records) => (
                     <ShowButton
                       size="small"
-                      onClick={() =>
-                        goToDailyLogs(records.monthID, "false")
-                      }
+                      onClick={() => goToDailyLogs(records.monthID, "false")}
                       hideText
                       icon={<ExportOutlined />}
                     />
@@ -619,22 +620,25 @@ export const EmployeeProfile = () => {
               }}
             >
               <Table dataSource={monthSalary}>
-                <Table.Column title="ID" dataIndex="id" key="id" />
-                <Table.Column title="Month" dataIndex="month" key="month" />
+                {/* <Table.Column title="ID" dataIndex="id" key="id" align="center" /> */}
+                <Table.Column title="Month" dataIndex="month" key="month" align="center" />
                 <Table.Column
                   title="Required Hours"
                   dataIndex="TotalHoursMonth"
                   key="TotalHoursMonth"
+                  align="center"
                 />
                 <Table.Column
                   title="Worked Hours"
                   dataIndex="hoursLogged"
                   key="hoursLogged"
+                  align="center"
                 />
                 <Table.Column
                   title="Net Salary"
                   dataIndex="grossSalaryEarned"
                   key="grossSalaryEarned"
+                  align="center"
                   render={(total) => (
                     <NumberField
                       value={total}
@@ -648,9 +652,14 @@ export const EmployeeProfile = () => {
                   key="actions"
                   width={64}
                   render={(records) => {
-                    return <ShowButton
-                    onClick={() => goToDailyLogs(records.id, "true")}
-                     hideText icon={<ExportOutlined />} />;
+                    return (
+                      <ShowButton
+                        size="small"
+                        onClick={() => goToDailyLogs(records.id, "true")}
+                        hideText
+                        icon={<ExportOutlined />}
+                      />
+                    );
                   }}
                 />
               </Table>
