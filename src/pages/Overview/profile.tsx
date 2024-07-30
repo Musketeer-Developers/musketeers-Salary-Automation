@@ -244,8 +244,8 @@ export const EmployeeProfile = () => {
       const emp = await fetchEmployee();
       const monthID = emp.monthly_salaries[emp.monthly_salaries.length - 1].id;
       const monthlyy = emp.monthly_salaries[emp.monthly_salaries.length - 1];
-      const absences = monthlyy.absentCount;
-      const lateCount = monthlyy.lateCount;
+      const absences = monthlyy.absentCount || 0;
+      const lateCount = monthlyy.lateCount || 0;
       const report = {
         monthName,
         requiredHours,
