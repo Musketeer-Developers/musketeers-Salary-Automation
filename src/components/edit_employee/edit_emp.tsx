@@ -9,6 +9,7 @@ import { EditButton } from '@refinedev/antd';
 import type { UploadProps } from 'antd';
 import { useParams } from "react-router-dom";
 import {useNotification} from '@refinedev/core';
+import { API_URL } from "../../constants";
 
 interface Employee {
     id: number;
@@ -381,6 +382,15 @@ const token = "9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29
                                     { value: 'Unity Developer', label: 'Unity Developer' },
                                     { value: 'Project Manager', label: 'Project Manager' },
                                     { value: 'HR Manager', label: 'HR Manager' },
+                                    { value: 'React Native Developer', label: 'React Native Developer' },
+                                    { value: 'Machine Learning Engineer', label: 'Machine Learning Engineer'},
+                                    { value: 'DevOps Engineer', label: 'DevOps Engineer'},
+                                    { value: 'SEO Specialist', label: 'SEO Specialist'},
+                                    { value: 'AI Engineer', label: 'AI Engineer'},
+                                    { value: 'Visual Designer', label: 'Visual Designer'},
+                                    { value: 'Upwork Bidder', label: 'Upwork Bidder'},
+                                    { value: 'Lead Generation Specialists', label: 'Lead Generation Specialists'},
+                                    { value: 'Office Boy', label: 'Office Boy'},
                                 ]}
                             />
                         </Form.Item>

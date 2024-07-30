@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Divider, Typography, DatePicker } from 'antd';
 import { useNotification } from "@refinedev/core";
 import axios from 'axios';
@@ -18,8 +18,8 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
     const [form] = Form.useForm();
     const { Title } = Typography;
     const [checkDate, setcheckDate] = useState(false);
-    const [dailyWorkID, setdailyWorkID] = useState();
-    const [SalaryMonthID, setSalaryMonthID] = useState();
+    const [dailyWorkID, setdailyWorkID] = useState(0);
+    const [SalaryMonthID, setSalaryMonthID] = useState(0);
     const [Count, setCount] = useState(0);
 
     const handleOk = async () => {
@@ -37,6 +37,58 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
     interface Date {
         workDate: moment.Moment;
     }
+
+    useEffect(() => {
+        if (dailyWorkID !== 0) {
+            const Data2 = {
+                data: {
+                    isLeave: true
+                }
+            };
+            async function update() {
+                try {
+                    const response = await axios.put(`http://localhost:1337/api/daily-works/${dailyWorkID}`, JSON.stringify(Data2),
+                        {
+                            headers: {
+                                Authorization: "Bearer " + token,
+                                "Content-Type": "application/json",
+                            }
+                        });
+                    console.log('Response-daily:', response.data);
+                } catch (error: any) {
+                    console.error('Error posting data:', error);
+                }
+            }
+            update();
+        }
+    }, [dailyWorkID])
+
+    useEffect(() => {
+        if (SalaryMonthID !== 0) {
+            const Data1 = {
+                data: {
+                    absentCount: Count + 1
+                }
+            };
+            async function update() {
+                try {
+                    const response = await axios.put(`http://localhost:1337/api/monthly-salaries/${SalaryMonthID}`, JSON.stringify(Data1),
+                        {
+                            headers: {
+                                Authorization: "Bearer " + token,
+                                "Content-Type": "application/json",
+                            }
+                        });
+                    console.log('Response-monthly:', response.data);
+                } catch (error: any) {
+                    console.error('Error posting data:', error);
+                }
+                setCount(0);
+            }
+            update();
+        }
+    }, [SalaryMonthID])
+
     async function Employee() {
         try {
             const response = await axios.get(`http://localhost:1337/api/employees/${id}?populate=*`,
@@ -53,7 +105,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
         }
     }
 
-    async function getID(formData: Date) {
+    async function putData(formData: Date) {
         const date = formData.workDate?.format('YYYY-MM-DD');
         let attributes = await Employee();
         const MonthlySalaries = attributes.data.monthly_salaries;
@@ -75,54 +127,12 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
                         setdailyWorkID(data.id);
                         setSalaryMonthID(item.id);
                         setCount(item.absentCount);
-                        console.log(checkDate, SalaryMonthID, dailyWorkID);
                     }
                 })
             } catch (error: any) {
                 console.error('Error posting data:', error);
             }
         });
-    }
-
-    async function putData(formData: Date) {
-        try {
-            let response_ = await getID(formData);
-            if (checkDate == true) {
-                console.log(checkDate, SalaryMonthID, dailyWorkID, Count);
-                const Data1 = {
-                    data:{
-                    absentCount: Count + 1
-                    }
-                };
-                const Data2 = {
-                    data:{
-                    isLeave: true
-                    }
-                };
-                const response = await axios.put(`http://localhost:1337/api/monthly-salaries/${SalaryMonthID}`, JSON.stringify(Data1),
-                    {
-                        headers: {
-                            Authorization: "Bearer " + token,
-                            "Content-Type": "application/json",
-                        }
-                    });
-                console.log('Response-monthly:', response.data);
-                try {
-                    const response = await axios.put(`http://localhost:1337/api/daily-works/${dailyWorkID}`, JSON.stringify(Data2),
-                        {
-                            headers: {
-                                Authorization: "Bearer " + token,
-                                "Content-Type": "application/json",
-                            }
-                        });
-                    console.log('Response-daily:', response.data);
-                } catch (error: any) {
-                    console.error('Error posting data:', error);
-                }
-            }
-        } catch (error: any) {
-            console.error('Error posting data:', error);
-        }
     }
 
     return (

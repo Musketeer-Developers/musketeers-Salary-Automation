@@ -16,6 +16,7 @@ import axios, { AxiosError } from "axios";
 import moment from 'moment';
 import { useModal } from '../../contexts/context-modal';
 import { useNotification } from "@refinedev/core"; 
+import { API_URL } from "../../constants";
 
 
 export const AddnewEmployee = () => {
@@ -119,8 +120,8 @@ export const AddnewEmployee = () => {
             }
         };
         console.log(EmployeeData);
+        console.log("hh");
         try {
-
             const response = await axios.post(`${API_URL}/employees`, JSON.stringify(EmployeeData),
                 {
                     headers: {
@@ -128,9 +129,10 @@ export const AddnewEmployee = () => {
                         'Content-Type': "application/json"
                     }
                 });
-            console.log('Response:', response.data);
+            console.log('Response Employee:', response.data);
             open?.( {type:'success',message: 'Success!',description: 'Employee details successfully added!'});
             console.log(response.data.data.id);
+            console.log("hh");
             const formattedData = {
                 data: {
                     emp_no: response.data.data.id,
@@ -148,7 +150,8 @@ export const AddnewEmployee = () => {
                             'Content-Type': "application/json"
                         }
                     });
-                console.log('Response:', response.data);
+                console.log('Response bank:', response.data);
+                console.log("hh");
                 open?.( {type:'success',message: 'Success!',description: 'Employee bank details successfully added!'});
             } catch (error:any) {
                 console.error('Error posting data:', error);
@@ -193,7 +196,6 @@ export const AddnewEmployee = () => {
         const formData = new FormData();
         formData.append('files', file);
         try {
-
             const response = await axios.post(`${API_URL}/upload`, formData, {
                 headers: {
                     'Authorization': "Bearer 9bd8af6b6900627b415eded84617f1d87d0a74136d3491a75b00c94127d77dd29763855f802afa232aedc294bc78e1c66e18c7cc854c28644288877aa7aafea65012ac05aa18230be1db9197bbed78381e8b6c2ca9ddacb5385427b594e660fabd6e269fac2464ba1e717c6b6ee48f7131ec5fb2647cf08ee83a8d761b9545b1",
@@ -310,6 +312,15 @@ export const AddnewEmployee = () => {
                                     { value: 'Unity Developer', label: 'Unity Developer' },
                                     { value: 'Project Manager', label: 'Project Manager' },
                                     { value: 'HR Manager', label: 'HR Manager' },
+                                    { value: 'React Native Developer', label: 'React Native Developer' },
+                                    { value: 'Machine Learning Engineer', label: 'Machine Learning Engineer'},
+                                    { value: 'DevOps Engineer', label: 'DevOps Engineer'},
+                                    { value: 'SEO Specialist', label: 'SEO Specialist'},
+                                    { value: 'AI Engineer', label: 'AI Engineer'},
+                                    { value: 'Visual Designer', label: 'Visual Designer'},
+                                    { value: 'Upwork Bidder', label: 'Upwork Bidder'},
+                                    { value: 'Lead Generation Specialists', label: 'Lead Generation Specialists'},
+                                    { value: 'Office Boy', label: 'Office Boy'},
                                 ]}
                             />
                         </Form.Item>

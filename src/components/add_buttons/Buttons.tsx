@@ -55,7 +55,7 @@ const ButtonsComponent: React.FC = () => {
                         type="primary"
                         size="large"
                         style={{
-                            width: "120px",
+                            width: "155px",
                         }}
                     >
                         Add
