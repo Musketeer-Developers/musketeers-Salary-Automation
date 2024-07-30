@@ -81,14 +81,23 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
           (total, item) => total + item.totalHours,
           0
         );
-        return workedHours;
+        const workedAmount = attributesDaily.dailyData.reduce(
+          (total, item) => total + item.earnedAmount,
+          0
+        );
+        return {
+          workedHours,
+          workedAmount
+        };
       } else {
         throw new Error("Failed to fetch daily work data");
       }
     } catch (error) {
       console.log("Error while fetching all monthly report", error);
+      return null; // or rethrow the error: throw error;
     }
   };
+  
 
   const fetchData = async () => {
     try {
@@ -101,12 +110,12 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
       const employees = await Promise.all(
         response.data.data.map(async (item) => {
           const imageUrl = item.image?.url;
-          const monthlyData = item.monthly_salaries;
           const report = (await fetchAllMonthlyReport(item.id)) || 0;
-          const hoursLogged = report; // Assign the report value to hoursLogged
-          const income =
-            monthlyData[monthlyData.length - 1]?.hoursLogged *
-              monthlyData[monthlyData.length - 1]?.monthlyRate || 0;
+          // if (!report){
+          //   throw new Error("Failed to fetch all monthly report worked hours and amount");
+          // }
+          const hoursLogged = report.workedHours || 0; // Assign the report value to hoursLogged
+          const income = report.workedAmount || 0;
           let hubstaffEnable = "";
           if (item.hubstaffEnabled) {
             hubstaffEnable = "Enabled";
@@ -164,7 +173,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
         }}
       >
         <Table dataSource={data} rowKey="id">
-          <Table.Column title="ID" dataIndex="id" key="id" width={20} />
+          {/* <Table.Column title="ID" dataIndex="id" key="id" width={20} /> */}
           <Table.Column title="ID" dataIndex="empNo" key="empNo" width={120} />
           <Table.Column
             title="Name"
