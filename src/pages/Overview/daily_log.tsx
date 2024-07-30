@@ -80,7 +80,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
             );
 
             const dailyRecords = response.data.data;
-            dailyWorkData = dailyRecords.map((dailyDataAttributes) => {
+            dailyWorkData = dailyRecords.map((dailyDataAttributes : any) => {
               const manualHours = dailyDataAttributes.manualHours;
               const hubstaffHours = dailyDataAttributes.hubstaffHours;
               const date = dailyDataAttributes.workDate;
@@ -89,7 +89,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                 dailyDataAttributes.hubstaffHours +
                 dailyDataAttributes.manualHours;
               const earnedAmount = totalHours * hourRate;
-
+              
               return {
                 manualHours,
                 hubstaffHours,
