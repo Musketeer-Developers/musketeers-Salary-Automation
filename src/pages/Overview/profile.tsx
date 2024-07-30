@@ -557,7 +557,7 @@ export const EmployeeProfile = () => {
                   render={(total) => (
                     <NumberField
                       value={total}
-                      options={{ style: "currency", currency: "pkr" }}
+                      options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
                     />
                   )}
                 />
@@ -633,7 +633,7 @@ export const EmployeeProfile = () => {
                   render={(total) => (
                     <NumberField
                       value={total}
-                      options={{ style: "currency", currency: "pkr" }}
+                      options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
                     />
                   )}
                 />
@@ -700,7 +700,7 @@ export const EmployeeProfile = () => {
                   render={(total) => (
                     <NumberField
                       value={total}
-                      options={{ style: "currency", currency: "pkr" }}
+                      options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
                     />
                   )}
                 />

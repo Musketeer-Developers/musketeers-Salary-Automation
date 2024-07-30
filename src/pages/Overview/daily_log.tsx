@@ -1,17 +1,12 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useState, useEffect } from "react";
 import { List, NumberField } from "@refinedev/antd";
-import { Col, Row, Flex, Table, Card, Typography } from "antd";
-import { DatePicker, Space, Button } from "antd";
-import { Monthlylog } from "../../components/index";
-
+import { Col, Row, Space, Table, Card, Typography, Button } from "antd";
 import { ClockCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { useEffect } from "react";
-import { API_URL } from "../../constants";
+import { API_URL, token } from "../../constants";
 import { Account } from "../../types";
-import { token } from "../../constants";
+import { Monthlylog } from "../../components/index";
 
 export const Dailylog = ({ children }: PropsWithChildren) => {
   const { id, monthID, activeParam } = useParams<{
@@ -24,15 +19,12 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
 
   const BackButton = () => {
     const navigate = useNavigate();
-
     return (
       <Button
         type="link"
         icon={<ArrowLeftOutlined />}
         onClick={() => navigate(`/profile/${id}`)}
-      >
-        {/* Back */}
-      </Button>
+      />
     );
   };
 
@@ -77,7 +69,6 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
           );
 
           if (selectedMonth) {
-            // Fetch all daily work records associated with the selected month
             const response = await axios.get(
               `${API_URL}/daily-works?filters[salaryMonth][id][$eq]=${selectedMonth.id}&populate=*`,
               {
@@ -110,6 +101,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
             });
           }
         }
+        console.log("dailyWorkData", dailyWorkData);
         setdailyData(dailyWorkData || []);
       } catch (error) {
         console.log("Error while fetching daily", error);
@@ -118,9 +110,8 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
 
     fetchPerson();
     fetchDailyWork();
-  }, [id]);
+  }, [id, monthID]);
 
-  // const { RangePicker } = DatePicker;
   return (
     <>
       <List
@@ -140,110 +131,79 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
       >
         <Row>
           <Col span={24}>
-            <Flex
-              gap={16}
-              justify="space-between"
-              style={{ marginBottom: "20px" }}
+            <Space
+              direction="vertical"
+              size={16}
+              style={{ width: "100%", marginBottom: "30px" }}
             >
-              <Flex gap={16} align="center">
-                <img
-                  src={person?.imageUrl || "https://via.placeholder.com/150"} // Updated to use dynamic image URL
-                  style={{
-                    borderRadius: "30px",
-                    maxWidth: "200px",
-                    height: "150px",
-                  }}
-                  alt="Employee"
-                />
-                <h1>{person?.Name || "Name of Employee"}</h1>
-              </Flex>
-              {/* <Space direction="vertical" size={12}>
-                <h3>Select:</h3>
-                <RangePicker />
-              </Space> */}
-            </Flex>
+              <Card
+                bordered={false}
+                title={
+                  <Space align="center">
+                    <ClockCircleOutlined />
+                    <Typography.Text>Daily Details</Typography.Text>
+                  </Space>
+                }
+              >
+                <Table dataSource={dailyData || []} rowKey="id">
+                  <Table.Column
+                    title="Date"
+                    dataIndex="date"
+                    key="date"
+                    width={80}
+                    sorter={(a, b) => new Date(a.date) - new Date(b.date)}
+                  />
+                  <Table.Column
+                    title="Total Hours"
+                    dataIndex="totalHours"
+                    key="totalHours"
+                    width={80}
+                  />
+                  <Table.Column
+                    title="Hubstaff Hours"
+                    dataIndex="hubstaffHours"
+                    key="hubstaffHours"
+                    width={80}
+                  />
+                  <Table.Column
+                    title="Manual Hours"
+                    dataIndex="manualHours"
+                    key="manualHours"
+                    width={80}
+                  />
+                  <Table.Column
+                    title="Hour Rate"
+                    dataIndex="hourRate"
+                    key="hourRate"
+                    width={80}
+                    render={(total) => (
+                      <NumberField
+                        value={total}
+                        options={{ style: "currency", currency: "pkr" }}
+                      />
+                    )}
+                  />
+                  <Table.Column
+                    title="Earned Amount"
+                    dataIndex="earnedAmount"
+                    key="earnedAmount"
+                    width={80}
+                    render={(total) => (
+                      <NumberField
+                        value={total}
+                        options={{ style: "currency", currency: "pkr" }}
+                      />
+                    )}
+                  />
+                </Table>
+              </Card>
+            </Space>
+            {activeParam === "true" ? (
+              <Monthlylog id={id || ""} monthID={monthID || ""} />
+            ) : null}
           </Col>
         </Row>
-        <Col>
-          <Space
-            direction="vertical"
-            size={16}
-            style={{ width: "100%", marginBottom: "30px" }}
-          >
-            <Card
-              bordered={false}
-              title={
-                <Flex gap={12} align="center">
-                  <ClockCircleOutlined />
-                  <Typography.Text>Daily Details</Typography.Text>
-                </Flex>
-              }
-              styles={{
-                header: {
-                  padding: "0 16px",
-                },
-                body: {
-                  padding: "0",
-                },
-              }}
-            >
-              <Table dataSource={dailyData || []} rowKey="id">
-                <Table.Column
-                  title="Date"
-                  dataIndex="date"
-                  key="date"
-                  width={80}
-                />
-                <Table.Column
-                  title="Total Hours"
-                  dataIndex="totalHours"
-                  key="totalHours"
-                  width={80}
-                />
-                <Table.Column
-                  title="Hubstaff Hours"
-                  dataIndex="hubstaffHours"
-                  key="hubstaffHours"
-                  width={80}
-                />
-                <Table.Column
-                  title="Manual Hours"
-                  dataIndex="manualHours"
-                  key="manualHours"
-                  width={80}
-                />
-                <Table.Column
-                  title="Hour Rate"
-                  dataIndex="hourRate"
-                  key="hourRate"
-                  width={80}
-                  render={(total) => (
-                    <NumberField
-                      value={total}
-                      options={{ style: "currency", currency: "pkr" }}
-                    />
-                  )}
-                />
-                <Table.Column
-                  title="Earned Amount"
-                  dataIndex="earnedAmount"
-                  key="earnedAmount"
-                  width={80}
-                  render={(total) => (
-                    <NumberField
-                      value={total}
-                      options={{ style: "currency", currency: "pkr" }}
-                    />
-                  )}
-                />
-              </Table>
-            </Card>
-          </Space>
-          {activeParam === "true" ? <Monthlylog id={id || ""} monthID={monthID || ""} /> : null}
-
-        </Col>
       </List>
-
       {children}
     </>
   );

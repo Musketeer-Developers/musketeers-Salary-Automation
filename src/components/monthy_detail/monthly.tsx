@@ -140,7 +140,7 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr" }}
+                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
                 />
               )}
               align="center"
@@ -179,7 +179,7 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr" }}
+                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
                 />
               )}
             />
@@ -192,7 +192,7 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr" }}
+                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
                 />
               )}
             />
@@ -205,7 +205,7 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr" }}
+                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
                 />
               )}
             />
@@ -218,7 +218,7 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr" }}
+                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
                 />
               )}
             />
@@ -231,7 +231,7 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr" }}
+                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
                 />
               )}
             />

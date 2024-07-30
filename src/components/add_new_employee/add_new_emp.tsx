@@ -1,18 +1,7 @@
-import type { PropsWithChildren } from "react";
-import { getDefaultFilter, useGo } from "@refinedev/core";
-import {
-    CreateButton,
-    EditButton,
-    List,
-    NumberField,
-    Show,
-    useForm,
-} from "@refinedev/antd";
 import { useState, ChangeEvent, useEffect } from "react";
-import { EyeOutlined, SearchOutlined, BookOutlined } from "@ant-design/icons";
-import { Col, Row, Avatar, Divider, Flex, Input, Select, Table, Form, Card, message, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
-import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
-import axios, { AxiosError } from "axios";
+import {  Divider, Flex, Input, Select, Form, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
+import { PlusOutlined } from '@ant-design/icons';
+import axios from "axios";
 import moment from 'moment';
 import { useModal } from '../../contexts/context-modal';
 import { useNotification } from "@refinedev/core";
