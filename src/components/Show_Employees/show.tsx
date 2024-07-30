@@ -10,6 +10,7 @@ import { Account } from "../../types";
 import { API_URL } from "../../constants";
 import Holiday from "../add_buttons/add_holiday";
 import Month from "../add_buttons/add_month";
+import HubstaffFile from "../add_buttons/add_hubstaffFile";
 import { token } from "../../constants";
 import { EmployeeAttributes } from "../../types";
 
@@ -144,22 +145,20 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
           return (
             <>
               <CreateButton size="large" onClick={() => setVisibleModal("2")}>
-                Add Month
+                Month
               </CreateButton>
               <CreateButton size="large" onClick={() => setVisibleModal("1")}>
-                Add Holiday
+                Holiday
               </CreateButton>
               <CreateButton size="large" onClick={showModal}>
-                Add new account
+                New Employee
               </CreateButton>
-              <Holiday
-                isVisible={visibleModal === "1"}
-                handleClose={handleClose}
-              />
-              <Month
-                isVisible={visibleModal === "2"}
-                handleClose={handleClose}
-              />
+              <CreateButton size="large" onClick={() => setVisibleModal("3")}>
+                Import 
+              </CreateButton>
+              <Holiday isVisible={visibleModal === "1"} handleClose={handleClose} />
+              <Month isVisible={visibleModal === "2"} handleClose={handleClose} />
+              <HubstaffFile isVisible={visibleModal === "3"} handleClose={handleClose} />
             </>
           );
         }}

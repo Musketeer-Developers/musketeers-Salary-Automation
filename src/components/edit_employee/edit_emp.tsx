@@ -8,7 +8,7 @@ import { EditButton } from '@refinedev/antd';
 import type { UploadProps } from 'antd';
 import { useParams } from "react-router-dom";
 import {useNotification} from '@refinedev/core';
-import { token } from "../../constants";
+import { API_URL, token } from "../../constants";
 
 
 interface Employee {
@@ -376,6 +376,15 @@ export const EditEmployee = (props: Employee) => {
                                     { value: 'Unity Developer', label: 'Unity Developer' },
                                     { value: 'Project Manager', label: 'Project Manager' },
                                     { value: 'HR Manager', label: 'HR Manager' },
+                                    { value: 'React Native Developer', label: 'React Native Developer' },
+                                    { value: 'Machine Learning Engineer', label: 'Machine Learning Engineer'},
+                                    { value: 'DevOps Engineer', label: 'DevOps Engineer'},
+                                    { value: 'SEO Specialist', label: 'SEO Specialist'},
+                                    { value: 'AI Engineer', label: 'AI Engineer'},
+                                    { value: 'Visual Designer', label: 'Visual Designer'},
+                                    { value: 'Upwork Bidder', label: 'Upwork Bidder'},
+                                    { value: 'Lead Generation Specialists', label: 'Lead Generation Specialists'},
+                                    { value: 'Office Boy', label: 'Office Boy'},
                                 ]}
                             />
                         </Form.Item>
