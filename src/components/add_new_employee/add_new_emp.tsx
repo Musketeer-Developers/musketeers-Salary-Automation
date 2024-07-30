@@ -23,14 +23,14 @@ export const AddnewEmployee = () => {
     const { isModalOpen, hideModal } = useModal();
     const [form] = Form.useForm();
     const { Option } = Select;
-    const [ImageID, setImageID] = useState(54);
+    const [ImageID, setImageID] = useState(1);
     const [isDisable, setisDisable] = useState(false);
     const [isCash, setisCash] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
     let isImage: boolean = false;
-    const MuskImageID: number = 54;
+    const MuskImageID: number = 1;
 
     interface FormData {
         EmpNo: string;
@@ -202,6 +202,7 @@ export const AddnewEmployee = () => {
                 }
             });
             onSuccess(response.data);
+            console.log(response.data[0].id)
             setImageID(response.data[0].id);
         } catch (error) {
             onError(error);
