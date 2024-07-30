@@ -35,6 +35,7 @@ import { useParams } from "react-router-dom";
 import { EditEmployee } from "../../components/index";
 import ButtonsComponent from "../../components/add_buttons/Buttons";
 import HubstaffHours from "../../components/add_buttons/add_hubstaff";
+import { isDate } from "util/types";
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -182,14 +183,43 @@ export const EmployeeProfile = () => {
 
   const fetchLastDayWork = async () => {
     try {
-      const allDayWork = await fetchDailyWork();
-      const lastDayWork = allDayWork?.dailyData[allDayWork.dailyData.length - 1];
-      setdailyData([lastDayWork]);
+      const allDayWork = await fetchDailyWork(); // Ensure fetchDailyWork is correctly defined and used
+      if (!allDayWork) throw new Error("Failed to fetch daily work data");
+  
+      // Get the last working day
+      const currentDate = new Date();
+      currentDate.setDate(currentDate.getDate() - 1);
+      const formattedDate = currentDate.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
+      console.log(`Current Date: ${formattedDate}`);
+  
+      // Find the last day's work
+      const lastDayWork = allDayWork.dailyData.find((dayWork) => {
+        const workDate = new Date(dayWork.workDate);
+        const formattedWorkDate = new Date(
+          workDate.getFullYear(),
+          workDate.getMonth(),
+          workDate.getDate()
+        ).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric'
+        });
+        return formattedWorkDate === formattedDate;
+      });
+  
+      console.log(lastDayWork);
+      setdailyData([lastDayWork]); // Ensure setdailyData is defined in your scope
       return lastDayWork;
     } catch (error) {
-      console.log("Error while fetching daily", error);
+      console.log("Error while fetching daily work data", error);
+      return null; // or rethrow the error: throw error;
     }
   };
+  
   
 
   const fetchAllMonthlyReport = async () => {
