@@ -3,7 +3,7 @@ import { Modal, Button, Form, Divider, Typography, DatePicker } from 'antd';
 import { useNotification } from "@refinedev/core";
 import axios from 'axios';
 import { useParams } from "react-router-dom";
-import { token } from "../../constants";
+import { API_URL,token } from "../../constants";
 interface AbsentProps {
     isVisible: boolean;
     handleClose: () => void;
@@ -44,7 +44,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
             };
             async function update() {
                 try {
-                    const response = await axios.put(`http://localhost:1337/api/daily-works/${dailyWorkID}`, JSON.stringify(Data2),
+                    const response = await axios.put(`${API_URL}/daily-works/${dailyWorkID}`, JSON.stringify(Data2),
                         {
                             headers: {
                                 Authorization: "Bearer " + token,
@@ -69,7 +69,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
             };
             async function update() {
                 try {
-                    const response = await axios.put(`http://localhost:1337/api/monthly-salaries/${SalaryMonthID}`, JSON.stringify(Data1),
+                    const response = await axios.put(`${API_URL}/monthly-salaries/${SalaryMonthID}`, JSON.stringify(Data1),
                         {
                             headers: {
                                 Authorization: "Bearer " + token,
@@ -88,7 +88,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
 
     async function Employee() {
         try {
-            const response = await axios.get(`http://localhost:1337/api/employees/${id}?populate=*`,
+            const response = await axios.get(`${API_URL}/employees/${id}?populate=*`,
                 {
                     headers: {
                         Authorization: "Bearer " + token,
@@ -108,7 +108,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
         const MonthlySalaries = attributes.data.monthly_salaries;
         MonthlySalaries.map(async (item: any) => {
             try {
-                const response = await axios.get(`http://localhost:1337/api/monthly-salaries/${item.id}?populate=*`,
+                const response = await axios.get(`${API_URL}/monthly-salaries/${item.id}?populate=*`,
                     {
                         headers: {
                             Authorization: "Bearer " + token,

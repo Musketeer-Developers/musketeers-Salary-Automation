@@ -12,7 +12,7 @@ import { useNotification } from "@refinedev/core";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { token } from "../../constants";
+import { API_URL,token } from "../../constants";
 
 interface HubstaffHoursProps {
   isVisible: boolean;
@@ -59,7 +59,7 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
       async function update() {
         try {
           const response = await axios.put(
-            `http://localhost:1337/api/daily-works/${dailyWorkID}`,
+            `${API_URL}/daily-works/${dailyWorkID}`,
             JSON.stringify(Data2),
             {
               headers: {
@@ -80,7 +80,7 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
   async function Employee() {
     try {
       const response = await axios.get(
-        `http://localhost:1337/api/employees/${id}?populate=*`,
+        `${API_URL}/employees/${id}?populate=*`,
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -103,7 +103,7 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
     MonthlySalaries.map(async (item: any) => {
       try {
         const response = await axios.get(
-          `http://localhost:1337/api/monthly-salaries/${item.id}?populate=*`,
+          `${API_URL}/monthly-salaries/${item.id}?populate=*`,
           {
             headers: {
               Authorization: "Bearer " + token,

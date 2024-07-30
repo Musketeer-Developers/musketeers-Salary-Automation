@@ -159,7 +159,7 @@ export const EditEmployee = (props: Employee) => {
         formData.append('files', file);
         console.log(file)
         try {
-            const response = await axios.post("http://localhost:1337/api/upload", formData, {
+            const response = await axios.post("${API_URL}/upload", formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': "multipart/form-data"
@@ -227,7 +227,7 @@ export const EditEmployee = (props: Employee) => {
         };
         console.log(EmployeeData);
         try {
-            const response = await axios.put(`http://localhost:1337/api/employees/${id}`, JSON.stringify(EmployeeData),
+            const response = await axios.put(`${API_URL}/employees/${id}`, JSON.stringify(EmployeeData),
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -246,7 +246,7 @@ export const EditEmployee = (props: Employee) => {
             console.log(formattedData);
             open?.( {type:'success',message: 'Success!',description: 'Employee details successfully updated!'});
             try {
-                const response = await axios.put(`http://localhost:1337/api/bank-details/${props.bankDetailsID}`, JSON.stringify(formattedData),
+                const response = await axios.put(`${API_URL}/bank-details/${props.bankDetailsID}`, JSON.stringify(formattedData),
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`,
