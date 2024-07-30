@@ -149,7 +149,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
   return (
     <>
       <List
-        title="Overview"
+        title="Employees"
         headerButtons={() => {
           return (
             <>

@@ -1,14 +1,18 @@
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
 import { useGetIdentity } from "@refinedev/core";
-import { Layout as AntdLayout, Avatar, Space, Switch, Typography, Button, Input, Flex,theme } from "antd";
+import { Layout as AntdLayout, Avatar, Space, Switch, Typography, Button, Input, Flex, theme } from "antd";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
 import logo from '../../logo.png';
 import './style.css';
-import {IconMoon} from './icons/icon-moon';
-import {IconSun} from './icons/icon-sun';
+import { IconMoon } from './icons/icon-moon';
+import { IconSun } from './icons/icon-sun';
 import { useLogout } from "@refinedev/core";
 import { useNavigate } from "react-router-dom";
+import { Tabs } from 'antd';
+import type { TabsProps } from 'antd';
+import {OverviewPageList} from '../../pages/Overview/list';
+
 
 const { Text } = Typography;
 const { useToken } = theme;
@@ -34,6 +38,29 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     console.log("goToprofile clicked");
     navigate('/');
   };
+  const goToAllEmployeesPage = () => {
+    console.log("goToallemployees clicked");
+    navigate('/allemployees');
+  };
+
+  const onChange = (key: string) => {
+    if(key == "1"){
+      goToHomePage();
+    }else if(key == "2"){
+      goToAllEmployeesPage();
+    }
+  };
+
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: 'Employees',
+    },
+    {
+      key: '2',
+      label: 'Overview',
+    }
+  ];
 
   return (
     <AntdLayout.Header className={`header ${mode}`}>
@@ -41,6 +68,9 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
         <Space>
           <img src={logo} alt="Logo" onClick={goToHomePage} style={{ cursor: 'pointer', height: '40px' }} />
           <Text strong className="title" onClick={goToHomePage} style={{ cursor: 'pointer' }}>Automator</Text>
+          <Space style={{ marginTop: "20px" ,marginLeft:"20px"}} >
+            <Tabs size="large" defaultActiveKey="1" items={items} onChange={onChange} style={{}}/>
+          </Space>
         </Space>
         <Flex gap="50px" justify="flex-end">
           <Input.Search placeholder="Search..." style={{ width: 200 }} />
@@ -51,9 +81,9 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
             icon={mode === 'dark' ? <IconSun /> : <IconMoon />}
           />
           <Button type="primary" onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                event.preventDefault();
-                mutate();
-            }}
+            event.preventDefault();
+            mutate();
+          }}
             disabled={isLoading} danger>Logout</Button>
         </Flex>
       </div>

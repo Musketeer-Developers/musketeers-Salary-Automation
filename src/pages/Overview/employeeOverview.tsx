@@ -99,7 +99,7 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
   return (
     <>
       <List
-        title="Salary List"
+        title="Overview"
         headerButtons={[
           <ExportButton
           onClick={exportToCSV}
