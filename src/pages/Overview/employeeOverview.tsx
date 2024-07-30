@@ -43,7 +43,7 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
             const basicSalary = item.monthly_salaries[length-1]?.basicSalary || 0;
             const grossSalaryEarned = item.monthly_salaries[length-1]?.grossSalaryEarned || 0;
             const medicalAllowance = item.monthly_salaries[length-1]?.medicalAllowance || 0;
-            const netSalary = basicSalary + medicalAllowance - WHT;
+            const netSalary = parseInt(basicSalary) + parseInt(medicalAllowance) - WHT;
             console.log("WHT:", WHT);
             return {
                 ...item,
