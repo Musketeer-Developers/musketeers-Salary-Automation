@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Form, Divider, Select, DatePicker, InputNumber } from 'antd';
+import { Modal, Button, Form, Divider, Select, DatePicker} from 'antd';
 import axios from 'axios';
 import { useNotification } from "@refinedev/core";
 import {token} from '../../constants'; 
@@ -12,7 +12,6 @@ interface MonthProps {
 interface FormData {
     month: string | number;
     year: moment.Moment;
-    totaldays: string | number;
 }
 
 const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
@@ -35,7 +34,6 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
         const MonthData = {
                 month: formData.month,
                 year: formData.year?.format('YYYY'),
-                totalDays: formData.totaldays
         };
         console.log(MonthData);
         try {
@@ -105,15 +103,6 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
                         noStyle
                     >
                         <DatePicker picker="year" style={{ width: "100%" }} />
-                    </Form.Item>
-                </Form.Item>
-                <Form.Item label="Total Days">
-                    <Form.Item
-                        name="totaldays"
-                        rules={[{ required: true, message: 'Please input the days!' }]}
-                        noStyle
-                    >
-                        <InputNumber min={29} max={31} style={{ width: "100%" }} placeholder={"Total Days"} />
                     </Form.Item>
                 </Form.Item>
                 <Divider></Divider>
