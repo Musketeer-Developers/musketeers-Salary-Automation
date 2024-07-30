@@ -123,17 +123,36 @@ export const EmployeeProfile = () => {
               "Content-Type": "application/json",
             },
           });
+          const monthName =
+            response2.data.data.month.charAt(0).toUpperCase() +
+            response2.data.data.month.slice(1);
+          const year = response2.data.data.year;
+          const month = monthName + " " + year;
           return {
             id: item.id, // Ensure id is returned
-            month:
-              response2.data.data.month.charAt(0).toUpperCase() +
-              response2.data.data.month.slice(1),
+            month,
+            monthName,
+            year,
             ...item,
           };
         })
       );
-      setMonthSalary(monthlySalariesWithNames || []);
-      return monthlySalariesWithNames;
+      console.log("monthlySalariesWithNames", monthlySalariesWithNames);
+      
+      const currentDate = new Date();
+      const currentMonth = currentDate.toLocaleString("default", { month: "long" });
+      const currentYear = currentDate.getFullYear();
+      
+      const monthlySalariesWithNamesFiltered = monthlySalariesWithNames.filter((item) => {
+        const itemMonth = item.monthName;
+        const itemYear = item.year;
+        return itemMonth !== currentMonth || itemYear !== currentYear;
+      });
+      console.log("monthlySalariesWithNamesFiltered", monthlySalariesWithNamesFiltered);
+      
+      setMonthSalary(monthlySalariesWithNamesFiltered || []);
+      // setMonthSalary(monthlySalariesWithNames || []);
+      return monthlySalariesWithNamesFiltered;
     } catch (error) {
       console.log("Error while fetching month", error);
     }
@@ -142,40 +161,45 @@ export const EmployeeProfile = () => {
   const fetchDailyWork = async () => {
     try {
       const attributes = await fetchEmployee();
-      const monthlySalariesID = attributes.monthly_salaries[attributes.monthly_salaries.length - 1]?.id;
-      const resp = await axios.get(`${API_URL}/monthly-salaries/${monthlySalariesID}?populate=*`, {
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      });
+      const monthlySalariesID =
+        attributes.monthly_salaries[attributes.monthly_salaries.length - 1]?.id;
+      const resp = await axios.get(
+        `${API_URL}/monthly-salaries/${monthlySalariesID}?populate=*`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const msAttribtes = resp.data.data;
       const dailyData = await Promise.all(
         msAttribtes.dailyWorks.map(async (item: any) => {
           const workDate = item.workDate;
-          const hubstaffHours =  item.hubstaffHours || 0;
-          const manualHours =  item.manualHours || 0;
+          const hubstaffHours = item.hubstaffHours || 0;
+          const manualHours = item.manualHours || 0;
           const totalHours = hubstaffHours + manualHours;
           const hourRate = msAttribtes.monthlyRate;
           const earnedAmount = totalHours * hourRate;
           return {
             ...item,
             monthID: msAttribtes.month_data.id,
-            month: msAttribtes.month_data.month.charAt(0).toUpperCase() +
-            msAttribtes.month_data.month.slice(1),
+            month:
+              msAttribtes.month_data.month.charAt(0).toUpperCase() +
+              msAttribtes.month_data.month.slice(1),
             workDate,
             totalHours,
             earnedAmount,
             hubstaffHours,
             manualHours,
             hourRate,
-          }
+          };
         })
-      )
+      );
       // console.log("dailyData : ",dailyData);
       return {
-          dailyData
-      }
+        dailyData,
+      };
     } catch (error) {
       console.log("Error while fetching daily", error);
     }
@@ -185,17 +209,16 @@ export const EmployeeProfile = () => {
     try {
       const allDayWork = await fetchDailyWork(); // Ensure fetchDailyWork is correctly defined and used
       if (!allDayWork) throw new Error("Failed to fetch daily work data");
-  
+
       // Get the last working day
       const currentDate = new Date();
       currentDate.setDate(currentDate.getDate() - 1);
-      const formattedDate = currentDate.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
+      const formattedDate = currentDate.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
       });
-      console.log(`Current Date: ${formattedDate}`);
-  
+
       // Find the last day's work
       const lastDayWork = allDayWork.dailyData.find((dayWork) => {
         const workDate = new Date(dayWork.workDate);
@@ -203,15 +226,13 @@ export const EmployeeProfile = () => {
           workDate.getFullYear(),
           workDate.getMonth(),
           workDate.getDate()
-        ).toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric'
+        ).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
         });
         return formattedWorkDate === formattedDate;
       });
-  
-      console.log(lastDayWork);
       setdailyData([lastDayWork]); // Ensure setdailyData is defined in your scope
       return lastDayWork;
     } catch (error) {
@@ -219,8 +240,6 @@ export const EmployeeProfile = () => {
       return null; // or rethrow the error: throw error;
     }
   };
-  
-  
 
   const fetchAllMonthlyReport = async () => {
     try {
@@ -246,15 +265,19 @@ export const EmployeeProfile = () => {
       const monthlyy = emp.monthly_salaries[emp.monthly_salaries.length - 1];
       const absences = monthlyy.absentCount || 0;
       const lateCount = monthlyy.lateCount || 0;
+      const currentMonth = new Date().toLocaleDateString("en-GB", {
+        month: "long",
+        year: "numeric",
+      });
       const report = {
-        monthName,
+        monthName: currentMonth,
         requiredHours,
         workedHours,
         absences,
         paidLeaves,
         lateCount,
         monthlyEarnedAmount,
-        monthID
+        monthID,
       };
       setMonthlyReporting([report]);
       return report;
@@ -651,7 +674,12 @@ export const EmployeeProfile = () => {
             >
               <Table dataSource={monthSalary}>
                 {/* <Table.Column title="ID" dataIndex="id" key="id" align="center" /> */}
-                <Table.Column title="Month" dataIndex="month" key="month" align="center" />
+                <Table.Column
+                  title="Month"
+                  dataIndex="month"
+                  key="month"
+                  align="center"
+                />
                 <Table.Column
                   title="Required Hours"
                   dataIndex="TotalHoursMonth"
