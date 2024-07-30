@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Form, Divider, DatePicker, InputNumber } from 'antd';
+import { Modal, Button, Form, Divider, Typography, DatePicker, InputNumber } from 'antd';
 
 interface ManualHoursProps {
     isVisible: boolean;
@@ -8,6 +8,7 @@ interface ManualHoursProps {
 
 const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => {
     const [form] = Form.useForm();
+    const { Title } = Typography;
     const handleOk = async () => {
         try {
             const values = await form.validateFields();

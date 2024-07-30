@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form, Divider, DatePicker } from 'antd';
+import { Modal, Button, Form, Divider, Typography, DatePicker } from 'antd';
+import { useNotification } from "@refinedev/core";
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 import { token } from "../../constants";
@@ -10,7 +11,9 @@ interface AbsentProps {
 
 const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
     const { id } = useParams<{ id: string }>();
+    const { open, close } = useNotification();
     const [form] = Form.useForm();
+    const { Title } = Typography;
     const [checkDate, setcheckDate] = useState(false);
     const [dailyWorkID, setdailyWorkID] = useState();
     const [SalaryMonthID, setSalaryMonthID] = useState();
@@ -21,7 +24,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
             const values = await form.validateFields();
             console.log('Received values of form: ', values);
             handleClose();
-            putData();
+            putData(values);
             form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);
@@ -49,7 +52,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
 
     async function getID(formData: Date) {
         const date = formData.workDate?.format('YYYY-MM-DD');
-        const attributes = await Employee();
+        let attributes = await Employee();
         const MonthlySalaries = attributes.data.monthly_salaries;
         MonthlySalaries.map(async (item: any) => {
             try {
@@ -78,8 +81,9 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
         });
     }
 
-    async function putData() {
+    async function putData(formData: Date) {
         try {
+            let response_ = await getID(formData);
             if (checkDate == true) {
                 console.log(checkDate, SalaryMonthID, dailyWorkID, Count);
                 const Data1 = {

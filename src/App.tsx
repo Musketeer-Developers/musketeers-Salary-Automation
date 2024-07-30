@@ -20,7 +20,7 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { authProvider, axiosInstance } from "./authProvider";
 import { API_URL } from "./constants";
 import { ColorModeContextProvider } from "./contexts/color-mode";
-import { Header, OverviewPageList, EmployeeProfile, Dailylog } from "./components/index";
+import { Header, OverviewPageList, EmployeeProfile, Dailylog, EmployeeOverview } from "./components/index";
 import { Login } from "./pages/Overview/login";
 
 function App() {
@@ -79,6 +79,21 @@ function App() {
                           <OverviewPageList>
                             <Outlet />
                           </OverviewPageList>
+                        </div>
+                      </ThemedLayoutV2>
+                    } />
+                    <Route path='/allemployees' element={
+                      <ThemedLayoutV2 Sider={() => null}>
+                        <div
+                          style={{
+                            maxWidth: "1280px",
+                            padding: "24px",
+                            margin: "0 auto",
+                          }}
+                        >
+                          <EmployeeOverview >
+                            <Outlet />
+                          </EmployeeOverview>
                         </div>
                       </ThemedLayoutV2>
                     } />

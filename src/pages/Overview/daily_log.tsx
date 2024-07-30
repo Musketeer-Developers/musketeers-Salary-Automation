@@ -1,5 +1,5 @@
 import { PropsWithChildren, useState } from "react";
-import { List } from "@refinedev/antd";
+import { List, NumberField } from "@refinedev/antd";
 import { Col, Row, Flex, Table, Card, Typography } from "antd";
 import { DatePicker, Space, Button } from "antd";
 import { Monthlylog } from "../../components/index";
@@ -120,7 +120,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
     fetchDailyWork();
   }, [id]);
 
-  const { RangePicker } = DatePicker;
+  // const { RangePicker } = DatePicker;
   return (
     <>
       <List
@@ -157,10 +157,10 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                 />
                 <h1>{person?.Name || "Name of Employee"}</h1>
               </Flex>
-              <Space direction="vertical" size={12}>
+              {/* <Space direction="vertical" size={12}>
                 <h3>Select:</h3>
                 <RangePicker />
-              </Space>
+              </Space> */}
             </Flex>
           </Col>
         </Row>
@@ -193,7 +193,6 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                   dataIndex="date"
                   key="date"
                   width={80}
-                  sorter
                 />
                 <Table.Column
                   title="Total Hours"
@@ -218,12 +217,24 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                   dataIndex="hourRate"
                   key="hourRate"
                   width={80}
+                  render={(total) => (
+                    <NumberField
+                      value={total}
+                      options={{ style: "currency", currency: "pkr" }}
+                    />
+                  )}
                 />
                 <Table.Column
                   title="Earned Amount"
                   dataIndex="earnedAmount"
                   key="earnedAmount"
                   width={80}
+                  render={(total) => (
+                    <NumberField
+                      value={total}
+                      options={{ style: "currency", currency: "pkr" }}
+                    />
+                  )}
                 />
               </Table>
             </Card>

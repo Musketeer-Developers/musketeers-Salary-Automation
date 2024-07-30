@@ -2,7 +2,6 @@ import React from 'react';
 import { Modal, Button, Form, Divider, Select, DatePicker, InputNumber } from 'antd';
 import axios from 'axios';
 import { useNotification } from "@refinedev/core";
-import { API_URL, token } from "../../constants";
 
 interface MonthProps {
     isVisible: boolean;
@@ -39,7 +38,7 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
         };
         console.log(MonthData);
         try {
-            const response = await axios.post(`${API_URL}/month-data/initializeMonthData`, JSON.stringify(MonthData),
+            const response = await axios.post('http://localhost:1337/api/month-data/initializeMonthData', JSON.stringify(MonthData),
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
