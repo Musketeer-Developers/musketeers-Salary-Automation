@@ -6,7 +6,8 @@ import { useNotification } from "@refinedev/core";
 import Papa from 'papaparse';
 import moment from 'moment';
 import axios from 'axios';
-import {API_URL,token} from '../../constants';
+import {API_URL} from '../../constants';
+import {axiosInstance} from '../../authProvider';
 
 interface HubstaffFileProps {
     isVisible: boolean;
@@ -72,10 +73,9 @@ const HubstaffFile: React.FC<HubstaffFileProps> = ({ isVisible, handleClose }) =
 
     async function putData() {
         try {
-            const response = await axios.post(`${API_URL}/daily-works/bulk-create`, JSON.stringify(data),
+            const response = await axiosInstance.post(`${API_URL}/daily-works/bulk-create`, JSON.stringify(data),
                 {
                     headers: {
-                        'Authorization': "Bearer" + token,
                         'Content-Type': "application/json"
                     }
                 });

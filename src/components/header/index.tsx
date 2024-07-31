@@ -11,8 +11,6 @@ import { useLogout } from "@refinedev/core";
 import { useNavigate } from "react-router-dom";
 import { Tabs } from 'antd';
 import type { TabsProps } from 'antd';
-import {OverviewPageList} from '../../pages/Overview/list';
-
 
 const { Text } = Typography;
 const { useToken } = theme;

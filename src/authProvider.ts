@@ -1,49 +1,65 @@
 import type { AuthProvider } from "@refinedev/core";
 import { AuthHelper } from "@refinedev/strapi-v4";
 import axios from "axios";
-import { API_URL, TOKEN_KEY } from "./constants";
+import { API_URL, token } from "./constants";
 
+export const strapiAuthHelper = AuthHelper(`${API_URL}`);
 export const axiosInstance = axios.create();
-const strapiAuthHelper = AuthHelper(API_URL);
+
+axiosInstance.interceptors.request.use((config) => {
+  const tok = localStorage.getItem(token);
+  if (tok) {
+    config.headers.Authorization = `Bearer ${tok}`;
+  }
+  return config;
+});
 
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
-    // Simulated login logic with hardcoded credentials
-    const hardcodedUser = {
-      email: 'demo@demo.com',
-      password: 'demodemo',
-      jwt: 'fake-jwt-token-12345'
-    };
-
-    if (email === hardcodedUser.email && password === hardcodedUser.password) {
-      localStorage.setItem(TOKEN_KEY, hardcodedUser.jwt);
-      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${hardcodedUser.jwt}`;
-      return { success: true, redirectTo: "/" };
-    } else {
+    try {
+      console.log(email, password);
+      const { data, status } = await strapiAuthHelper.login(email, password);
+      console.log(data);
+      if (status === 200) {
+        localStorage.setItem(token, data.jwt);
+        return {
+          success: true,
+          redirectTo: "/",
+        };
+      }
+    } catch (error: any) {
+      const errorObj = error?.response?.data?.message?.[0]?.messages?.[0];
       return {
         success: false,
         error: {
-          message: "Login failed",
-          name: "Invalid email or password",
+          message: errorObj?.message || "Login failed",
+          name: errorObj?.id || "Invalid email or password",
         },
       };
     }
+
+    return {
+      success: false,
+      error: {
+        message: "Login failed",
+        name: "Invalid email or password",
+      },
+    };
   },
   logout: async () => {
-    localStorage.removeItem(TOKEN_KEY);
-    delete axiosInstance.defaults.headers.common["Authorization"];
-    return { success:true,redirectTo: "/login" };
+    localStorage.removeItem(token);
+    return {
+      success: true,
+      redirectTo: "/login",
+    };
   },
   onError: async (error) => {
     console.error(error);
     return { error };
   },
   check: async () => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
-      axiosInstance.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${token}`;
+    const tok = localStorage.getItem(token);
+    if (tok) {
       return {
         authenticated: true,
       };
@@ -52,7 +68,7 @@ export const authProvider: AuthProvider = {
     return {
       authenticated: false,
       error: {
-        message: "Check failed",
+        message: "Authentication failed",
         name: "Token not found",
       },
       logout: true,
@@ -61,12 +77,12 @@ export const authProvider: AuthProvider = {
   },
   getPermissions: async () => null,
   getIdentity: async () => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
+    const tok = localStorage.getItem(token);
+    if (!tok) {
       return null;
     }
 
-    const { data, status } = await strapiAuthHelper.me(token);
+    const { data, status } = await strapiAuthHelper.me(tok);
     if (status === 200) {
       const { id, username, email } = data;
       return {

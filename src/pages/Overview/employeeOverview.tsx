@@ -1,14 +1,16 @@
 import type { PropsWithChildren } from "react";
-import {  List, NumberField } from "@refinedev/antd";
+import { CreateButton, List, NumberField } from "@refinedev/antd";
 import { useState, useEffect } from "react";
 import { Flex, Table } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Account } from "../../types";
 import { API_URL } from "../../constants";
-import {token} from "../../constants";
+// import {token} from "../../constants";
 import { EditButton, ExportButton } from "@refinedev/antd";
 import { EyeOutlined } from "@ant-design/icons";
+import { axiosInstance } from "../../authProvider";
+import Calculate from '../../components/add_buttons/calculateSalary';
 
 export const EmployeeOverview = ({ children }: PropsWithChildren) => {
   const [data, setData] = useState<any[]>([]);
@@ -16,11 +18,10 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
 
   const fetchEmployee = async () => {
     try {
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `${API_URL}/employees?populate=*`,
         {
           headers: {
-            Authorization: "Bearer " + token,
             "Content-Type": "application/json",
           },
         }
@@ -38,22 +39,22 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
 
       const empInfo = await Promise.all(
         empAttributes.map(async (item: any) => {
-            const imageURL = "http://localhost:1337" + item.image?.url;
-            const WHT = item.monthly_salaries[length-1]?.WTH || 0;
-            const basicSalary = item.monthly_salaries[length-1]?.basicSalary || 0;
-            const grossSalaryEarned = item.monthly_salaries[length-1]?.grossSalaryEarned || 0;
-            const medicalAllowance = item.monthly_salaries[length-1]?.medicalAllowance || 0;
-            const netSalary = parseInt(basicSalary) + parseInt(medicalAllowance) - WHT;
-            console.log("WHT:", WHT);
-            return {
-                ...item,
-                imageUrl: imageURL,
-                WHT: WHT,
-                basicSalary: basicSalary,
-                grossSalaryEarned: grossSalaryEarned,
-                medicalAllowance: medicalAllowance,
-                netSalary: netSalary
-            }
+          const imageURL = "http://localhost:1337" + item.image?.url;
+          const WHT = item.monthly_salaries[length - 1]?.WTH || 0;
+          const basicSalary = item.monthly_salaries[length - 1]?.basicSalary || 0;
+          const grossSalaryEarned = item.monthly_salaries[length - 1]?.grossSalaryEarned || 0;
+          const medicalAllowance = item.monthly_salaries[length - 1]?.medicalAllowance || 0;
+          const netSalary = parseInt(basicSalary) + parseInt(medicalAllowance) - WHT;
+          console.log("WHT:", WHT);
+          return {
+            ...item,
+            imageUrl: imageURL,
+            WHT: WHT,
+            basicSalary: basicSalary,
+            grossSalaryEarned: grossSalaryEarned,
+            medicalAllowance: medicalAllowance,
+            netSalary: netSalary
+          }
         })
       )
 
@@ -95,17 +96,29 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
     document.body.removeChild(link);
   };
 
+  const [visibleModal, setVisibleModal] = useState("");
+  const handleClose = () => {
+    setVisibleModal("");
+  };
 
   return (
     <>
       <List
-        title="Overview"
-        headerButtons={[
-          <ExportButton
-          onClick={exportToCSV}
+        title="Salary List"
+        headerButtons={() => {
+          return (
+            <>
+              <CreateButton size="middle" onClick={() => setVisibleModal("1")}>
+                Calculate
+              </CreateButton>
+              <ExportButton
+                onClick={exportToCSV}
 
-          />,
-        ]}
+              />
+              <Calculate isVisible={visibleModal === "1"} handleClose={handleClose} />
+            </>
+          );
+        }}
       >
         <Table dataSource={data} rowKey="id">
           {/* <Table.Column title="ID" dataIndex="id" key="id" width={80} sorter /> */}
@@ -138,70 +151,70 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
             )}
           />
           <Table.Column
-              title="Withholding tax"
-              dataIndex="WHT"
-              width={80}
-              align="center"
-              render={(total) => (
-                <NumberField
-                  value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
-                />
-              )}
-            />
-            <Table.Column
-              title="Basic Salary"
-              dataIndex="basicSalary"
-              key="basicSalary"
-              align="center"
-              width={100}
-              render={(total) => (
-                <NumberField
-                  value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
-                />
-              )}
-            />
-            <Table.Column
-              title="Medical Allowance"
-              dataIndex="medicalAllowance"
-              key="medicalAllowance"
-              align="center"
-              width={80}
-              render={(total) => (
-                <NumberField
-                  value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
-                />
-              )}
-            />
-            <Table.Column
-              title="Gross Salary"
-              dataIndex="grossSalaryEarned"
-              key="grossSalaryEarned"
-              align="center"
-              width={100}
-              render={(total) => (
-                <NumberField
-                  value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
-                />
-              )}
-            />
-            <Table.Column
-              title="Net salary"
-              dataIndex="netSalary"
-              key="netSalary"
-              align="center"
-              width={100}
-              render={(total) => (
-                <NumberField
-                  value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
-                />
-              )}
-            />
-            <Table.Column
+            title="Withholding tax"
+            dataIndex="WHT"
+            width={80}
+            align="center"
+            render={(total) => (
+              <NumberField
+                value={total}
+                options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+              />
+            )}
+          />
+          <Table.Column
+            title="Basic Salary"
+            dataIndex="basicSalary"
+            key="basicSalary"
+            align="center"
+            width={100}
+            render={(total) => (
+              <NumberField
+                value={total}
+                options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+              />
+            )}
+          />
+          <Table.Column
+            title="Medical Allowance"
+            dataIndex="medicalAllowance"
+            key="medicalAllowance"
+            align="center"
+            width={80}
+            render={(total) => (
+              <NumberField
+                value={total}
+                options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+              />
+            )}
+          />
+          <Table.Column
+            title="Gross Salary"
+            dataIndex="grossSalaryEarned"
+            key="grossSalaryEarned"
+            align="center"
+            width={100}
+            render={(total) => (
+              <NumberField
+                value={total}
+                options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+              />
+            )}
+          />
+          <Table.Column
+            title="Net salary"
+            dataIndex="netSalary"
+            key="netSalary"
+            align="center"
+            width={100}
+            render={(total) => (
+              <NumberField
+                value={total}
+                options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+              />
+            )}
+          />
+          <Table.Column
             title="Profile"
             key="actions"
             fixed="right"

@@ -2,8 +2,9 @@ import { Flex, Table, Card, Typography, Space } from "antd";
 import { DollarOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { API_URL, token } from "../../constants";
+import { API_URL} from "../../constants";
 import { NumberField } from "@refinedev/antd";
+import {axiosInstance } from '../../authProvider';
 
 interface MonthlylogProps {
   id: string;
@@ -19,11 +20,10 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${API_URL}/employees/${id}?populate=*`,
           {
             headers: {
-              Authorization: "Bearer " + token,
               "Content-Type": "application/json",
             },
           }
@@ -42,9 +42,8 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
         const paidLeaves = attributes.leavesRemaining;
         setPaidLeaves(paidLeaves);
 
-        const response = await axios.get(`${API_URL}/months-data`, {
+        const response = await axiosInstance.get(`${API_URL}/months-data`, {
           headers: {
-            Authorization: "Bearer " + token,
             "Content-Type": "application/json",
           },
         });

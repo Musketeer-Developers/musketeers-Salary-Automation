@@ -5,7 +5,7 @@ import { useNotification } from "@refinedev/core";
 import {API_URL} from '../../constants'; 
 import {axiosInstance} from '../../authProvider';
 
-interface MonthProps {
+interface CalculateProps {
     isVisible: boolean;
     handleClose: () => void;
 }
@@ -15,7 +15,7 @@ interface FormData {
     year: moment.Moment;
 }
 
-const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
+const Calculate: React.FC<CalculateProps> = ({ isVisible, handleClose }) => {
     const { open } = useNotification();
     const [form] = Form.useForm();
 
@@ -38,7 +38,7 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
         };
         console.log(MonthData);
         try {
-            const response = await axiosInstance.post(`${API_URL}/month-data/initializeMonthData`, JSON.stringify(MonthData),
+            const response = await axiosInstance.post(`${API_URL}/monthly-salary/calculate-salary`, JSON.stringify(MonthData),
                 {
                     headers: {
                         'Content-Type': "application/json"
@@ -53,7 +53,7 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
     }
     return (
         <Modal
-            title="Add Month"
+            title="Caluclate Salary"
             visible={isVisible}
             onCancel={handleClose}
             footer={[
@@ -80,18 +80,18 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
                                 (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                             }
                             options={[
-                                { value: 'january', label: 'January' },
-                                { value: 'february', label: 'February' },
-                                { value: 'march', label: 'March' },
-                                { value: 'april', label: 'April' },
-                                { value: 'may', label: 'May' },
-                                { value: 'june', label: 'June' },
-                                { value: 'july', label: 'July' },
-                                { value: 'august', label: 'August' },
-                                { value: 'september', label: 'September' },
-                                { value: 'october', label: 'October' },
-                                { value: 'november', label: 'November' },
-                                { value: 'december', label: 'December' },
+                                { value: 1, label: 'January' },
+                                { value: 2, label: 'February' },
+                                { value: 3, label: 'March' },
+                                { value: 4, label: 'April' },
+                                { value: 5, label: 'May' },
+                                { value: 6, label: 'June' },
+                                { value: 7, label: 'July' },
+                                { value: 8, label: 'August' },
+                                { value: 9, label: 'September' },
+                                { value: 10, label: 'October' },
+                                { value: 11, label: 'November' },
+                                { value: 12, label: 'December' },
                             ]}
                         />
                     </Form.Item>
@@ -111,4 +111,4 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
     );
 };
 
-export default Month;
+export default Calculate;

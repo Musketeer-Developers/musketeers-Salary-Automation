@@ -30,12 +30,13 @@ import { ShowTextAndIcon } from "../../components/forms/ShowForm";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { Button } from "antd"; // Assuming you're using antd for UI components
-import { token } from "../../constants";
+// import { token } from "../../constants";
 import { useParams } from "react-router-dom";
 import { EditEmployee } from "../../components/index";
 import ButtonsComponent from "../../components/add_buttons/Buttons";
 import HubstaffHours from "../../components/add_buttons/add_hubstaff";
 import { isDate } from "util/types";
+import { axiosInstance } from "../../authProvider";
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -77,11 +78,10 @@ export const EmployeeProfile = () => {
 
   const fetchEmployee = async () => {
     try {
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `${API_URL}/employees/${id}?populate=*`,
         {
           headers: {
-            Authorization: "Bearer " + token,
             "Content-Type": "application/json",
           },
         }
@@ -107,9 +107,8 @@ export const EmployeeProfile = () => {
     try {
       const attributes = await fetchEmployee();
       const monthlySalaries = attributes.monthly_salaries;
-      const resp = await axios.get(`${API_URL}/monthly-salaries?populate=*`, {
+      const resp = await axiosInstance.get(`${API_URL}/monthly-salaries?populate=*`, {
         headers: {
-          Authorization: "Bearer " + token,
           "Content-Type": "application/json",
         },
       });
@@ -117,9 +116,8 @@ export const EmployeeProfile = () => {
       const mID = msAttribtes[msAttribtes.length - 1].month_data.id;
       const monthlySalariesWithNames = await Promise.all(
         monthlySalaries.map(async (item: any) => {
-          const response2 = await axios.get(`${API_URL}/months-data/${mID}`, {
+          const response2 = await axiosInstance.get(`${API_URL}/months-data/${mID}`, {
             headers: {
-              Authorization: "Bearer " + token,
               "Content-Type": "application/json",
             },
           });
@@ -163,11 +161,10 @@ export const EmployeeProfile = () => {
       const attributes = await fetchEmployee();
       const monthlySalariesID =
         attributes.monthly_salaries[attributes.monthly_salaries.length - 1]?.id;
-      const resp = await axios.get(
+      const resp = await axiosInstance.get(
         `${API_URL}/monthly-salaries/${monthlySalariesID}?populate=*`,
         {
           headers: {
-            Authorization: "Bearer " + token,
             "Content-Type": "application/json",
           },
         }

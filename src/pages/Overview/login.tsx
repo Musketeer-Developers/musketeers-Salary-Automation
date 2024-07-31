@@ -16,12 +16,6 @@ export const Login = () => {
                     <Text strong style={{marginLeft:"12px", fontSize:"30px"}}>Automator</Text>
                 </Space>
             }
-            formProps={{
-                initialValues: {
-                    email: "demo@demo.com",
-                    password: "demodemo",
-                },
-            }}
         />
     )
 };

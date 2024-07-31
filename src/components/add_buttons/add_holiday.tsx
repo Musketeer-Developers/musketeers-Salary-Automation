@@ -1,8 +1,8 @@
 import React from 'react';
 import { Modal, Button, Form, Divider, Typography, DatePicker } from 'antd';
 import axios from 'axios';
-import {API_URL,token} from '../../constants';
-
+import {API_URL} from '../../constants';
+import {axiosInstance} from '../../authProvider';
 
 interface HolidayProps {
     isVisible: boolean;
@@ -35,9 +35,8 @@ const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
         }
         console.log(data);
         try{
-            const response = await axios.post(`${API_URL}/month-data/add-holiday`, JSON.stringify(data), {
+            const response = await axiosInstance.post(`${API_URL}/month-data/add-holiday`, JSON.stringify(data), {
                 headers: {
-                    'Authorization': "Bearer" + token,
                     "Content-Type": "application/json",
                 }
             });

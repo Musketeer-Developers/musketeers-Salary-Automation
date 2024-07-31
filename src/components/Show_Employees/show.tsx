@@ -13,6 +13,7 @@ import Month from "../add_buttons/add_month";
 import HubstaffFile from "../add_buttons/add_hubstaffFile";
 import { token } from "../../constants";
 import { EmployeeAttributes } from "../../types";
+import { axiosInstance } from "../../authProvider";
 
 export const ShowEmployees = ({ children }: PropsWithChildren) => {
   const [visibleModal, setVisibleModal] = useState("");
@@ -24,11 +25,10 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
 
   const fetchEmployee = async (id) => {
     try {
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `${API_URL}/employees/${id}?populate=*`,
         {
           headers: {
-            Authorization: "Bearer " + token,
             "Content-Type": "application/json",
           },
         }
@@ -44,11 +44,10 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
       const attributes = await fetchEmployee(id);
       const monthlySalariesID =
         attributes.monthly_salaries[attributes.monthly_salaries.length - 1]?.id;
-      const resp = await axios.get(
+      const resp = await axiosInstance.get(
         `${API_URL}/monthly-salaries/${monthlySalariesID}?populate=*`,
         {
           headers: {
-            Authorization: "Bearer " + token,
             "Content-Type": "application/json",
           },
         }
@@ -101,9 +100,8 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${API_URL}/employees?populate=*`, {
+      const response = await axiosInstance.get(`${API_URL}/employees?populate=*`, {
         headers: {
-          Authorization: "Bearer " + token,
           "Content-Type": "application/json",
         },
       });

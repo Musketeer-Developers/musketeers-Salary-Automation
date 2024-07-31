@@ -32,7 +32,7 @@ function App() {
             <DevtoolsProvider>
               <Refine
                 authProvider={authProvider}
-                dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
+                // dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerBindings}
                 options={{
@@ -68,7 +68,7 @@ function App() {
                     }
                   >
                     <Route path='/' element={
-                      <ThemedLayoutV2 Sider={() => null}>
+                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
                         <div
                           style={{
                             maxWidth: "1280px",
@@ -83,7 +83,7 @@ function App() {
                       </ThemedLayoutV2>
                     } />
                     <Route path='/allemployees' element={
-                      <ThemedLayoutV2 Sider={() => null}>
+                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
                         <div
                           style={{
                             maxWidth: "1280px",
@@ -98,7 +98,7 @@ function App() {
                       </ThemedLayoutV2>
                     } />
                     <Route path="/profile/:id" element={
-                      <ThemedLayoutV2 Sider={() => null}>
+                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
                         <div
                           style={{
                             maxWidth: "1280px",
@@ -111,7 +111,7 @@ function App() {
                       </ThemedLayoutV2>
                     } />
                     <Route path='/daily/:id/:monthID/:activeParam' element={
-                      <ThemedLayoutV2 Sider={() => null}>
+                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
                         <div
                           style={{
                             maxWidth: "1280px",

@@ -4,9 +4,10 @@ import { Col, Row, Space, Table, Card, Typography, Button } from "antd";
 import { ClockCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { API_URL, token } from "../../constants";
+import { API_URL} from "../../constants";
 import { Account } from "../../types";
 import { Monthlylog } from "../../components/index";
+import { axiosInstance } from "../../authProvider";
 
 export const Dailylog = ({ children }: PropsWithChildren) => {
   const { id, monthID, activeParam } = useParams<{
@@ -31,11 +32,10 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${API_URL}/employees/${id}?populate=*`,
           {
             headers: {
-              Authorization: "Bearer " + token,
               "Content-Type": "application/json",
             },
           }
@@ -69,11 +69,10 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
           );
 
           if (selectedMonth) {
-            const response = await axios.get(
+            const response = await axiosInstance.get(
               `${API_URL}/daily-works?filters[salaryMonth][id][$eq]=${selectedMonth.id}&populate=*`,
               {
                 headers: {
-                  Authorization: "Bearer " + token,
                   "Content-Type": "application/json",
                 },
               }

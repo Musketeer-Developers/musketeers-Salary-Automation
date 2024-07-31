@@ -4,7 +4,8 @@ import { useNotification } from "@refinedev/core";
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from 'react';
-import {API_URL,token} from '../../constants';
+import {API_URL} from '../../constants';
+import {axiosInstance} from '../../authProvider';
 
 interface ManualHoursProps {
     isVisible: boolean;
@@ -47,10 +48,9 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
             };
             async function update() {
                 try {
-                    const response = await axios.put(`${API_URL}/daily-works/${dailyWorkID}`, JSON.stringify(Data2),
+                    const response = await axiosInstance.put(`${API_URL}/daily-works/${dailyWorkID}`, JSON.stringify(Data2),
                         {
                             headers: {
-                                Authorization: "Bearer " + token,
                                 "Content-Type": "application/json",
                             }
                         });
@@ -65,10 +65,9 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
 
     async function Employee() {
         try {
-            const response = await axios.get(`${API_URL}/employees/${id}?populate=*`,
+            const response = await axiosInstance.get(`${API_URL}/employees/${id}?populate=*`,
                 {
                     headers: {
-                        Authorization: "Bearer " + token,
                         "Content-Type": "application/json",
                     }
                 });
@@ -86,10 +85,9 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
         const MonthlySalaries = attributes.data.monthly_salaries;
         MonthlySalaries.map(async (item: any) => {
             try {
-                const response = await axios.get(`${API_URL}/monthly-salaries/${item.id}?populate=*`,
+                const response = await axiosInstance.get(`${API_URL}/monthly-salaries/${item.id}?populate=*`,
                     {
                         headers: {
-                            Authorization: "Bearer " + token,
                             "Content-Type": "application/json",
                         }
                     });

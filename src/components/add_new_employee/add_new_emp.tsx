@@ -1,14 +1,14 @@
 import { useState, ChangeEvent, useEffect } from "react";
-import {  Divider, Flex, Input, Select, Form, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
+import { Divider, Flex, Input, Select, Form, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
-import axios from "axios";
 import moment from 'moment';
 import { useModal } from '../../contexts/context-modal';
 import { useNotification } from "@refinedev/core";
-import { API_URL,token } from "../../constants";
+import { API_URL} from "../../constants";
+import { axiosInstance } from "../../authProvider";
 
 export const AddnewEmployee = () => {
-    const {open,close} = useNotification();
+    const { open, close } = useNotification();
     const { isModalOpen, hideModal } = useModal();
     const [form] = Form.useForm();
     const { Option } = Select;
@@ -20,6 +20,8 @@ export const AddnewEmployee = () => {
     const { Title } = Typography;
     let isImage: boolean = false;
     const MuskImageID: number = 1;
+    const month = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+    const date = new Date();
 
     interface FormData {
         EmpNo: string;
@@ -108,19 +110,16 @@ export const AddnewEmployee = () => {
             }
         };
         console.log(EmployeeData);
-        console.log("hh");
         try {
-            const response = await axios.post(`${API_URL}/employees`, JSON.stringify(EmployeeData),
+            const response = await axiosInstance.post(`${API_URL}/employees`, JSON.stringify(EmployeeData),
                 {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
                         'Content-Type': "application/json"
                     }
                 });
             console.log('Response Employee:', response.data);
-            open?.( {type:'success',message: 'Success!',description: 'Employee details successfully added!'});
+            open?.({ type: 'success', message: 'Success!', description: 'Employee details successfully added!' });
             console.log(response.data.data.id);
-            console.log("hh");
             const formattedData = {
                 data: {
                     emp_no: response.data.data.id,
@@ -131,23 +130,38 @@ export const AddnewEmployee = () => {
             };
             console.log(formattedData);
             try {
-                const response = await axios.post(`${API_URL}/bank-details`, JSON.stringify(formattedData),
+                const response = await axiosInstance.post(`${API_URL}/bank-details`, JSON.stringify(formattedData),
                     {
                         headers: {
-                            'Authorization': `Bearer ${token}`,
                             'Content-Type': "application/json"
                         }
                     });
                 console.log('Response bank:', response.data);
-                console.log("hh");
-                open?.( {type:'success',message: 'Success!',description: 'Employee bank details successfully added!'});
-            } catch (error:any) {
+                const MonthData = {
+                    month: month[date.getMonth()],
+                    year: date.getFullYear().toString(),
+                }
+                open?.({ type: 'success', message: 'Success!', description: 'Employee bank details successfully added!' });
+                try {
+                    const response = await axiosInstance.post(`${API_URL}/month-data/initializeMonthData`, JSON.stringify(MonthData),
+                        {
+                            headers: {
+                                'Content-Type': "application/json"
+                            }
+                        });
+                    console.log('Response:', response);
+                    open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
+                } catch (error: any) {
+                    console.error('Error posting data:', error);
+                    open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
+                }
+            } catch (error: any) {
                 console.error('Error posting data:', error);
-                open?.( {type:'error',message: `Error!`,description: `${error?.response?.data?.error?.message}`});
+                open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
             }
-        } catch (error:any) {
+        } catch (error: any) {
             console.error('Error posting data:', error);
-            open?.( {type:'error',message: `Error!`,description: `${(error?.response?.data?.error?.message)}`});
+            open?.({ type: 'error', message: `Error!`, description: `${(error?.response?.data?.error?.message)}` });
         }
     }
 
@@ -184,9 +198,8 @@ export const AddnewEmployee = () => {
         const formData = new FormData();
         formData.append('files', file);
         try {
-            const response = await axios.post(`${API_URL}/upload`, formData, {
+            const response = await axiosInstance.post(`${API_URL}/upload`, formData, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,
                     'Content-Type': "multipart/form-data"
                 }
             });
@@ -302,14 +315,14 @@ export const AddnewEmployee = () => {
                                     { value: 'Project Manager', label: 'Project Manager' },
                                     { value: 'HR Manager', label: 'HR Manager' },
                                     { value: 'React Native Developer', label: 'React Native Developer' },
-                                    { value: 'Machine Learning Engineer', label: 'Machine Learning Engineer'},
-                                    { value: 'DevOps Engineer', label: 'DevOps Engineer'},
-                                    { value: 'SEO Specialist', label: 'SEO Specialist'},
-                                    { value: 'AI Engineer', label: 'AI Engineer'},
-                                    { value: 'Visual Designer', label: 'Visual Designer'},
-                                    { value: 'Upwork Bidder', label: 'Upwork Bidder'},
-                                    { value: 'Lead Generation Specialists', label: 'Lead Generation Specialists'},
-                                    { value: 'Office Boy', label: 'Office Boy'},
+                                    { value: 'Machine Learning Engineer', label: 'Machine Learning Engineer' },
+                                    { value: 'DevOps Engineer', label: 'DevOps Engineer' },
+                                    { value: 'SEO Specialist', label: 'SEO Specialist' },
+                                    { value: 'AI Engineer', label: 'AI Engineer' },
+                                    { value: 'Visual Designer', label: 'Visual Designer' },
+                                    { value: 'Upwork Bidder', label: 'Upwork Bidder' },
+                                    { value: 'Lead Generation Specialists', label: 'Lead Generation Specialists' },
+                                    { value: 'Office Boy', label: 'Office Boy' },
                                 ]}
                             />
                         </Form.Item>
