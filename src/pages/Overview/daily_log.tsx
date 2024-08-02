@@ -3,7 +3,7 @@ import { List, NumberField } from "@refinedev/antd";
 import { Col, Row, Space, Table, Card, Typography, Button, Flex } from "antd";
 import { ClockCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import { API_URL} from "../../constants";
+import { API_URL } from "../../constants";
 import { Account } from "../../types";
 import { Monthlylog } from "../../components/index";
 import { axiosInstance } from "../../authProvider";
@@ -78,7 +78,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
             );
 
             const dailyRecords = response.data.data;
-            dailyWorkData = dailyRecords.map((dailyDataAttributes : any) => {
+            dailyWorkData = dailyRecords.map((dailyDataAttributes: any) => {
               const manualHours = dailyDataAttributes.manualHours;
               const hubstaffHours = dailyDataAttributes.hubstaffHours;
               const date = dailyDataAttributes.workDate;
@@ -87,7 +87,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                 dailyDataAttributes.hubstaffHours +
                 dailyDataAttributes.manualHours;
               const earnedAmount = totalHours * hourRate;
-              
+
               return {
                 manualHours,
                 hubstaffHours,
@@ -132,7 +132,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
             <Flex gap={16} justify="space-between">
               <Flex gap={16} align="center">
                 <img
-                  src={ person?.imageUrl || "https://via.placeholder.com/150"} // Updated to use dynamic image URL
+                  src={person?.imageUrl || "https://via.placeholder.com/150"}
                   style={{
                     borderRadius: "30px",
                     maxWidth: "200px",
@@ -140,7 +140,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                   }}
                   alt="Employee"
                 />
-                <h1>{ person?.Name || "Name of Employee"}</h1>
+                <h1>{person?.Name || "Name of Employee"}</h1>
               </Flex>
             </Flex>
           </Col>
@@ -167,36 +167,41 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                   </Space>
                 }
               >
-                <Table dataSource={dailyData || []} rowKey="id">
+                <Table
+                  dataSource={
+                    dailyData?.map((item) => ({ ...item, key: item.id })) || []
+                  }
+                  rowKey="id"
+                >
                   <Table.Column
                     title="Date"
                     dataIndex="date"
-                    key="date"
+                    key="daily_date"
                     width={80}
                     sorter={(a, b) => new Date(a.date) - new Date(b.date)}
                   />
                   <Table.Column
                     title="Total Hours"
                     dataIndex="totalHours"
-                    key="totalHours"
+                    key="daily_totalHours"
                     width={80}
                   />
                   <Table.Column
                     title="Hubstaff Hours"
                     dataIndex="hubstaffHours"
-                    key="hubstaffHours"
+                    key="daily_hubstaffHours"
                     width={80}
                   />
                   <Table.Column
                     title="Manual Hours"
                     dataIndex="manualHours"
-                    key="manualHours"
+                    key="daily_manualHours"
                     width={80}
                   />
                   <Table.Column
                     title="Hour Rate"
                     dataIndex="hourRate"
-                    key="hourRate"
+                    key="daily_hourRate"
                     width={80}
                     render={(total) => (
                       <NumberField
@@ -208,7 +213,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                   <Table.Column
                     title="Earned Amount"
                     dataIndex="earnedAmount"
-                    key="earnedAmount"
+                    key="daily_earnedAmount"
                     width={80}
                     render={(total) => (
                       <NumberField

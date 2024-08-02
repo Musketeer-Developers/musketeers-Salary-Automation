@@ -2,9 +2,9 @@ import { Flex, Table, Card, Typography, Space } from "antd";
 import { DollarOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { API_URL} from "../../constants";
+import { API_URL } from "../../constants";
 import { NumberField } from "@refinedev/antd";
-import {axiosInstance } from '../../authProvider';
+import { axiosInstance } from "../../authProvider";
 
 interface MonthlylogProps {
   id: string;
@@ -65,9 +65,9 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
             (item: any) => item.id == monthID
           );
           const netSalary =
-            parseInt(selectedMonth?.basicSalary || 0) +
+            parseInt(selectedMonth?.grossSalaryEarned || 0) +
             parseInt(selectedMonth?.medicalAllowance || 0) -
-            parseInt(selectedMonth?.WHT || 0);
+            parseInt(selectedMonth?.WTH || 0);
           setNetSalary(netSalary);
 
           const updatedSelectedMonth = {
@@ -109,37 +109,47 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
             </Flex>
           }
         >
-          <Table dataSource={monthlyData} rowKey="id" pagination={false}>
+          <Table
+            dataSource={
+              monthlyData?.map((item) => ({ ...item, key: item.id })) || []
+            }
+            rowKey="id"
+            pagination={false}
+          >
             <Table.Column
               title="Remaining paid leaves till now"
               dataIndex="paidLeaves"
+              key="monthly_paidLeaves"
               width={80}
-              key="paidLeaves"
               align="center"
             />
             <Table.Column
               title="No of absence"
               dataIndex="absentCount"
-              key="absentCount"
+              key="monthly_absentCount"
               width={80}
               align="center"
             />
             <Table.Column
               title="Late count"
               dataIndex="lateCount"
-              key="lateCount"
+              key="monthly_lateCount"
               width={80}
               align="center"
             />
             <Table.Column
               title="Salary paid"
               dataIndex="paidSalary"
-              key="paidSalary"
+              key="monthly_paidSalary"
               width={80}
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+                  options={{
+                    style: "currency",
+                    currency: "pkr",
+                    maximumFractionDigits: 0,
+                  }}
                 />
               )}
               align="center"
@@ -147,7 +157,7 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
             <Table.Column
               title="Public holidays"
               dataIndex="holidaysCount"
-              key="holidaysCount"
+              key="monthly_holidaysCount"
               width={80}
               align="center"
             />
@@ -169,68 +179,95 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
             </Flex>
           }
         >
-          <Table dataSource={monthlyData} rowKey="id" pagination={false}>
+          <Table
+            dataSource={
+              monthlyData?.map((item) => ({ ...item, key: item.id })) || []
+            }
+            rowKey="id"
+            pagination={false}
+          >
             <Table.Column
               title="Withholding tax"
               dataIndex="WTH"
+              key="monthly_WTH"
               width={80}
               align="center"
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+                  options={{
+                    style: "currency",
+                    currency: "pkr",
+                    maximumFractionDigits: 0,
+                  }}
                 />
               )}
             />
             <Table.Column
               title="Basic Salary"
               dataIndex="basicSalary"
-              key="basicSalary"
+              key="monthly_basicSalary"
               align="center"
               width={80}
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+                  options={{
+                    style: "currency",
+                    currency: "pkr",
+                    maximumFractionDigits: 0,
+                  }}
                 />
               )}
             />
             <Table.Column
               title="Medical Allowance"
               dataIndex="medicalAllowance"
-              key="medicalAllowance"
+              key="monthly_medicalAllowance"
               align="center"
               width={80}
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+                  options={{
+                    style: "currency",
+                    currency: "pkr",
+                    maximumFractionDigits: 0,
+                  }}
                 />
               )}
             />
             <Table.Column
               title="Gross Salary"
               dataIndex="grossSalaryEarned"
-              key="grossSalaryEarned"
+              key="monthly_grossSalaryEarned"
               align="center"
               width={80}
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+                  options={{
+                    style: "currency",
+                    currency: "pkr",
+                    maximumFractionDigits: 0,
+                  }}
                 />
               )}
             />
             <Table.Column
               title="Net salary"
               dataIndex="netSalary"
-              key="netSalary"
+              key="monthly_netSalary"
               align="center"
               width={80}
               render={(total) => (
                 <NumberField
                   value={total}
-                  options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+                  options={{
+                    style: "currency",
+                    currency: "pkr",
+                    maximumFractionDigits: 0,
+                  }}
                 />
               )}
             />

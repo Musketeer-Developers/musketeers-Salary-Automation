@@ -33,27 +33,30 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
   const fetchData = async () => {
     try {
       const empAttributes = await fetchEmployee();
-      console.log("empAttributes:", empAttributes);
+      // console.log("empAttributes:", empAttributes);
 
       const empInfo = await Promise.all(
         empAttributes.map(async (item: any) => {
           const imageURL = API_URL.slice(0,-4) + item.image?.url;
           console.log("name: ", item.Name);
-          console.log("length: ", item.monthly_salaries.length);
-          const lastmonth = item.monthly_salaries[length+1];
-          console.log("lastmonth: ", item.monthly_salaries[length+1]);
+          console.log("item:", item);
+          const lastmonthTotal = item.monthly_salaries;
+          const len = lastmonthTotal.length;
+          const lastmonth = lastmonthTotal[len-2]; // second last month data   (last month in array would be current month)
           const WHT = lastmonth.WTH || 0;
-          console.log("WHT:", WHT);
+          // console.log("WHT:", WHT);
           const basicSalary = lastmonth.basicSalary || 0;
-          console.log("basicSalary:", basicSalary);
+          // console.log("basicSalary:", basicSalary);
           const grossSalaryEarned = lastmonth?.grossSalaryEarned || 0;
-          console.log("grossSalaryEarned:", grossSalaryEarned);
+          // console.log("grossSalaryEarned:", grossSalaryEarned);
           const medicalAllowance = lastmonth?.medicalAllowance || 0;
-          console.log("medicalAllowance:", medicalAllowance);
+          // console.log("medicalAllowance:", medicalAllowance);
           const netSalary = parseInt(basicSalary) + parseInt(medicalAllowance) - WHT;
           console.log("netSalary:", netSalary);
+          // console.log("Month:", lastmonth.id);
           return {
             ...item,
+            Monthid : lastmonth.id,
             imageUrl: imageURL,
             WHT: WHT,
             basicSalary: basicSalary,
@@ -63,7 +66,7 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
           }
         })
       )
-      console.log("empInfo : ",empInfo);
+      // console.log("empInfo : ",empInfo);
       setData(empInfo);
     } catch (error) {
       console.log("Error while fetching data", error);
@@ -127,12 +130,12 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
         }}
       >
         <Table dataSource={data} rowKey="id">
-          {/* <Table.Column title="ID" dataIndex="id" key="id" width={80} sorter /> */}
+          <Table.Column title="M. ID" dataIndex="Monthid" key="monthid" width={60} />
           <Table.Column
             title="ID"
             dataIndex="empNo"
             key="empNo"
-            width={90}
+            width={100}
             align="center"
           />
           <Table.Column

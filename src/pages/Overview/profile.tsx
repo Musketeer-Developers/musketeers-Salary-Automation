@@ -8,6 +8,7 @@ import {
   KeyOutlined,
   DollarOutlined,
   CalendarOutlined,
+  ArrowLeftOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -20,16 +21,21 @@ import {
 } from "@refinedev/antd";
 import { API_URL } from "../../constants";
 import { useEffect, useState } from "react";
-import { Col, Row } from "antd";
 import { Account, EmployeeAttributes } from "../../types";
-import { Flex, Form, Card, Divider, Typography, Table } from "antd";
-import { PostShow } from "../../components/index";
+import {
+  Flex,
+  Form,
+  Card,
+  Divider,
+  Typography,
+  Table,
+  Button,
+  Col,
+  Row,
+} from "antd";
 import { ShowTextAndIcon } from "../../components/forms/ShowForm";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import { Button } from "antd"; // Assuming you're using antd for UI components
-import { useParams } from "react-router-dom";
-import { EditEmployee } from "../../components/index";
+import { useNavigate, useParams } from "react-router-dom";
+import { EditEmployee, PostShow } from "../../components/index";
 import ButtonsComponent from "../../components/add_buttons/Buttons";
 import { axiosInstance } from "../../authProvider";
 
@@ -64,6 +70,8 @@ export const EmployeeProfile = () => {
       monthID: number;
     }[]
   >([]);
+  // Add a state variable to manage loading status
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
   const goToDailyLogs = (monthID: number, activeParam: string) => {
@@ -120,7 +128,7 @@ export const EmployeeProfile = () => {
           }
         );
         const msAttribtes = resp.data.data;
-        // console.log("msAttribtes: ", msAttribtes);
+        console.log("msAttribtes: ", msAttribtes);
         const mID = msAttribtes.month_data.id;
         const monthlySalariesWithNames1 = await Promise.all(
           monthlySalaries.map(async (item: any) => {
@@ -133,7 +141,6 @@ export const EmployeeProfile = () => {
               }
             );
             // console.log("response2 : ", response2.data.data);
-
             const monthName =
               response2.data.data.month.charAt(0).toUpperCase() +
               response2.data.data.month.slice(1);
@@ -170,7 +177,7 @@ export const EmployeeProfile = () => {
           return itemMonth !== currentMonth || itemYear !== currentYear;
         }
       );
-      // console.log("monthlySalariesWithNamesFiltered", monthlySalariesWithNamesFiltered);
+      console.log("monthlySalariesWithNamesFiltered", monthlySalariesWithNamesFiltered);
 
       setMonthSalary(monthlySalariesWithNamesFiltered || []);
       // setMonthSalary(monthlySalariesWithNames || []);
@@ -328,18 +335,23 @@ export const EmployeeProfile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       await fetchLastDayWork();
       await fetchMonth();
       await fetchPerson();
-
       await fetchAllMonthlyReport(); // This will ensure monthlyReport is updated after all data is fetched
+      setLoading(false);
     };
 
     fetchData();
   }, [id]);
 
   if (!person) {
-    return <ErrorComponent />; // Added error page
+    return (
+      <Card title={<BackButton />} loading={loading}>
+        <ErrorComponent />
+      </Card>
+    );
   }
 
   return (
@@ -362,6 +374,7 @@ export const EmployeeProfile = () => {
           boxShadow: "none",
         },
       }}
+      isLoading={loading}
     >
       <Form layout="vertical">
         <Row>
@@ -415,7 +428,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.empNo || "MUSK-YY-NNNN"}
                 icon={<KeyOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
               <Divider style={{ margin: 0 }} />
               <ShowTextAndIcon
@@ -426,7 +439,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.email || "rehan@gmail.com"}
                 icon={<MailOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
               <Divider style={{ margin: 0 }} />
               <ShowTextAndIcon
@@ -437,7 +450,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.phoneNo || "+92 3xx xxx xxxx"}
                 icon={<PhoneOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
               <Divider style={{ margin: 0 }} />
               <ShowTextAndIcon
@@ -448,7 +461,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.Designation || "Software Engineer"}
                 icon={<DollarOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
 
               <Divider style={{ margin: 0 }} />
@@ -460,7 +473,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.employementStatus || "Employement Status"}
                 icon={<DollarOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
               <Divider style={{ margin: 0 }} />
               <ShowTextAndIcon
@@ -471,7 +484,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.hubstaffEnabled ? "Enabled" : "Disabled"}
                 icon={<ClockCircleOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
               <Divider style={{ margin: 0 }} />
               <ShowTextAndIcon
@@ -482,7 +495,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.grossSalary?.toString() || "99,999"}
                 icon={<DollarOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
               <Divider style={{ margin: 0 }} />
               <ShowTextAndIcon
@@ -493,7 +506,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.joinDate || "DD MM YYYY"}
                 icon={<CalendarOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
               <Divider style={{ margin: 0 }} />
               <ShowTextAndIcon
@@ -504,7 +517,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.permanentDate || "Not yet"}
                 icon={<CalendarOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
               <Divider style={{ margin: 0 }} />
               <ShowTextAndIcon
@@ -515,7 +528,7 @@ export const EmployeeProfile = () => {
                 placeholder={person.lastWorkingDay || "Currently Employed"}
                 icon={<CalendarOutlined />}
                 variant="text"
-                loading={false}
+                loading={loading}
               />
             </Card>
             {/*See Bank Details*/}
@@ -552,7 +565,10 @@ export const EmployeeProfile = () => {
               }}
             >
               <Table
-                dataSource={dailyData || []}
+                dataSource={
+                  dailyData?.map((item, index) => ({ ...item, key: index })) ||
+                  []
+                }
                 rowKey={"id"}
                 pagination={false}
               >
@@ -588,6 +604,16 @@ export const EmployeeProfile = () => {
                   dataIndex="hourRate"
                   key="hourRate"
                   align="center"
+                  render={(hourRate) => (
+                    <NumberField
+                      value={hourRate}
+                      options={{
+                        style: "currency",
+                        currency: "pkr",
+                        maximumFractionDigits: 1,
+                      }}
+                    />
+                  )}
                 />
                 <Table.Column
                   title="Earned Amount"
@@ -627,7 +653,12 @@ export const EmployeeProfile = () => {
               }}
             >
               <Table
-                dataSource={monthlyReport || []}
+                dataSource={
+                  monthlyReport.map((item, index) => ({
+                    ...item,
+                    key: index,
+                  })) || []
+                }
                 rowKey={"monthID"}
                 pagination={false}
               >
@@ -731,7 +762,12 @@ export const EmployeeProfile = () => {
                 },
               }}
             >
-              <Table dataSource={monthSalary}>
+              <Table
+                dataSource={
+                  monthSalary.map((item, index) => ({ ...item, key: index })) ||
+                  []
+                }
+              >
                 {/* <Table.Column
                   title="ID"
                   dataIndex="id"
@@ -758,8 +794,8 @@ export const EmployeeProfile = () => {
                 />
                 <Table.Column
                   title="Net Salary"
-                  dataIndex="grossSalaryEarned"
-                  key="grossSalaryEarned"
+                  dataIndex="netSalary"
+                  key="netSalary"
                   align="center"
                   render={(total) => (
                     <NumberField
