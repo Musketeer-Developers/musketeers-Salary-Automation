@@ -49,8 +49,9 @@ const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
 
     return (
         <Modal
+            forceRender
             title="Add Holiday"
-            visible={isVisible}
+            open={isVisible}
             onCancel={handleClose}
             footer={[
                 <Button key="back" onClick={handleClose}>
@@ -61,7 +62,7 @@ const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
                 </Button>
             ]}
         >
-            <Form form={form} layout="vertical" initialValues={{}}>
+            <Form form={form} layout="vertical">
                 <Divider></Divider>
                 <Form.Item label="Date">
                     <Form.Item

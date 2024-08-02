@@ -89,8 +89,9 @@ const HubstaffFile: React.FC<HubstaffFileProps> = ({ isVisible, handleClose }) =
 
     return (
         <Modal
+            forceRender
             title="Upload Hubstaff CSV File"
-            visible={isVisible}
+            open={isVisible}
             onCancel={handleClose}
             footer={[
                 <Button key="back" onClick={handleClose}>

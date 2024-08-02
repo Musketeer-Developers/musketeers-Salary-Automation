@@ -3,8 +3,9 @@ import { AuthPage } from "@refinedev/antd";
 import {Space,Typography} from 'antd';
 import logo from '../../logo.png';
 
+const { Text } = Typography;
+
 export const Login = () => {
-    const { Text } = Typography;
     return (
         <AuthPage
             type="login"

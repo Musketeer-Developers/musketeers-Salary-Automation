@@ -53,8 +53,9 @@ const Calculate: React.FC<CalculateProps> = ({ isVisible, handleClose }) => {
     }
     return (
         <Modal
+            forceRender
             title="Caluclate Salary"
-            visible={isVisible}
+            open={isVisible}
             onCancel={handleClose}
             footer={[
                 <Button key="back" onClick={handleClose}>
@@ -65,7 +66,7 @@ const Calculate: React.FC<CalculateProps> = ({ isVisible, handleClose }) => {
                 </Button>
             ]}
         >
-            <Form form={form} layout="vertical" initialValues={{}}>
+            <Form form={form} layout="vertical">
                 <Divider></Divider>
                 <Form.Item label="Month">
                     <Form.Item

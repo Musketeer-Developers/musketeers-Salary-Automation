@@ -53,8 +53,9 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
     }
     return (
         <Modal
+            forceRender
             title="Add Month"
-            visible={isVisible}
+            open={isVisible}
             onCancel={handleClose}
             footer={[
                 <Button key="back" onClick={handleClose}>
@@ -65,7 +66,7 @@ const Month: React.FC<MonthProps> = ({ isVisible, handleClose }) => {
                 </Button>
             ]}
         >
-            <Form form={form} layout="vertical" initialValues={{}}>
+            <Form form={form} layout="vertical">
                 <Divider></Divider>
                 <Form.Item label="Month">
                     <Form.Item

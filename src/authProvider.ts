@@ -17,9 +17,7 @@ axiosInstance.interceptors.request.use((config) => {
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
     try {
-      console.log(email, password);
       const { data, status } = await strapiAuthHelper.login(email, password);
-      console.log(data);
       if (status === 200) {
         localStorage.setItem(token, data.jwt);
         return {
