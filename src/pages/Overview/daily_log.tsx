@@ -1,9 +1,8 @@
 import { PropsWithChildren, useState, useEffect } from "react";
 import { List, NumberField } from "@refinedev/antd";
-import { Col, Row, Space, Table, Card, Typography, Button } from "antd";
+import { Col, Row, Space, Table, Card, Typography, Button, Flex } from "antd";
 import { ClockCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { API_URL} from "../../constants";
 import { Account } from "../../types";
 import { Monthlylog } from "../../components/index";
@@ -49,7 +48,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
     const fetchPerson = async () => {
       try {
         const attributes = await fetchEmployee();
-        const imageUrl = "http://localhost:1337" + attributes.image?.url;
+        const imageUrl = API_URL.slice(0, -4) + attributes.image?.url;
         setPerson({ ...attributes, imageUrl });
       } catch (error) {
         console.log("Error while fetching person", error);
@@ -100,7 +99,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
             });
           }
         }
-        console.log("dailyWorkData", dailyWorkData);
+        // console.log("dailyWorkData", dailyWorkData);
         setdailyData(dailyWorkData || []);
       } catch (error) {
         console.log("Error while fetching daily", error);
@@ -128,6 +127,30 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
           },
         }}
       >
+        <Row>
+          <Col span={24}>
+            <Flex gap={16} justify="space-between">
+              <Flex gap={16} align="center">
+                <img
+                  src={ person?.imageUrl || "https://via.placeholder.com/150"} // Updated to use dynamic image URL
+                  style={{
+                    borderRadius: "30px",
+                    maxWidth: "200px",
+                    height: "150px",
+                  }}
+                  alt="Employee"
+                />
+                <h1>{ person?.Name || "Name of Employee"}</h1>
+              </Flex>
+            </Flex>
+          </Col>
+        </Row>
+        <Row
+          gutter={32}
+          style={{
+            marginTop: "32px",
+          }}
+        ></Row>
         <Row>
           <Col span={24}>
             <Space

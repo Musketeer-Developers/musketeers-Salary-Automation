@@ -1,6 +1,6 @@
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
 import { useGetIdentity } from "@refinedev/core";
-import { Layout as AntdLayout, Avatar, Space, Switch, Typography, Button, Input, Flex, theme } from "antd";
+import { Layout as AntdLayout, Space, Typography, Button, Input, Flex, theme } from "antd";
 import React, { useContext } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
 import logo from '../../logo.png';
@@ -67,7 +67,14 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
           <img src={logo} alt="Logo" onClick={goToHomePage} style={{ cursor: 'pointer', height: '40px' }} />
           <Text strong className="title" onClick={goToHomePage} style={{ cursor: 'pointer' }}>Automator</Text>
           <Space style={{ marginTop: "20px" ,marginLeft:"20px"}} >
-            <Tabs size="large" defaultActiveKey="1" items={items} onChange={onChange} style={{}}/>
+            <Tabs
+              size="large"
+              defaultActiveKey="1"
+              items={items}
+              onChange={onChange}
+              onTabClick={(key) => onChange(key)} // Handle tab click
+              style={{}}
+            />
           </Space>
         </Space>
         <Flex gap="50px" justify="flex-end">

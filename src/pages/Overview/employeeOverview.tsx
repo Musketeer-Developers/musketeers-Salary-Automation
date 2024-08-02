@@ -2,11 +2,9 @@ import type { PropsWithChildren } from "react";
 import { CreateButton, List, NumberField } from "@refinedev/antd";
 import { useState, useEffect } from "react";
 import { Flex, Table } from "antd";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Account } from "../../types";
 import { API_URL } from "../../constants";
-// import {token} from "../../constants";
 import { EditButton, ExportButton } from "@refinedev/antd";
 import { EyeOutlined } from "@ant-design/icons";
 import { axiosInstance } from "../../authProvider";
@@ -39,13 +37,21 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
 
       const empInfo = await Promise.all(
         empAttributes.map(async (item: any) => {
-          const imageURL = "http://localhost:1337" + item.image?.url;
-          const WHT = item.monthly_salaries[length - 1]?.WTH || 0;
-          const basicSalary = item.monthly_salaries[length - 1]?.basicSalary || 0;
-          const grossSalaryEarned = item.monthly_salaries[length - 1]?.grossSalaryEarned || 0;
-          const medicalAllowance = item.monthly_salaries[length - 1]?.medicalAllowance || 0;
-          const netSalary = parseInt(basicSalary) + parseInt(medicalAllowance) - WHT;
+          const imageURL = API_URL.slice(0,-4) + item.image?.url;
+          console.log("name: ", item.Name);
+          console.log("length: ", item.monthly_salaries.length);
+          const lastmonth = item.monthly_salaries[length+1];
+          console.log("lastmonth: ", item.monthly_salaries[length+1]);
+          const WHT = lastmonth.WTH || 0;
           console.log("WHT:", WHT);
+          const basicSalary = lastmonth.basicSalary || 0;
+          console.log("basicSalary:", basicSalary);
+          const grossSalaryEarned = lastmonth?.grossSalaryEarned || 0;
+          console.log("grossSalaryEarned:", grossSalaryEarned);
+          const medicalAllowance = lastmonth?.medicalAllowance || 0;
+          console.log("medicalAllowance:", medicalAllowance);
+          const netSalary = parseInt(basicSalary) + parseInt(medicalAllowance) - WHT;
+          console.log("netSalary:", netSalary);
           return {
             ...item,
             imageUrl: imageURL,
@@ -57,7 +63,7 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
           }
         })
       )
-
+      console.log("empInfo : ",empInfo);
       setData(empInfo);
     } catch (error) {
       console.log("Error while fetching data", error);

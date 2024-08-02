@@ -1,9 +1,8 @@
 import type { PropsWithChildren } from "react";
-import { CreateButton, EditButton, List } from "@refinedev/antd";
+import { CreateButton, EditButton, List,NumberField } from "@refinedev/antd";
 import { useState, useEffect } from "react";
 import { EyeOutlined } from "@ant-design/icons";
 import { Flex, Table } from "antd";
-import axios from "axios";
 import { useModal } from "../../contexts/context-modal";
 import { useNavigate } from "react-router-dom";
 import { Account } from "../../types";
@@ -11,8 +10,6 @@ import { API_URL } from "../../constants";
 import Holiday from "../add_buttons/add_holiday";
 import Month from "../add_buttons/add_month";
 import HubstaffFile from "../add_buttons/add_hubstaffFile";
-import { token } from "../../constants";
-import { EmployeeAttributes } from "../../types";
 import { axiosInstance } from "../../authProvider";
 
 export const ShowEmployees = ({ children }: PropsWithChildren) => {
@@ -181,7 +178,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             render={(text: string, record: Account) => (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <img
-                  src={`http://localhost:1337${record.imageUrl}`}
+                  src={`${API_URL.slice(0,-4)}${record.imageUrl}`}
                   alt="Avatar"
                   style={{
                     width: "30px",
@@ -222,13 +219,25 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             key="hoursLogged"
             width={60}
             align="center"
+            render={(total) => (
+              <NumberField
+                value={total}
+                options={{maximumFractionDigits: 1 }}
+              />
+            )}
           />
           <Table.Column
             title="Income"
             dataIndex="income"
             key="income"
-            width={80}
+            width={120}
             align="center"
+            render={(total) => (
+              <NumberField
+                value={total}
+                options={{ style: "currency", currency: "pkr", maximumFractionDigits: 2 }}
+              />
+            )}
           />
           <Table.Column
             title="Profile"

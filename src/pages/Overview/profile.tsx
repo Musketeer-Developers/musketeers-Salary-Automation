@@ -16,26 +16,21 @@ import {
   NumberField,
   ShowButton,
   Show,
+  ErrorComponent,
 } from "@refinedev/antd";
-import { ErrorComponent } from "@refinedev/antd";
 import { API_URL } from "../../constants";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Col, Row } from "antd";
 import { Account, EmployeeAttributes } from "../../types";
 import { Flex, Form, Card, Divider, Typography, Table } from "antd";
 import { PostShow } from "../../components/index";
 import { ShowTextAndIcon } from "../../components/forms/ShowForm";
-
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { Button } from "antd"; // Assuming you're using antd for UI components
-// import { token } from "../../constants";
 import { useParams } from "react-router-dom";
 import { EditEmployee } from "../../components/index";
 import ButtonsComponent from "../../components/add_buttons/Buttons";
-import HubstaffHours from "../../components/add_buttons/add_hubstaff";
-import { isDate } from "util/types";
 import { axiosInstance } from "../../authProvider";
 
 const BackButton = () => {
@@ -72,7 +67,7 @@ export const EmployeeProfile = () => {
 
   const navigate = useNavigate();
   const goToDailyLogs = (monthID: number, activeParam: string) => {
-    console.log(monthID, activeParam);
+    // console.log(monthID, activeParam);
     navigate(`/daily/${id}/${monthID}/${encodeURIComponent(activeParam)}`);
   };
 
@@ -94,7 +89,7 @@ export const EmployeeProfile = () => {
   const fetchPerson = async () => {
     try {
       const attributes = await fetchEmployee();
-      const imageUrl = "http://localhost:1337" + attributes.image?.url;
+      const imageUrl = API_URL.slice(0, -4) + attributes.image?.url;
       const bankDetails = attributes.bank_detail;
       const bankDetailsID = attributes.bank_detail?.id;
       setPerson({ ...attributes, imageUrl, bankDetails, bankDetailsID });
@@ -106,48 +101,77 @@ export const EmployeeProfile = () => {
   const fetchMonth = async () => {
     try {
       const attributes = await fetchEmployee();
+      // console.log("attributes: ", attributes);
       const monthlySalaries = attributes.monthly_salaries;
-      const resp = await axiosInstance.get(`${API_URL}/monthly-salaries?populate=*`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const msAttribtes = resp.data.data;
-      const mID = msAttribtes[msAttribtes.length - 1].month_data.id;
-      const monthlySalariesWithNames = await Promise.all(
-        monthlySalaries.map(async (item: any) => {
-          const response2 = await axiosInstance.get(`${API_URL}/months-data/${mID}`, {
+      // console.log("monthlySalaries : ", monthlySalaries);
+      const mIDArray = [];
+      for (let i = 0; i < attributes.monthly_salaries.length; i++) {
+        mIDArray[i] = attributes.monthly_salaries[i].id;
+      }
+      // console.log(mIDArray);
+      const monthlySalariesWithNames = [];
+      for (let i = 0; i < mIDArray.length; i++) {
+        const resp = await axiosInstance.get(
+          `${API_URL}/monthly-salaries/${mIDArray[i]}?populate=*`,
+          {
             headers: {
               "Content-Type": "application/json",
             },
-          });
-          const monthName =
-            response2.data.data.month.charAt(0).toUpperCase() +
-            response2.data.data.month.slice(1);
-          const year = response2.data.data.year;
-          const month = monthName + " " + year;
-          return {
-            id: item.id, // Ensure id is returned
-            month,
-            monthName,
-            year,
-            ...item,
-          };
-        })
-      );
-      console.log("monthlySalariesWithNames", monthlySalariesWithNames);
-      
+          }
+        );
+        const msAttribtes = resp.data.data;
+        // console.log("msAttribtes: ", msAttribtes);
+        const mID = msAttribtes.month_data.id;
+        const monthlySalariesWithNames1 = await Promise.all(
+          monthlySalaries.map(async (item: any) => {
+            const response2 = await axiosInstance.get(
+              `${API_URL}/months-data/${mID}?populate=*`,
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            // console.log("response2 : ", response2.data.data);
+
+            const monthName =
+              response2.data.data.month.charAt(0).toUpperCase() +
+              response2.data.data.month.slice(1);
+            const year = response2.data.data.year;
+            const month = monthName + " " + year;
+            return {
+              id: item.id, // Ensure id is returned
+              month,
+              monthName,
+              year,
+              ...item,
+            };
+          })
+        );
+        monthlySalariesWithNames[i] = monthlySalariesWithNames1;
+        // console.log(`monthlySalariesWithNames[${i}]`,monthlySalariesWithNames[i])
+      }
+      const monthlySalariesWN = [];
+      for (let i = 0; i < mIDArray.length; i++) {
+        monthlySalariesWN[i] = monthlySalariesWithNames[i][i];
+      }
+
+      // console.log("monthlySalariesWithNames", monthlySalariesWN);
+
       const currentDate = new Date();
-      const currentMonth = currentDate.toLocaleString("default", { month: "long" });
-      const currentYear = currentDate.getFullYear();
-      
-      const monthlySalariesWithNamesFiltered = monthlySalariesWithNames.filter((item) => {
-        const itemMonth = item.monthName;
-        const itemYear = item.year;
-        return itemMonth !== currentMonth || itemYear !== currentYear;
+      const currentMonth = currentDate.toLocaleString("default", {
+        month: "long",
       });
-      console.log("monthlySalariesWithNamesFiltered", monthlySalariesWithNamesFiltered);
-      
+      const currentYear = currentDate.getFullYear();
+      const monthlySalariesWithNamesFiltered = monthlySalariesWN.filter(
+        (item) => {
+          const itemMonth = item.monthName;
+          const itemYear = item.year;
+          return itemMonth !== currentMonth || itemYear !== currentYear;
+        }
+      );
+      // console.log("monthlySalariesWithNamesFiltered", monthlySalariesWithNamesFiltered);
+
       setMonthSalary(monthlySalariesWithNamesFiltered || []);
       // setMonthSalary(monthlySalariesWithNames || []);
       return monthlySalariesWithNamesFiltered;
@@ -170,6 +194,7 @@ export const EmployeeProfile = () => {
         }
       );
       const msAttribtes = resp.data.data;
+      // console.log(msAttribtes);
       const dailyData = await Promise.all(
         msAttribtes.dailyWorks.map(async (item: any) => {
           const workDate = item.workDate;
@@ -184,6 +209,7 @@ export const EmployeeProfile = () => {
             month:
               msAttribtes.month_data.month.charAt(0).toUpperCase() +
               msAttribtes.month_data.month.slice(1),
+            year: msAttribtes.month_data.year,
             workDate,
             totalHours,
             earnedAmount,
@@ -209,12 +235,28 @@ export const EmployeeProfile = () => {
 
       // Get the last working day
       const currentDate = new Date();
-      currentDate.setDate(currentDate.getDate() - 1);
-      const formattedDate = currentDate.toLocaleDateString("en-GB", {
+      let yesterdayDate;
+
+      if (currentDate.getDate() === 1) {
+        // If today is the 1st of the month, get the last date of the previous month
+        yesterdayDate = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          0
+        );
+      } else {
+        // Otherwise, get yesterday's date
+        yesterdayDate = new Date(currentDate);
+        yesterdayDate.setDate(currentDate.getDate() - 1);
+      }
+
+      const formattedDate = yesterdayDate.toLocaleDateString("en-GB", {
         day: "2-digit",
         month: "long",
         year: "numeric",
       });
+
+      // console.log(formattedDate);
 
       // Find the last day's work
       const lastDayWork = allDayWork.dailyData.find((dayWork) => {
@@ -230,6 +272,7 @@ export const EmployeeProfile = () => {
         });
         return formattedWorkDate === formattedDate;
       });
+      // console.log(lastDayWork);     // undefined at new month date 1st
       setdailyData([lastDayWork]); // Ensure setdailyData is defined in your scope
       return lastDayWork;
     } catch (error) {
@@ -242,8 +285,11 @@ export const EmployeeProfile = () => {
     try {
       const attributesEmployee: EmployeeAttributes = await fetchEmployee();
       const attributesDaily = await fetchDailyWork();
-      const monthAttributes = await fetchLastDayWork();
-      const monthName = monthAttributes?.month;
+      // console.log(attributesDaily);
+      const monthName =
+        attributesDaily?.dailyData[0]?.month +
+        " " +
+        attributesDaily?.dailyData[0]?.year;
       let requiredHours = 0;
       const workedHoursOfAll: number[] = [];
       const EarnedAmountOfAll: number[] = [];
@@ -262,10 +308,7 @@ export const EmployeeProfile = () => {
       const monthlyy = emp.monthly_salaries[emp.monthly_salaries.length - 1];
       const absences = monthlyy.absentCount || 0;
       const lateCount = monthlyy.lateCount || 0;
-      const currentMonth = new Date().toLocaleDateString("en-GB", {
-        month: "long",
-        year: "numeric",
-      });
+      const currentMonth = monthName;
       const report = {
         monthName: currentMonth,
         requiredHours,
@@ -554,7 +597,11 @@ export const EmployeeProfile = () => {
                   render={(total) => (
                     <NumberField
                       value={total}
-                      options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+                      options={{
+                        style: "currency",
+                        currency: "pkr",
+                        maximumFractionDigits: 0,
+                      }}
                     />
                   )}
                 />
@@ -584,7 +631,12 @@ export const EmployeeProfile = () => {
                 rowKey={"monthID"}
                 pagination={false}
               >
-                {/* <Table.Column title="ID" dataIndex="monthID" key="monthID" align="center" /> */}
+                {/* <Table.Column
+                  title="ID"
+                  dataIndex="monthID"
+                  key="monthID"
+                  align="center"
+                /> */}
                 <Table.Column
                   title="Month"
                   dataIndex="monthName"
@@ -602,6 +654,12 @@ export const EmployeeProfile = () => {
                   dataIndex="workedHours"
                   key="workedHours"
                   align="center"
+                  render={(total) => (
+                    <NumberField
+                      value={total}
+                      options={{ maximumFractionDigits: 1 }}
+                    />
+                  )}
                 />
                 <Table.Column
                   title="Absences"
@@ -630,7 +688,11 @@ export const EmployeeProfile = () => {
                   render={(total) => (
                     <NumberField
                       value={total}
-                      options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+                      options={{
+                        style: "currency",
+                        currency: "pkr",
+                        maximumFractionDigits: 0,
+                      }}
                     />
                   )}
                 />
@@ -670,7 +732,12 @@ export const EmployeeProfile = () => {
               }}
             >
               <Table dataSource={monthSalary}>
-                {/* <Table.Column title="ID" dataIndex="id" key="id" align="center" /> */}
+                {/* <Table.Column
+                  title="ID"
+                  dataIndex="id"
+                  key="id"
+                  align="center"
+                /> */}
                 <Table.Column
                   title="Month"
                   dataIndex="month"
@@ -697,7 +764,11 @@ export const EmployeeProfile = () => {
                   render={(total) => (
                     <NumberField
                       value={total}
-                      options={{ style: "currency", currency: "pkr", maximumFractionDigits: 0 }}
+                      options={{
+                        style: "currency",
+                        currency: "pkr",
+                        maximumFractionDigits: 0,
+                      }}
                     />
                   )}
                 />
