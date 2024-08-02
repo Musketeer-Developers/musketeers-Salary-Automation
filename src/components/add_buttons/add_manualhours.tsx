@@ -108,8 +108,9 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
 
     return (
         <Modal
+            forceRender
             title="Add Manual Hours"
-            visible={isVisible}
+            open={isVisible}
             onCancel={handleClose}
             footer={[
                 <Button key="back" onClick={handleClose}>
@@ -120,7 +121,7 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
                 </Button>
             ]}
         >
-            <Form form={form} layout="vertical" initialValues={{}}>
+            <Form form={form} layout="vertical">
                 <Divider></Divider>
                 <Form.Item label="Date">
                     <Form.Item
@@ -136,8 +137,9 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
                         name={"manualHours"}
                         rules={[{ required: true, message: 'Please enter the manual hours' }]}
                         noStyle
+                        initialValue={0}
                     >
-                        <InputNumber min={0} max={24} defaultValue={0} style={{ width: "100%" }} />
+                        <InputNumber min={0} max={24} style={{ width: "100%" }} />
                     </Form.Item>
                 </Form.Item>
                 <Divider></Divider>

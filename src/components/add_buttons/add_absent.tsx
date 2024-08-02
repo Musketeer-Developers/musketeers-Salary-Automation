@@ -132,8 +132,9 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
 
     return (
         <Modal
+            forceRender
             title="Add Absent"
-            visible={isVisible}
+            open={isVisible}
             onCancel={handleClose}
             footer={[
                 <Button key="back" onClick={handleClose}>
@@ -144,7 +145,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
                 </Button>
             ]}
         >
-            <Form form={form} layout="vertical" initialValues={{}}>
+            <Form form={form} layout="vertical">
                 <Divider></Divider>
                 <Form.Item label="Date">
                     <Form.Item

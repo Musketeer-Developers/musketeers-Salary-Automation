@@ -29,7 +29,6 @@ function App() {
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
-            <DevtoolsProvider>
               <Refine
                 authProvider={authProvider}
                 // dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
@@ -145,8 +144,6 @@ function App() {
                 <UnsavedChangesNotifier />
                 <DocumentTitleHandler />
               </Refine>
-              <DevtoolsPanel />
-            </DevtoolsProvider>
           </AntdApp>
         </ColorModeContextProvider>
       </RefineKbarProvider>

@@ -134,8 +134,9 @@ const LateCount: React.FC<LateCountProps> = ({ isVisible, handleClose }) => {
 
     return (
         <Modal
+            forceRender
             title="Add Late"
-            visible={isVisible}
+            open={isVisible}
             onCancel={handleClose}
             footer={[
                 <Button key="back" onClick={handleClose}>
@@ -146,7 +147,7 @@ const LateCount: React.FC<LateCountProps> = ({ isVisible, handleClose }) => {
                 </Button>
             ]}
         >
-            <Form form={form} layout="vertical" initialValues={{}}>
+            <Form form={form} layout="vertical">
                 <Divider></Divider>
                 <Form.Item label="Date">
                     <Form.Item

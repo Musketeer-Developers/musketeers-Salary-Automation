@@ -1,4 +1,4 @@
-import { useModalForm } from "@refinedev/antd";
+import { useState } from "react";
 import { Modal, Button, Typography,Divider } from "antd";
 import { BankOutlined } from "@ant-design/icons";
 
@@ -12,9 +12,19 @@ interface PostShowProps {
 
 export const PostShow: React.FC <PostShowProps> = ({ bankDetails }) => {
  
-  const { modalProps, show } = useModalForm<"show">({
-    action: "show",
-  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div> 
@@ -26,16 +36,16 @@ export const PostShow: React.FC <PostShowProps> = ({ bankDetails }) => {
           marginTop: 24,
         }}
         icon={<BankOutlined />}
-        onClick={() => show()}
+        onClick={showModal}
       >
         See Bank Details
       </Button>
-      <Modal {...modalProps} title="Bank Details" centered footer={null} width={400} >
+      <Modal forceRender title="Bank Details" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} centered footer={null} width={400}>
         <Divider/>
-          <Typography.Title level={5}>Bank : {bankDetails.bankName}</Typography.Title>
-          <Typography.Title level={5}>Account Title: {bankDetails.accountTitle}</Typography.Title>
-          <Typography.Title level={5}>IBAN: {bankDetails.accountIBAN}</Typography.Title>
-
+        <Typography.Title level={5}>Bank : {bankDetails.bankName}</Typography.Title>
+        <Typography.Title level={5}>Account Title: {bankDetails.accountTitle}</Typography.Title>
+        <Typography.Title level={5}>IBAN: {bankDetails.accountIBAN}</Typography.Title>
+        <Divider/>
       </Modal>
     </div>
   );
