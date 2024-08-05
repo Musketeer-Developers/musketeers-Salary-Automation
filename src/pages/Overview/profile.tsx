@@ -12,13 +12,13 @@ import {
 } from "@ant-design/icons";
 
 import {
-  DeleteButton,
   DateField,
   NumberField,
   ShowButton,
   Show,
   ErrorComponent,
 } from "@refinedev/antd";
+import DeleteButton from "../../components/delete_employee";
 import { API_URL } from "../../constants";
 import { useEffect, useState } from "react";
 import { Account, EmployeeAttributes } from "../../types";
@@ -33,6 +33,7 @@ import {
   Col,
   Row,
 } from "antd";
+
 import { ShowTextAndIcon } from "../../components/forms/ShowForm";
 import { useNavigate, useParams } from "react-router-dom";
 import { EditEmployee, PostShow } from "../../components/index";
@@ -536,15 +537,7 @@ export const EmployeeProfile = () => {
             </Card>
             {/*See Bank Details*/}
             <PostShow bankDetails={person.bankDetails} />
-            <DeleteButton
-              size="large"
-              type="text"
-              style={{
-                marginTop: "16px",
-              }}
-            >
-              Delete account
-            </DeleteButton>
+            <DeleteButton EmpID={person.id}/>
           </Col>
           <Col xs={{ span: 24 }} xl={{ span: 16 }}>
             <Card
