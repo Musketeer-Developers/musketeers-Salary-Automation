@@ -283,7 +283,7 @@ export const EmployeeProfile = () => {
         });
         return formattedWorkDate === formattedDate;
       });
-      // console.log(lastDayWork);     // undefined at new month date 1st
+      console.log(lastDayWork);     // undefined at new month date 1st
       setdailyData([lastDayWork]); // Ensure setdailyData is defined in your scope
       return lastDayWork;
     } catch (error) {
