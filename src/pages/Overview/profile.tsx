@@ -129,7 +129,7 @@ export const EmployeeProfile = () => {
           }
         );
         const msAttribtes = resp.data.data;
-        console.log("msAttribtes: ", msAttribtes);
+        // console.log("msAttribtes: ", msAttribtes);
         const mID = msAttribtes.month_data.id;
         const monthlySalariesWithNames1 = await Promise.all(
           monthlySalaries.map(async (item: any) => {
@@ -178,10 +178,10 @@ export const EmployeeProfile = () => {
           return itemMonth !== currentMonth || itemYear !== currentYear;
         }
       );
-      console.log(
-        "monthlySalariesWithNamesFiltered",
-        monthlySalariesWithNamesFiltered
-      );
+      // console.log(
+      //   "monthlySalariesWithNamesFiltered",
+      //   monthlySalariesWithNamesFiltered
+      // );
 
       setMonthSalary(monthlySalariesWithNamesFiltered || []);
       // setMonthSalary(monthlySalariesWithNames || []);
@@ -211,9 +211,9 @@ export const EmployeeProfile = () => {
           const workDate = item.workDate;
           const hubstaffHours = item.hubstaffHours || 0;
           const manualHours = item.manualHours || 0;
-          const totalHours = hubstaffHours + manualHours;
-          const hourRate = msAttribtes.monthlyRate;
-          const earnedAmount = totalHours * hourRate;
+          const totalHours = hubstaffHours + manualHours || 0;
+          const hourRate = msAttribtes.monthlyRate || 0;
+          const earnedAmount = totalHours * hourRate || 0;
           return {
             ...item,
             monthID: msAttribtes.month_data.id,
@@ -350,7 +350,7 @@ export const EmployeeProfile = () => {
     fetchData();
   }, [id]);
 
-  if (!person) {
+  if (!person || person.publishedAt === null) {
     return (
       <Card title={<BackButton />} loading={loading}>
         <ErrorComponent />

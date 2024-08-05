@@ -43,7 +43,7 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
           console.log("item:", item);
           const lastmonthTotal = item.monthly_salaries;
           const len = lastmonthTotal.length;
-          const lastmonth = lastmonthTotal[len - 2]; // second last month data   (last month in array would be current month)
+          const lastmonth = lastmonthTotal[len-2]; // second last month data   (last month in array would be current month)
           const WHT = lastmonth.WTH || 0;
           // console.log("WHT:", WHT);
           const basicSalary = lastmonth.basicSalary || 0;
@@ -81,11 +81,12 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
         response.data.data.month_data.month.slice(1);
       console.log("empInfo : ", empInfo);
       setData(empInfo);
-      setLoading(false);
       setMonthName(monthName);
+      setLoading(false);
       console.log("monthName:", monthName);
     } catch (error) {
       console.log("Error while fetching data", error);
+      setLoading(false);
     }
   };
 

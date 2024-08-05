@@ -136,6 +136,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
       setLoading(false);
     } catch (error) {
       console.log("Error while fetching data", error);
+      setLoading(false);
     }
   };
 

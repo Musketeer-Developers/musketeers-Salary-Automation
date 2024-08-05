@@ -18,6 +18,7 @@ export type Account = {
     imageUrl: string;
     bankDetailsID: number;
     imageID:number;
+    publishedAt: string;
     bankDetails: {
       accountTitle: string;
       accountIBAN: string;
