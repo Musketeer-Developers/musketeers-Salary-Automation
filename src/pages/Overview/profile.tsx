@@ -178,7 +178,10 @@ export const EmployeeProfile = () => {
           return itemMonth !== currentMonth || itemYear !== currentYear;
         }
       );
-      console.log("monthlySalariesWithNamesFiltered", monthlySalariesWithNamesFiltered);
+      console.log(
+        "monthlySalariesWithNamesFiltered",
+        monthlySalariesWithNamesFiltered
+      );
 
       setMonthSalary(monthlySalariesWithNamesFiltered || []);
       // setMonthSalary(monthlySalariesWithNames || []);
@@ -298,11 +301,9 @@ export const EmployeeProfile = () => {
         attributesDaily?.dailyData[0]?.month +
         " " +
         attributesDaily?.dailyData[0]?.year;
-      let requiredHours = 0;
       const workedHoursOfAll: number[] = [];
       const EarnedAmountOfAll: number[] = [];
       if (attributesDaily) {
-        requiredHours = attributesDaily?.dailyData.length * 8;
         for (let i = 0; i < attributesDaily?.dailyData.length; i++) {
           workedHoursOfAll.push(attributesDaily?.dailyData[i].totalHours);
           EarnedAmountOfAll.push(attributesDaily?.dailyData[i].earnedAmount);
@@ -312,6 +313,8 @@ export const EmployeeProfile = () => {
       const monthlyEarnedAmount = EarnedAmountOfAll.reduce((a, b) => a + b, 0);
       const paidLeaves = attributesEmployee.leavesRemaining;
       const emp = await fetchEmployee();
+      const requiredHours =
+        emp.monthly_salaries[emp.monthly_salaries.length - 1].TotalHoursMonth;
       const monthID = emp.monthly_salaries[emp.monthly_salaries.length - 1].id;
       const monthlyy = emp.monthly_salaries[emp.monthly_salaries.length - 1];
       const absences = monthlyy.absentCount || 0;
@@ -408,7 +411,7 @@ export const EmployeeProfile = () => {
           <Col xs={{ span: 24 }} xl={{ span: 8 }}>
             <Card
               bordered={false}
-              styles={{ body: { padding: 0 } }}
+              styles={{ header: { padding: 16 }, body: { padding: 0 } }}
               title={
                 <Flex justify="space-between">
                   <Flex gap={12} align="center">

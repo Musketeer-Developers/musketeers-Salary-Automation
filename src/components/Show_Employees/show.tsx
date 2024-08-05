@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { CreateButton, EditButton, List,NumberField } from "@refinedev/antd";
+import { CreateButton, EditButton, List, NumberField } from "@refinedev/antd";
 import { useState, useEffect } from "react";
 import { EyeOutlined } from "@ant-design/icons";
 import { Flex, Table } from "antd";
@@ -16,6 +16,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
   const [visibleModal, setVisibleModal] = useState("");
   const { showModal } = useModal();
   const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const handleClose = () => {
     setVisibleModal("");
   };
@@ -36,7 +37,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const fetchDailyWork = async (id) => {
+  const fetchDailyWork = async (id: number) => {
     try {
       const attributes = await fetchEmployee(id);
       const monthlySalariesID =
@@ -69,7 +70,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
       console.log("Error while fetching daily", error);
     }
   };
-  const fetchAllMonthlyReport = async (id) => {
+  const fetchAllMonthlyReport = async (id: number) => {
     try {
       const attributesDaily = await fetchDailyWork(id);
       if (attributesDaily) {
@@ -83,7 +84,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
         );
         return {
           workedHours,
-          workedAmount
+          workedAmount,
         };
       } else {
         throw new Error("Failed to fetch daily work data");
@@ -93,24 +94,29 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
       return null; // or rethrow the error: throw error;
     }
   };
-  
 
   const fetchData = async () => {
     try {
-      const response = await axiosInstance.get(`${API_URL}/employees?populate=*`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axiosInstance.get(
+        `${API_URL}/employees?populate=*`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const employees = await Promise.all(
         response.data.data.map(async (item) => {
           const imageUrl = item.image?.url;
-          const report = (await fetchAllMonthlyReport(item.id)) || 0;
-          // if (!report){
-          //   throw new Error("Failed to fetch all monthly report worked hours and amount");
-          // }
-          const hoursLogged = report.workedHours || 0; // Assign the report value to hoursLogged
-          const income = report.workedAmount || 0;
+          const report = await fetchAllMonthlyReport(item.id);
+          let hoursLogged = 0;
+          let income = 0;
+          if (report) {
+            hoursLogged = report.workedHours;
+            income = report.workedAmount;
+          } else {
+            console.log("Failed to fetch all monthly report");
+          }
           let hubstaffEnable = "";
           if (item.hubstaffEnabled) {
             hubstaffEnable = "Enabled";
@@ -127,12 +133,14 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
         })
       );
       setData(employees);
+      setLoading(false);
     } catch (error) {
       console.log("Error while fetching data", error);
     }
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchData();
   }, []);
 
@@ -158,16 +166,25 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
                 New Employee
               </CreateButton>
               <CreateButton size="large" onClick={() => setVisibleModal("3")}>
-                Import 
+                Import
               </CreateButton>
-              <Holiday isVisible={visibleModal === "1"} handleClose={handleClose} />
-              <Month isVisible={visibleModal === "2"} handleClose={handleClose} />
-              <HubstaffFile isVisible={visibleModal === "3"} handleClose={handleClose} />
+              <Holiday
+                isVisible={visibleModal === "1"}
+                handleClose={handleClose}
+              />
+              <Month
+                isVisible={visibleModal === "2"}
+                handleClose={handleClose}
+              />
+              <HubstaffFile
+                isVisible={visibleModal === "3"}
+                handleClose={handleClose}
+              />
             </>
           );
         }}
       >
-        <Table dataSource={data} rowKey="id">
+        <Table dataSource={data} rowKey="id" loading={loading}>
           {/* <Table.Column title="ID" dataIndex="id" key="id" width={20} /> */}
           <Table.Column title="ID" dataIndex="empNo" key="empNo" width={120} />
           <Table.Column
@@ -178,7 +195,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             render={(text: string, record: Account) => (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <img
-                  src={`${API_URL.slice(0,-4)}${record.imageUrl}`}
+                  src={`${API_URL.slice(0, -4)}${record.imageUrl}`}
                   alt="Avatar"
                   style={{
                     width: "30px",
@@ -222,7 +239,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             render={(total) => (
               <NumberField
                 value={total}
-                options={{maximumFractionDigits: 1 }}
+                options={{ maximumFractionDigits: 1 }}
               />
             )}
           />
@@ -235,7 +252,11 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
             render={(total) => (
               <NumberField
                 value={total}
-                options={{ style: "currency", currency: "pkr", maximumFractionDigits: 2 }}
+                options={{
+                  style: "currency",
+                  currency: "pkr",
+                  maximumFractionDigits: 2,
+                }}
               />
             )}
           />

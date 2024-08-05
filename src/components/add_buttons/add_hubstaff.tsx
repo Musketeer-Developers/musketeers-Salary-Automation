@@ -9,11 +9,10 @@ import {
   InputNumber,
 } from "antd";
 import { useNotification } from "@refinedev/core";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { API_URL} from "../../constants";
-import {axiosInstance} from '../../authProvider';
+import { API_URL } from "../../constants";
+import { axiosInstance } from "../../authProvider";
 
 interface HubstaffHoursProps {
   isVisible: boolean;
@@ -25,13 +24,12 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
   handleClose,
 }) => {
   const { id } = useParams<{ id: string }>();
-  const { open, close } = useNotification();
+  // const { open, close } = useNotification();
   const [form] = Form.useForm();
   const { Title } = Typography;
   const [checkDate, setcheckDate] = useState(false);
-  const [hubstaffHours, sethubstaffHours] = useState<Number>(0);
+  const [hubstaffHours, sethubstaffHours] = useState<number>(0);
   const [dailyWorkID, setdailyWorkID] = useState(0);
-  const [Count, setCount] = useState(0);
 
   const handleOk = async () => {
     try {
@@ -47,7 +45,7 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
 
   interface FormData {
     workDate: moment.Moment;
-    hubstaffHours: Number;
+    hubstaffHours: number;
   }
 
   useEffect(() => {
@@ -57,7 +55,7 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
           hubstaffHours: hubstaffHours,
         },
       };
-      async function update() {
+      const update = async () => {
         try {
           const response = await axiosInstance.put(
             `${API_URL}/daily-works/${dailyWorkID}`,
@@ -72,12 +70,12 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
         } catch (error: any) {
           console.error("Error posting data:", error);
         }
-      }
+      };
       update();
     }
   }, [dailyWorkID]);
 
-  async function Employee() {
+  const Employee = async () => {
     try {
       const response = await axiosInstance.get(
         `${API_URL}/employees/${id}?populate=*`,
@@ -92,12 +90,12 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
     } catch (error: any) {
       console.error("Error posting data:", error);
     }
-  }
+  };
 
   async function putData(formData: FormData) {
     const date = formData.workDate?.format("YYYY-MM-DD");
     sethubstaffHours(formData.hubstaffHours);
-    let attributes = await Employee();
+    const attributes = await Employee();
     const MonthlySalaries = attributes.data.monthly_salaries;
     MonthlySalaries.map(async (item: any) => {
       try {
@@ -159,11 +157,7 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
             noStyle
             initialValue={0}
           >
-            <InputNumber
-              min={0}
-              max={24}
-              style={{ width: "100%" }}
-            />
+            <InputNumber min={0} max={24} style={{ width: "100%" }} />
           </Form.Item>
         </Form.Item>
         <Divider></Divider>
