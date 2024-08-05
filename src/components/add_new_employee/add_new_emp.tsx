@@ -142,19 +142,19 @@ export const AddnewEmployee = () => {
                     year: date.getFullYear().toString(),
                 }
                 open?.({ type: 'success', message: 'Success!', description: 'Employee bank details successfully added!' });
-                try {
-                    const response = await axiosInstance.post(`${API_URL}/month-data/initializeMonthData`, JSON.stringify(MonthData),
-                        {
-                            headers: {
-                                'Content-Type': "application/json"
-                            }
-                        });
-                    console.log('Response:', response);
-                    open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
-                } catch (error: any) {
-                    console.error('Error posting data:', error);
-                    open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
-                }
+                // try {
+                //     const response = await axiosInstance.post(`${API_URL}/month-data/initializeMonthData`, JSON.stringify(MonthData),
+                //         {
+                //             headers: {
+                //                 'Content-Type': "application/json"
+                //             }
+                //         });
+                //     console.log('Response:', response);
+                //     open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
+                // } catch (error: any) {
+                //     console.error('Error posting data:', error);
+                //     open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
+                // }
             } catch (error: any) {
                 console.error('Error posting data:', error);
                 open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
