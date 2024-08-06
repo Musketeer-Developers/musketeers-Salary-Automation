@@ -36,6 +36,7 @@ interface Employee {
         accountIBAN: string;
         bankName: string;
     }
+    setRefreshData: (refresh: boolean) => void;
 }
 
 interface FormData {
@@ -77,7 +78,7 @@ export const EditEmployee = (props: Employee) => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
-    const MuskImageID: number = 1;
+    const MuskImageID: number = 2;
 
     const handleStatusChange = (value: string): void => {
         setisDisable(value !== "Permanent");
@@ -102,7 +103,8 @@ export const EditEmployee = (props: Employee) => {
             const values = await form.validateFields();
             console.log('Received values of form: ', values);
             handleCancel();
-            putData(values);
+            await putData(values);
+            props.setRefreshData(true);
             form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);

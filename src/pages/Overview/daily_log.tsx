@@ -64,7 +64,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
 
         if (monthID !== undefined) {
           const selectedMonth = monthlySalaries.find(
-            (item) => item.id == monthID
+            (item:any) => item.id == monthID
           );
 
           if (selectedMonth) {

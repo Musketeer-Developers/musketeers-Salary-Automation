@@ -14,6 +14,7 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [monthName, setMonthName] = useState("");
+  const [refreshData, setRefreshData] = useState(false);
 
   const fetchEmployee = async () => {
     try {
@@ -95,6 +96,14 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (refreshData) {
+      setLoading(true);
+      fetchData();
+      setRefreshData(false);
+    }
+  }, [refreshData]);
+
   const navigate = useNavigate();
   const goToprofile = (id: number) => {
     console.log(`goToprofile of ${id} clicked`);
@@ -154,6 +163,7 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
               <Calculate
                 isVisible={visibleModal === "1"}
                 handleClose={handleClose}
+                setRefreshData={setRefreshData}
               />
             </>
           );
