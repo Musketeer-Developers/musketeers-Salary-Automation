@@ -8,6 +8,11 @@ import { Account } from "../../types";
 import { Monthlylog } from "../../components/index";
 import { axiosInstance } from "../../authProvider";
 
+interface TableData {
+  date: string;
+  // other properties...
+}
+
 export const Dailylog = ({ children }: PropsWithChildren) => {
   const { id, monthID, activeParam } = useParams<{
     id: string;
@@ -64,7 +69,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
 
         if (monthID !== undefined) {
           const selectedMonth = monthlySalaries.find(
-            (item) => item.id == monthID
+            (item:any) => item.id == monthID
           );
 
           if (selectedMonth) {
@@ -178,8 +183,8 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                     dataIndex="date"
                     key="daily_date"
                     width={80}
-                    sorter={(a, b) => new Date(a.date) - new Date(b.date)}
-                  />
+                    sorter={(a: TableData, b: TableData) => new Date(a.date)?.getTime() - new Date(b.date)?.getTime()}
+                    />
                   <Table.Column
                     title="Total Hours"
                     dataIndex="totalHours"

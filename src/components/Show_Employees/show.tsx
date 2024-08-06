@@ -21,7 +21,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
     setVisibleModal("");
   };
 
-  const fetchEmployee = async (id) => {
+  const fetchEmployee = async (id: any) => {
     try {
       const response = await axiosInstance.get(
         `${API_URL}/employees/${id}?populate=*`,
@@ -52,7 +52,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
       );
       const msAttribtes = resp.data.data;
       const dailyData = await Promise.all(
-        msAttribtes.dailyWorks.map(async (item) => {
+        msAttribtes.dailyWorks.map(async (item: any) => {
           const hubstaffHours = item.hubstaffHours || 0;
           const manualHours = item.manualHours || 0;
           const totalHours = hubstaffHours + manualHours;
@@ -106,7 +106,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
         }
       );
       const employees = await Promise.all(
-        response.data.data.map(async (item) => {
+        response.data.data.map(async (item: any) => {
           const imageUrl = item.image?.url;
           const report = await fetchAllMonthlyReport(item.id);
           let hoursLogged = 0;
