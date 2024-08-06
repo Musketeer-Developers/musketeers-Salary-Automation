@@ -10,9 +10,10 @@ import {axiosInstance} from '../../authProvider';
 interface LateCountProps {
     isVisible: boolean;
     handleClose: () => void;
+    setRefreshData:(refresh:boolean) => void;
 }
 
-const LateCount: React.FC<LateCountProps> = ({ isVisible, handleClose }) => {
+const LateCount: React.FC<LateCountProps> = ({ isVisible, handleClose,setRefreshData  }) => {
     const { id } = useParams<{ id: string }>();
     const { open, close } = useNotification();
     const [form] = Form.useForm();
@@ -27,7 +28,8 @@ const LateCount: React.FC<LateCountProps> = ({ isVisible, handleClose }) => {
             const values = await form.validateFields();
             console.log('Received values of form: ', values);
             handleClose();
-            putData(values);
+            await putData(values);
+            setRefreshData(true);
             form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);
@@ -56,6 +58,7 @@ const LateCount: React.FC<LateCountProps> = ({ isVisible, handleClose }) => {
                     console.log('Response-daily:', response.data);
                 } catch (error: any) {
                     console.error('Error posting data:', error);
+                    open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
                 }
             }
             update();
@@ -80,6 +83,7 @@ const LateCount: React.FC<LateCountProps> = ({ isVisible, handleClose }) => {
                     console.log('Response-monthly:', response.data);
                 } catch (error: any) {
                     console.error('Error posting data:', error);
+                    open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
                 }
                 setCount(0);
             }
@@ -99,6 +103,7 @@ const LateCount: React.FC<LateCountProps> = ({ isVisible, handleClose }) => {
             return response.data;
         } catch (error: any) {
             console.error('Error posting data:', error);
+            open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
         }
     }
 
@@ -123,10 +128,12 @@ const LateCount: React.FC<LateCountProps> = ({ isVisible, handleClose }) => {
                         setdailyWorkID(data.id);
                         setSalaryMonthID(item.id);
                         setCount(item.lateCount);
+                        open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
                     }
                 })
             } catch (error: any) {
                 console.error('Error posting data:', error);
+                open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
             }
         });
     }

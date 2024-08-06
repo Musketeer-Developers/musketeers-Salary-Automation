@@ -9,9 +9,10 @@ import { axiosInstance } from '../../authProvider';
 interface AbsentProps {
     isVisible: boolean;
     handleClose: () => void;
+    setRefreshData:(refresh:boolean) => void;
 }
 
-const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
+const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose, setRefreshData }) => {
     const { id } = useParams<{ id: string }>();
     const { open, close } = useNotification();
     const [form] = Form.useForm();
@@ -26,7 +27,8 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
             const values = await form.validateFields();
             console.log('Received values of form: ', values);
             handleClose();
-            putData(values);
+            await putData(values);
+            setRefreshData(true);
             form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);
@@ -55,6 +57,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
                     console.log('Response-daily:', response.data);
                 } catch (error: any) {
                     console.error('Error posting data:', error);
+                    open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
                 }
             }
             update();
@@ -79,6 +82,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
                     console.log('Response-monthly:', response.data);
                 } catch (error: any) {
                     console.error('Error posting data:', error);
+                    open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
                 }
                 setCount(0);
             }
@@ -98,6 +102,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
             return response.data;
         } catch (error: any) {
             console.error('Error posting data:', error);
+            open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
         }
     }
 
@@ -122,10 +127,12 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose }) => {
                         setdailyWorkID(data.id);
                         setSalaryMonthID(item.id);
                         setCount(item.absentCount);
+                        open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
                     }
                 })
             } catch (error: any) {
                 console.error('Error posting data:', error);
+                open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
             }
         });
     }

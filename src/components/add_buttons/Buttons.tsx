@@ -9,7 +9,11 @@ import LateCount from './add_latecount';
 import { useState } from 'react';
 
 
-const ButtonsComponent: React.FC = () => {
+interface ButtonsProps {
+    setRefreshData: (refresh: boolean) => void;
+}
+
+const ButtonsComponent: React.FC<ButtonsProps> = ({ setRefreshData }) => {
     const [visibleModal, setVisibleModal] = useState('');
 
     const handleClick: MenuProps['onClick'] = (e) => {
@@ -47,6 +51,7 @@ const ButtonsComponent: React.FC = () => {
     const handleClose = () => {
         setVisibleModal('');
     };
+
     return (
         <>
             <Space wrap>
@@ -63,10 +68,11 @@ const ButtonsComponent: React.FC = () => {
                     </Button>
                 </Dropdown>
             </Space>
-            <Absent isVisible={visibleModal==="1"} handleClose={handleClose}/>
-            <ManualHours isVisible={visibleModal==="2"} handleClose={handleClose}/>
-            <HubstaffHours isVisible={visibleModal==="3"} handleClose={handleClose}/>
-            <LateCount isVisible={visibleModal==="4"} handleClose={handleClose}/>
+            <Absent isVisible={visibleModal==="1"} handleClose={handleClose} setRefreshData={setRefreshData}/>
+            <ManualHours isVisible={visibleModal==="2"} handleClose={handleClose} setRefreshData={setRefreshData}/>
+            <HubstaffHours isVisible={visibleModal==="3"} handleClose={handleClose} setRefreshData={setRefreshData}/>
+            <LateCount isVisible={visibleModal==="4"} handleClose={handleClose} setRefreshData={setRefreshData}/>
+        
         </>
     )
 }

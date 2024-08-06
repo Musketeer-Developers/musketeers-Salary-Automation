@@ -73,6 +73,7 @@ export const EmployeeProfile = () => {
   >([]);
   // Add a state variable to manage loading status
   const [loading, setLoading] = useState(true);
+  const [refreshData, setRefreshData] = useState(false);
 
   const navigate = useNavigate();
   const goToDailyLogs = (monthID: number, activeParam: string) => {
@@ -337,18 +338,25 @@ export const EmployeeProfile = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      await fetchLastDayWork();
-      await fetchMonth();
-      await fetchPerson();
-      await fetchAllMonthlyReport(); // This will ensure monthlyReport is updated after all data is fetched
-      setLoading(false);
-    };
+  const fetchData = async () => {
+    setLoading(true);
+    await fetchMonth();
+    await fetchLastDayWork();
+    await fetchPerson();
+    await fetchAllMonthlyReport(); // This will ensure monthlyReport is updated after all data is fetched
+    setLoading(false);
+  };
 
+  useEffect(() => {
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    if (refreshData) {
+      fetchData();
+      setRefreshData(false);
+    }
+  }, [refreshData]);
 
   if (!person || person.publishedAt === null) {
     return (
@@ -397,7 +405,7 @@ export const EmployeeProfile = () => {
                 <h1>{person.Name || "Name of Employee"}</h1>
               </Flex>
               <Flex gap={16}>
-                <ButtonsComponent />
+                <ButtonsComponent setRefreshData={setRefreshData} />
               </Flex>
             </Flex>
           </Col>
@@ -419,7 +427,7 @@ export const EmployeeProfile = () => {
                     <Typography.Text>Employee info</Typography.Text>
                   </Flex>
                   <Flex>
-                    <EditEmployee {...person} />
+                    <EditEmployee {...person} setRefreshData={setRefreshData}/>
                   </Flex>
                 </Flex>
               }
@@ -537,7 +545,7 @@ export const EmployeeProfile = () => {
             </Card>
             {/*See Bank Details*/}
             <PostShow bankDetails={person.bankDetails} />
-            <DeleteButton EmpID={person.id}/>
+            <DeleteButton EmpID={person.id} />
           </Col>
           <Col xs={{ span: 24 }} xl={{ span: 16 }}>
             <Card

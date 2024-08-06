@@ -12,16 +12,18 @@ import {axiosInstance} from '../../authProvider';
 interface HubstaffFileProps {
     isVisible: boolean;
     handleClose: () => void;
+    setRefreshData:(refresh:boolean) => void;
 }
 
-const HubstaffFile: React.FC<HubstaffFileProps> = ({ isVisible, handleClose }) => {
+const HubstaffFile: React.FC<HubstaffFileProps> = ({ isVisible, handleClose, setRefreshData }) => {
     const { id } = useParams<{ id: string }>();
     const { open, close } = useNotification();
     const [form] = Form.useForm();
     const [data, setData] = useState<any[]>([]);
 
     const handleOk = async () => {
-        putData();
+        await postData();
+        setRefreshData(true);
         handleClose();
     };
 
@@ -71,7 +73,7 @@ const HubstaffFile: React.FC<HubstaffFileProps> = ({ isVisible, handleClose }) =
         }
     };
 
-    async function putData() {
+    async function postData() {
         try {
             const response = await axiosInstance.post(`${API_URL}/daily-works/bulk-create`, JSON.stringify(data),
                 {

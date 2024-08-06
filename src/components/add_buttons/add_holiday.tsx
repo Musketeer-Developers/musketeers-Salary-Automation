@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, Button, Form, Divider, Typography, DatePicker } from 'antd';
+import { useNotification } from "@refinedev/core";
 import axios from 'axios';
 import {API_URL} from '../../constants';
 import {axiosInstance} from '../../authProvider';
@@ -14,6 +15,7 @@ interface Date {
 }
 
 const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
+    const { open, close } = useNotification();
     const [form] = Form.useForm();
     const { Title } = Typography;
 
@@ -41,9 +43,11 @@ const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
                 }
             });
             console.log(response.data);
+            open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
         }catch(error:any)
         {
             console.error('Error posting data:', error);
+            open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
         }
     }
 

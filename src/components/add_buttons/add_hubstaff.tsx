@@ -17,14 +17,16 @@ import { axiosInstance } from "../../authProvider";
 interface HubstaffHoursProps {
   isVisible: boolean;
   handleClose: () => void;
+  setRefreshData:(refresh:boolean) => void;
 }
 
 const HubstaffHours: React.FC<HubstaffHoursProps> = ({
   isVisible,
   handleClose,
+  setRefreshData 
 }) => {
   const { id } = useParams<{ id: string }>();
-  // const { open, close } = useNotification();
+  const { open, close } = useNotification();
   const [form] = Form.useForm();
   const { Title } = Typography;
   const [checkDate, setcheckDate] = useState(false);
@@ -36,7 +38,8 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
       const values = await form.validateFields();
       console.log("Received values of form: ", values);
       handleClose();
-      putData(values);
+      await putData(values);
+      setRefreshData(true);
       form.resetFields();
     } catch (error) {
       console.error("Validation Failed:", error);
@@ -69,6 +72,7 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
           console.log("Response-daily:", response.data);
         } catch (error: any) {
           console.error("Error posting data:", error);
+          open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
         }
       };
       update();
@@ -89,6 +93,7 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
       return response.data;
     } catch (error: any) {
       console.error("Error posting data:", error);
+      open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
     }
   };
 
@@ -114,10 +119,12 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
             console.log("found");
             setcheckDate(true);
             setdailyWorkID(data.id);
+            open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
           }
         });
       } catch (error: any) {
         console.error("Error posting data:", error);
+        open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
       }
     });
   }

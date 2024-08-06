@@ -8,6 +8,7 @@ import {axiosInstance} from '../../authProvider';
 interface CalculateProps {
     isVisible: boolean;
     handleClose: () => void;
+    setRefreshData:(refresh:boolean) => void;
 }
 
 interface FormData {
@@ -15,7 +16,7 @@ interface FormData {
     year: moment.Moment;
 }
 
-const Calculate: React.FC<CalculateProps> = ({ isVisible, handleClose }) => {
+const Calculate: React.FC<CalculateProps> = ({ isVisible, handleClose, setRefreshData }) => {
     const { open } = useNotification();
     const [form] = Form.useForm();
 
@@ -24,7 +25,8 @@ const Calculate: React.FC<CalculateProps> = ({ isVisible, handleClose }) => {
             const values = await form.validateFields();
             console.log('Received values of form: ', values);
             handleClose();
-            initializeMonth(values);
+            await initializeMonth(values);
+            setRefreshData(true);
             form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);

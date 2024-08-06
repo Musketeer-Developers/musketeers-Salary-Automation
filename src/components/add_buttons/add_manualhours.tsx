@@ -10,9 +10,10 @@ import {axiosInstance} from '../../authProvider';
 interface ManualHoursProps {
     isVisible: boolean;
     handleClose: () => void;
+    setRefreshData:(refresh:boolean) => void;
 }
 
-const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => {
+const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose, setRefreshData }) => {
     const { id } = useParams<{ id: string }>();
     const { open, close } = useNotification();
     const [form] = Form.useForm();
@@ -27,7 +28,8 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
             const values = await form.validateFields();
             console.log('Received values of form: ', values);
             handleClose();
-            putData(values);
+            await putData(values);
+            setRefreshData(true);
             form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);
@@ -55,8 +57,10 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
                             }
                         });
                     console.log('Response-daily:', response.data);
+                    open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
                 } catch (error: any) {
                     console.error('Error posting data:', error);
+                    open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
                 }
             }
             update();
@@ -75,6 +79,7 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
             return response.data;
         } catch (error: any) {
             console.error('Error posting data:', error);
+            open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
         }
     }
 

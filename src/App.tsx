@@ -6,7 +6,6 @@ import { ThemedLayoutV2, useNotificationProvider, ErrorComponent } from "@refine
 import "@refinedev/antd/dist/reset.css";
 
 import routerBindings, {
-  DocumentTitleHandler,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 
@@ -142,7 +141,7 @@ function App() {
                 </Routes>
                 <RefineKbar />
                 <UnsavedChangesNotifier />
-                <DocumentTitleHandler />
+                {/* <DocumentTitleHandler /> */}
               </Refine>
           </AntdApp>
         </ColorModeContextProvider>
