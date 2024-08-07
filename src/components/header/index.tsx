@@ -14,13 +14,12 @@ import "./style.css";
 import { IconMoon } from "./icons/icon-moon";
 import { IconSun } from "./icons/icon-sun";
 import { useLogout } from "@refinedev/core";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 
 const { Text } = Typography;
-export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
-) => {
+export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
   const { mode, setMode } = useContext(ColorModeContext);
   const { mutate, isLoading } = useLogout();
 
@@ -28,7 +27,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
 
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeKey,setactiveKey] = useState("");
+  const [activeKey, setactiveKey] = useState("");
   const goToHomePage = () => {
     console.log("go To Overview clicked");
     navigate("/");
@@ -39,10 +38,10 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
   };
 
   const getActiveKey = () => {
-    switch(location.pathname) {
-      case '/':
+    switch (location.pathname) {
+      case "/":
         return "1";
-      case '/allemployees':
+      case "/allemployees":
         return "2";
       default:
         return "1"; // default to home if the path does not match known routes
@@ -87,7 +86,12 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
             Automator
           </Text>
         </Space>
-        <Space style={{ marginTop: "25px", marginLeft: "200px" }} >
+        <Space
+          style={{
+            marginTop: "25px",
+            //  marginLeft: "200px"
+          }}
+        >
           <Tabs
             size="large"
             defaultActiveKey={getActiveKey()}
@@ -97,7 +101,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
           />
         </Space>
         <Flex gap="50px" justify="flex-end">
-          <Input.Search placeholder="Search..." style={{ width: 200 }} />
+          {/* <Input.Search placeholder="Search..." style={{ width: 200 }} /> */}
           <Button
             className="mode-toggle-button"
             shape="circle"
