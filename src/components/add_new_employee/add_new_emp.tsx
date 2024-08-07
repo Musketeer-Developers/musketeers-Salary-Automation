@@ -2,24 +2,28 @@ import { useState, ChangeEvent, useEffect } from "react";
 import { Divider, Flex, Input, Select, Form, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { useModal } from '../../contexts/context-modal';
 import { useNotification } from "@refinedev/core";
 import { API_URL} from "../../constants";
 import { axiosInstance } from "../../authProvider";
 
-export const AddnewEmployee = () => {
+interface addProps {
+    isVisible: boolean;
+    handleClose: () => void;
+    setRefreshData:(refresh:boolean) => void;
+}
+
+export const AddnewEmployee:React.FC<addProps> = ({ isVisible, handleClose,setRefreshData}) => {
     const { open, close } = useNotification();
-    const { isModalOpen, hideModal } = useModal();
     const [form] = Form.useForm();
     const { Option } = Select;
-    const [ImageID, setImageID] = useState(1);
+    const [ImageID, setImageID] = useState(3);
     const [isDisable, setisDisable] = useState(false);
     const [isCash, setisCash] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
-    let isImage: boolean = false;
-    const MuskImageID: number = 1;
+    // let isImage = false;
+    const MuskImageID = 3;
     const month = ["january","february","march","april","may","june","july","august","september","october","november","december"];
     const date = new Date();
 
@@ -50,7 +54,7 @@ export const AddnewEmployee = () => {
 
     useEffect(() => {
         isDisable ? form.setFieldsValue({ leavesRemaining: 0 }) : null
-    }, [isDisable])
+    }, [form, isDisable])
 
     const onSwtichChange = (value: boolean): void => {
         setisCash(value);
@@ -60,14 +64,15 @@ export const AddnewEmployee = () => {
         isCash ?
             form.setFieldsValue({ accountTitle: "Cash Salary", accountIBAN: ".......Cash Salary......", bankName: "Cash Salary" })
             : form.setFieldsValue({ accountTitle: "", accountIBAN: "", bankName: "" })
-    }, [isCash])
+    }, [form, isCash])
 
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
             console.log('Received values of form: ', values);
-            hideModal();
-            postData(values);
+            handleClose();
+            await postData(values);
+            setRefreshData(true);
             form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);
@@ -155,6 +160,9 @@ export const AddnewEmployee = () => {
                 //     console.error('Error posting data:', error);
                 //     open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
                 // }
+
+                // please dont remove it
+
             } catch (error: any) {
                 console.error('Error posting data:', error);
                 open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
@@ -216,11 +224,11 @@ export const AddnewEmployee = () => {
             <Modal
                 forceRender
                 title="Add New Employee"
-                open={isModalOpen}
+                open={isVisible}
                 onOk={handleOk}
-                onCancel={hideModal}
+                onCancel={handleClose}
                 footer={[
-                    <Button key="back" onClick={hideModal}>
+                    <Button key="back" onClick={handleClose}>
                         Cancel
                     </Button>,
                     <Button key="submit" type="primary" onClick={handleOk}>

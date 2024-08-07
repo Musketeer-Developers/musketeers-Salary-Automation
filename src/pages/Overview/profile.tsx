@@ -46,7 +46,7 @@ const BackButton = () => {
     <Button
       type="link"
       icon={<ArrowLeftOutlined />}
-      onClick={() => navigate("/")}
+      onClick={() => navigate(-1)}
     >
       {/* Back */}
     </Button>
@@ -73,6 +73,7 @@ export const EmployeeProfile = () => {
   >([]);
   // Add a state variable to manage loading status
   const [loading, setLoading] = useState(true);
+  const [refreshData, setRefreshData] = useState(false);
 
   const navigate = useNavigate();
   const goToDailyLogs = (monthID: number, activeParam: string) => {
@@ -147,17 +148,19 @@ export const EmployeeProfile = () => {
               response2.data.data.month.slice(1);
             const year = response2.data.data.year;
             const month = monthName + " " + year;
+            const calculatedNetSalary = parseInt(msAttribtes.grossSalaryEarned) + parseInt(msAttribtes.medicalAllowance) - parseInt(msAttribtes.WTH);
             return {
               id: item.id, // Ensure id is returned
               month,
               monthName,
               year,
+              calculatedNetSalary,
               ...item,
             };
           })
         );
         monthlySalariesWithNames[i] = monthlySalariesWithNames1;
-        // console.log(`monthlySalariesWithNames[${i}]`,monthlySalariesWithNames[i])
+        // console.log(`monthlySalariesWithNames[${i}]`,monthlySalariesWithNames[i]);
       }
       const monthlySalariesWN = [];
       for (let i = 0; i < mIDArray.length; i++) {
@@ -283,7 +286,7 @@ export const EmployeeProfile = () => {
         });
         return formattedWorkDate === formattedDate;
       });
-      console.log(lastDayWork);     // undefined at new month date 1st
+      // console.log(lastDayWork);     // undefined at new month date 1st
       setdailyData([lastDayWork]); // Ensure setdailyData is defined in your scope
       return lastDayWork;
     } catch (error) {
@@ -337,18 +340,25 @@ export const EmployeeProfile = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      await fetchLastDayWork();
-      await fetchMonth();
-      await fetchPerson();
-      await fetchAllMonthlyReport(); // This will ensure monthlyReport is updated after all data is fetched
-      setLoading(false);
-    };
+  const fetchData = async () => {
+    setLoading(true);
+    await fetchMonth();
+    await fetchLastDayWork();
+    await fetchPerson();
+    await fetchAllMonthlyReport(); // This will ensure monthlyReport is updated after all data is fetched
+    setLoading(false);
+  };
 
+  useEffect(() => {
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    if (refreshData) {
+      fetchData();
+      setRefreshData(false);
+    }
+  }, [refreshData]);
 
   if (!person || person.publishedAt === null) {
     return (
@@ -363,7 +373,7 @@ export const EmployeeProfile = () => {
       title={
         <div style={{ display: "flex", alignItems: "center" }}>
           <BackButton />
-          <span style={{ marginLeft: "10px" }}>Accounts</span>
+          <span style={{ marginLeft: "10px" }}>Profile</span>
         </div>
       }
       headerButtons={() => null}
@@ -397,7 +407,7 @@ export const EmployeeProfile = () => {
                 <h1>{person.Name || "Name of Employee"}</h1>
               </Flex>
               <Flex gap={16}>
-                <ButtonsComponent />
+                <ButtonsComponent setRefreshData={setRefreshData} />
               </Flex>
             </Flex>
           </Col>
@@ -419,7 +429,7 @@ export const EmployeeProfile = () => {
                     <Typography.Text>Employee info</Typography.Text>
                   </Flex>
                   <Flex>
-                    <EditEmployee {...person} />
+                    <EditEmployee {...person} setRefreshData={setRefreshData}/>
                   </Flex>
                 </Flex>
               }
@@ -537,7 +547,7 @@ export const EmployeeProfile = () => {
             </Card>
             {/*See Bank Details*/}
             <PostShow bankDetails={person.bankDetails} />
-            <DeleteButton EmpID={person.id}/>
+            <DeleteButton EmpID={person.id} />
           </Col>
           <Col xs={{ span: 24 }} xl={{ span: 16 }}>
             <Card
@@ -787,8 +797,8 @@ export const EmployeeProfile = () => {
                 />
                 <Table.Column
                   title="Net Salary"
-                  dataIndex="netSalary"
-                  key="netSalary"
+                  dataIndex="calculatedNetSalary"
+                  key="calculatedNetSalary"
                   align="center"
                   render={(total) => (
                     <NumberField

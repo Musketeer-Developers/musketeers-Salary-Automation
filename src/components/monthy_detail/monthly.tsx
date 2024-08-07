@@ -1,7 +1,6 @@
 import { Flex, Table, Card, Typography, Space } from "antd";
 import { DollarOutlined, CalendarOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { API_URL } from "../../constants";
 import { NumberField } from "@refinedev/antd";
 import { axiosInstance } from "../../authProvider";
@@ -13,9 +12,9 @@ interface MonthlylogProps {
 
 export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
-  const [holidaysCount, setHolidaysCount] = useState(0);
-  const [paidLeaves, setPaidLeaves] = useState(0);
-  const [netSalary, setNetSalary] = useState(0);
+  const [holidaysCount, setHolidaysCount] = useState(0);          //holidaysCount is being used in table (NO error)
+  const [paidLeaves, setPaidLeaves] = useState(0);          //paidLeaves is being used in table (NO error)
+  const [netSalary, setNetSalary] = useState(0);          //netSalary is being used in table (NO error)
 
   useEffect(() => {
     const fetchEmployee = async () => {
@@ -37,7 +36,6 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
     const fetchDailyWork = async () => {
       try {
         const attributes = await fetchEmployee();
-        console.log("Attributes:", attributes);
         const monthlySalaries = attributes.monthly_salaries;
         const paidLeaves = attributes.leavesRemaining;
         setPaidLeaves(paidLeaves);
@@ -56,10 +54,6 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
         }
         setHolidaysCount(holidaysCount);
 
-        console.log("Holidays Count:", holidaysCount);
-        console.log("Paid Leaves:", paidLeaves);
-        console.log("Monthly Salaries:", monthlySalaries);
-
         if (monthID !== undefined) {
           const selectedMonth = monthlySalaries.find(
             (item: any) => item.id == monthID
@@ -77,8 +71,6 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
             netSalary,
           };
 
-          console.log("Net Salary:", netSalary);
-          console.log("Selected Month:", updatedSelectedMonth);
           setMonthlyData(updatedSelectedMonth ? [updatedSelectedMonth] : []);
         }
       } catch (error) {
@@ -88,10 +80,6 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
 
     fetchDailyWork();
   }, [id, monthID]);
-
-  useEffect(() => {
-    console.log("Monthly Data Updated:", monthlyData);
-  }, [monthlyData]);
 
   return (
     <>

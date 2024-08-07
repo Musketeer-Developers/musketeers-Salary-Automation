@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Modal,
-  Button,
-  Form,
-  Divider,
-  Typography,
-  DatePicker,
-  InputNumber,
-} from "antd";
+import { Modal, Button, Form, Divider, DatePicker, InputNumber } from "antd";
 import { useNotification } from "@refinedev/core";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -17,16 +9,17 @@ import { axiosInstance } from "../../authProvider";
 interface HubstaffHoursProps {
   isVisible: boolean;
   handleClose: () => void;
+  setRefreshData: (refresh: boolean) => void;
 }
 
 const HubstaffHours: React.FC<HubstaffHoursProps> = ({
   isVisible,
   handleClose,
+  setRefreshData,
 }) => {
   const { id } = useParams<{ id: string }>();
-  // const { open, close } = useNotification();
+  const { open } = useNotification();
   const [form] = Form.useForm();
-  const { Title } = Typography;
   const [checkDate, setcheckDate] = useState(false);
   const [hubstaffHours, sethubstaffHours] = useState<number>(0);
   const [dailyWorkID, setdailyWorkID] = useState(0);
@@ -36,7 +29,8 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
       const values = await form.validateFields();
       console.log("Received values of form: ", values);
       handleClose();
-      putData(values);
+      await putData(values);
+      setRefreshData(true);
       form.resetFields();
     } catch (error) {
       console.error("Validation Failed:", error);
@@ -67,13 +61,19 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
             }
           );
           console.log("Response-daily:", response.data);
+          setdailyWorkID(0);
         } catch (error: any) {
           console.error("Error posting data:", error);
+          open?.({
+            type: "error",
+            message: `Error!`,
+            description: `${error?.response?.data?.error?.message}`,
+          });
         }
       };
       update();
     }
-  }, [dailyWorkID]);
+  }, [dailyWorkID, hubstaffHours, open]);
 
   const Employee = async () => {
     try {
@@ -89,6 +89,11 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
       return response.data;
     } catch (error: any) {
       console.error("Error posting data:", error);
+      open?.({
+        type: "error",
+        message: `Error!`,
+        description: `${error?.response?.data?.error?.message}`,
+      });
     }
   };
 
@@ -114,10 +119,20 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
             console.log("found");
             setcheckDate(true);
             setdailyWorkID(data.id);
+            open?.({
+              type: "success",
+              message: "Success!",
+              description: "Successfully added!",
+            });
           }
         });
       } catch (error: any) {
         console.error("Error posting data:", error);
+        open?.({
+          type: "error",
+          message: `Error!`,
+          description: `${error?.response?.data?.error?.message}`,
+        });
       }
     });
   }

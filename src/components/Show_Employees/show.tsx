@@ -3,7 +3,6 @@ import { CreateButton, EditButton, List, NumberField } from "@refinedev/antd";
 import { useState, useEffect } from "react";
 import { EyeOutlined } from "@ant-design/icons";
 import { Flex, Table } from "antd";
-import { useModal } from "../../contexts/context-modal";
 import { useNavigate } from "react-router-dom";
 import { Account } from "../../types";
 import { API_URL } from "../../constants";
@@ -11,17 +10,19 @@ import Holiday from "../add_buttons/add_holiday";
 import Month from "../add_buttons/add_month";
 import HubstaffFile from "../add_buttons/add_hubstaffFile";
 import { axiosInstance } from "../../authProvider";
+import { AddnewEmployee } from "../add_new_employee/add_new_emp";
 
 export const ShowEmployees = ({ children }: PropsWithChildren) => {
   const [visibleModal, setVisibleModal] = useState("");
-  const { showModal } = useModal();
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshData, setRefreshData] = useState(false);
+
   const handleClose = () => {
     setVisibleModal("");
   };
 
-  const fetchEmployee = async (id: any) => {
+  const fetchEmployee = async (id:number) => {
     try {
       const response = await axiosInstance.get(
         `${API_URL}/employees/${id}?populate=*`,
@@ -145,6 +146,14 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (refreshData) {
+      setLoading(true);
+      fetchData();
+      setRefreshData(false);
+    }
+  }, [refreshData]);
+
   const navigate = useNavigate();
   const goToprofile = (id: number) => {
     console.log(`goToprofile of ${id} clicked`);
@@ -163,12 +172,17 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
               <CreateButton size="large" onClick={() => setVisibleModal("1")}>
                 Holiday
               </CreateButton>
-              <CreateButton size="large" onClick={showModal}>
+              <CreateButton size="large" onClick={() => setVisibleModal("4")}>
                 New Employee
               </CreateButton>
               <CreateButton size="large" onClick={() => setVisibleModal("3")}>
                 Import
               </CreateButton>
+              <AddnewEmployee
+                isVisible={visibleModal === "4"}
+                handleClose={handleClose}
+                setRefreshData={setRefreshData}
+              />
               <Holiday
                 isVisible={visibleModal === "1"}
                 handleClose={handleClose}
@@ -180,6 +194,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
               <HubstaffFile
                 isVisible={visibleModal === "3"}
                 handleClose={handleClose}
+                setRefreshData={setRefreshData}
               />
             </>
           );
@@ -187,7 +202,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
       >
         <Table dataSource={data} rowKey="id" loading={loading}>
           {/* <Table.Column title="ID" dataIndex="id" key="id" width={20} /> */}
-          <Table.Column title="ID" dataIndex="empNo" key="empNo" width={120} />
+          <Table.Column title="MUSK ID" dataIndex="empNo" key="empNo" width={120} align="center" />
           <Table.Column
             title="Name"
             dataIndex="Name"

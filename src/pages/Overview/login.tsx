@@ -1,4 +1,3 @@
-import React from "react";
 import { AuthPage } from "@refinedev/antd";
 import {Space,Typography} from 'antd';
 import logo from '../../logo.png';

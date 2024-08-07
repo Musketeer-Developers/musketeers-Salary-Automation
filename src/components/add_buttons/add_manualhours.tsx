@@ -1,7 +1,6 @@
 import React from 'react';
 import { Modal, Button, Form, Divider, Typography, DatePicker, InputNumber } from 'antd';
 import { useNotification } from "@refinedev/core";
-import axios from 'axios';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import {API_URL} from '../../constants';
@@ -10,24 +9,24 @@ import {axiosInstance} from '../../authProvider';
 interface ManualHoursProps {
     isVisible: boolean;
     handleClose: () => void;
+    setRefreshData:(refresh:boolean) => void;
 }
 
-const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => {
+const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose, setRefreshData }) => {
     const { id } = useParams<{ id: string }>();
     const { open, close } = useNotification();
     const [form] = Form.useForm();
-    const { Title } = Typography;
     const [checkDate, setcheckDate] = useState(false);
     const [manualHours, setManualHours] = useState<Number>(0);
     const [dailyWorkID, setdailyWorkID] = useState(0);
-    const [Count, setCount] = useState(0);
 
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
             console.log('Received values of form: ', values);
             handleClose();
-            putData(values);
+            await putData(values);
+            setRefreshData(true);
             form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);
@@ -36,7 +35,7 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
 
     interface FormData {
         workDate: moment.Moment;
-        manualHours: Number;
+        manualHours: number;
     }
 
     useEffect(() => {
@@ -55,13 +54,16 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
                             }
                         });
                     console.log('Response-daily:', response.data);
+                    open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
+                    setdailyWorkID(0);
                 } catch (error: any) {
                     console.error('Error posting data:', error);
+                    open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
                 }
             }
             update();
         }
-    }, [dailyWorkID])
+    }, [dailyWorkID, manualHours, open])
 
     async function Employee() {
         try {
@@ -75,13 +77,14 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose }) => 
             return response.data;
         } catch (error: any) {
             console.error('Error posting data:', error);
+            open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
         }
     }
 
     async function putData(formData: FormData) {
         const date = formData.workDate?.format('YYYY-MM-DD');
         setManualHours(formData.manualHours);
-        let attributes = await Employee();
+        const attributes = await Employee();
         const MonthlySalaries = attributes.data.monthly_salaries;
         MonthlySalaries.map(async (item: any) => {
             try {

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal, Button, Form, Divider, Select, DatePicker} from 'antd';
-import axios from 'axios';
 import { useNotification } from "@refinedev/core";
 import {API_URL} from '../../constants'; 
 import {axiosInstance} from '../../authProvider';
