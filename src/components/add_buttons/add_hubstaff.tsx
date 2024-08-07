@@ -70,6 +70,7 @@ const HubstaffHours: React.FC<HubstaffHoursProps> = ({
             }
           );
           console.log("Response-daily:", response.data);
+          setdailyWorkID(0);
         } catch (error: any) {
           console.error("Error posting data:", error);
           open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });

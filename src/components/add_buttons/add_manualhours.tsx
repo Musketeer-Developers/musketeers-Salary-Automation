@@ -58,6 +58,7 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose, setRe
                         });
                     console.log('Response-daily:', response.data);
                     open?.({ type: 'success', message: 'Success!', description: 'Successfully added!' });
+                    setdailyWorkID(0);
                 } catch (error: any) {
                     console.error('Error posting data:', error);
                     open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });

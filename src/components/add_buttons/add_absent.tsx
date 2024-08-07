@@ -55,6 +55,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose, setRefreshData 
                             }
                         });
                     console.log('Response-daily:', response.data);
+                    setdailyWorkID(0);
                 } catch (error: any) {
                     console.error('Error posting data:', error);
                     open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
@@ -80,6 +81,7 @@ const Absent: React.FC<AbsentProps> = ({ isVisible, handleClose, setRefreshData 
                             }
                         });
                     console.log('Response-monthly:', response.data);
+                    setSalaryMonthID(0);
                 } catch (error: any) {
                     console.error('Error posting data:', error);
                     open?.({ type: 'error', message: `Error!`, description: `${error?.response?.data?.error?.message}` });
