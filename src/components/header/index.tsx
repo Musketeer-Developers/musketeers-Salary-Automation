@@ -28,7 +28,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
 
   const navigate = useNavigate();
   const location = useLocation();
-  const [check,setCheck] = useState(false);
+  const [activeKey,setactiveKey] = useState("");
   const goToHomePage = () => {
     console.log("go To Overview clicked");
     navigate("/");
@@ -67,13 +67,6 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
       label: "Salary List",
     },
   ];
-
-  useEffect(()=>{
-    if(check==false){
-      setCheck(true);
-      setCheck(false);
-    }
-  },[])
 
   return (
     <AntdLayout.Header className={`header ${mode}`}>

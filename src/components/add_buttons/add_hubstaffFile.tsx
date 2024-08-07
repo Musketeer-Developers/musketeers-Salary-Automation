@@ -51,7 +51,7 @@ const HubstaffFile: React.FC<HubstaffFileProps> = ({
               const employees: { [key: string]: any } = {};
               results.data.forEach((row: any) => {
                 const employeeName = row.Member;
-                const date = moment(row.Date, "DD-MM-YY").format("YYYY-MM-DD");
+                const date = moment(row.Date, "YYYY-MM-DD");
                 const hubstaffHours = convertTimeToHours(row.Time);
                 if (!employees[employeeName]) {
                   employees[employeeName] = {

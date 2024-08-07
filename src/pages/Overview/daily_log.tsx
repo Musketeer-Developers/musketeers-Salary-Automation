@@ -182,6 +182,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                     dataIndex="date"
                     key="daily_date"
                     width={80}
+                    defaultSortOrder={"ascend"}
                     sorter={(a: TableData, b: TableData) =>
                       new Date(a.date)?.getTime() - new Date(b.date)?.getTime()
                     }
