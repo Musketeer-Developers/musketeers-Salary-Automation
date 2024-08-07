@@ -202,7 +202,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
       >
         <Table dataSource={data} rowKey="id" loading={loading}>
           {/* <Table.Column title="ID" dataIndex="id" key="id" width={20} /> */}
-          <Table.Column title="ID" dataIndex="empNo" key="empNo" width={120} />
+          <Table.Column title="MUSK ID" dataIndex="empNo" key="empNo" width={120} align="center" />
           <Table.Column
             title="Name"
             dataIndex="Name"

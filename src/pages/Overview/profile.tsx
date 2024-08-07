@@ -148,11 +148,13 @@ export const EmployeeProfile = () => {
               response2.data.data.month.slice(1);
             const year = response2.data.data.year;
             const month = monthName + " " + year;
+            const calculatedNetSalary = parseInt(msAttribtes.grossSalaryEarned) + parseInt(msAttribtes.medicalAllowance) - parseInt(msAttribtes.WTH);
             return {
               id: item.id, // Ensure id is returned
               month,
               monthName,
               year,
+              calculatedNetSalary,
               ...item,
             };
           })
@@ -284,7 +286,7 @@ export const EmployeeProfile = () => {
         });
         return formattedWorkDate === formattedDate;
       });
-      console.log(lastDayWork);     // undefined at new month date 1st
+      // console.log(lastDayWork);     // undefined at new month date 1st
       setdailyData([lastDayWork]); // Ensure setdailyData is defined in your scope
       return lastDayWork;
     } catch (error) {
@@ -795,8 +797,8 @@ export const EmployeeProfile = () => {
                 />
                 <Table.Column
                   title="Net Salary"
-                  dataIndex="netSalary"
-                  key="netSalary"
+                  dataIndex="calculatedNetSalary"
+                  key="calculatedNetSalary"
                   align="center"
                   render={(total) => (
                     <NumberField

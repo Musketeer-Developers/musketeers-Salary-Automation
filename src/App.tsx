@@ -1,5 +1,4 @@
 import { Authenticated, Refine } from "@refinedev/core";
-import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { NavigateToResource } from "@refinedev/react-router-v6";
 import { ThemedLayoutV2, useNotificationProvider, ErrorComponent } from "@refinedev/antd";
@@ -13,11 +12,9 @@ import {
   CatchAllNavigate,
 } from "@refinedev/react-router-v6";
 
-import { DataProvider } from "@refinedev/strapi-v4";
 import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import { authProvider, axiosInstance } from "./authProvider";
-import { API_URL } from "./constants";
+import { authProvider } from "./authProvider";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import { Header, OverviewPageList, EmployeeProfile, Dailylog, EmployeeOverview } from "./components/index";
 import { Login } from "./pages/Overview/login";
@@ -30,7 +27,6 @@ function App() {
           <AntdApp>
               <Refine
                 authProvider={authProvider}
-                // dataProvider={DataProvider(API_URL + `/api`, axiosInstance)}
                 notificationProvider={useNotificationProvider}
                 routerProvider={routerBindings}
                 options={{
@@ -40,7 +36,6 @@ function App() {
                   projectId: "5BDGdF-zJCTf9-YjUmiY",
                 }}
               >
-                {/* <Header/> */}
                 <Routes>
                   <Route
                     element={
@@ -141,7 +136,6 @@ function App() {
                 </Routes>
                 <RefineKbar />
                 <UnsavedChangesNotifier />
-                {/* <DocumentTitleHandler /> */}
               </Refine>
           </AntdApp>
         </ColorModeContextProvider>
