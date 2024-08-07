@@ -160,7 +160,7 @@ export const EmployeeProfile = () => {
           })
         );
         monthlySalariesWithNames[i] = monthlySalariesWithNames1;
-        // console.log(`monthlySalariesWithNames[${i}]`,monthlySalariesWithNames[i])
+        // console.log(`monthlySalariesWithNames[${i}]`,monthlySalariesWithNames[i]);
       }
       const monthlySalariesWN = [];
       for (let i = 0; i < mIDArray.length; i++) {

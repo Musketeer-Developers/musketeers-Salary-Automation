@@ -8,7 +8,6 @@ import {
   Skeleton,
   Typography,
 } from "antd";
-// import { EditOutlined } from "@ant-design/icons";
 import { useStyles } from "./styled";
 
 type Props = {

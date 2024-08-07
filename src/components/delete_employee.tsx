@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 const { Title } = Typography;
 
 interface deleteProps {
-  EmpID:Number
+  EmpID:number
 }
 
 const DeleteButton: React.FC<deleteProps> = ({EmpID}) => {
@@ -36,7 +36,7 @@ const DeleteButton: React.FC<deleteProps> = ({EmpID}) => {
       const response = await axiosInstance.put(`${API_URL}/employees/${EmpID}/unpublish`);
       navigate('/');
       console.log('Response:', response.data);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error posting data:', error);
     }
   }

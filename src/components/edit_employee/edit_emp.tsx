@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, ChangeEvent, useEffect} from "react";
 import { Divider, Flex, Input, Select, Form, Switch, Typography, Modal, Button, Upload, InputNumber, DatePicker } from "antd";
-import axios from 'axios';
 import dayjs from 'dayjs';
 import { PlusOutlined } from '@ant-design/icons';
 import { EditButton } from '@refinedev/antd';
@@ -78,7 +77,7 @@ export const EditEmployee = (props: Employee) => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
-    const MuskImageID: number = 2;
+    const MuskImageID = 2;
 
     const handleStatusChange = (value: string): void => {
         setisDisable(value !== "Permanent");
@@ -86,7 +85,7 @@ export const EditEmployee = (props: Employee) => {
 
     useEffect(() => {
         isDisable ? form.setFieldsValue({ leavesRemaining: 0 }) : null
-    }, [isDisable])
+    }, [form, isDisable])
 
     const onSwtichChange = (value: boolean): void => {
         setisCash(value);
@@ -96,7 +95,7 @@ export const EditEmployee = (props: Employee) => {
         isCash ?
             form.setFieldsValue({ accountTitle: "Cash Salary", accountIBAN: ".......Cash Salary......", bankName: "Cash Salary" })
             : form.setFieldsValue({ accountTitle: props.bankDetails.accountTitle, accountIBAN: props.bankDetails.accountIBAN, bankName: props.bankDetails.bankName })
-    }, [isCash])
+    }, [form, isCash, props.bankDetails.accountIBAN, props.bankDetails.accountTitle, props.bankDetails.bankName])
 
     const handleOk = async () => {
         try {
@@ -196,7 +195,7 @@ export const EditEmployee = (props: Employee) => {
         });
         props.bankDetails.bankName == "Cash Salary" ? setisCash(true) : setisCash(false)
         props.employementStatus === "Permanent" ? setisDisable(false) : null
-    }, [])
+    }, [form, props.Designation, props.Name, props.bankDetails.accountIBAN, props.bankDetails.accountTitle, props.bankDetails.bankName, props.email, props.empNo, props.employementStatus, props.grossSalary, props.hubstaffEnabled, props.imageUrl, props.joinDate, props.lastWorkingDay, props.leavesRemaining, props.permanentDate, props.phoneNo, props.salarySlipRequired])
 
     const imageprops: UploadProps = {
         defaultFileList: [{

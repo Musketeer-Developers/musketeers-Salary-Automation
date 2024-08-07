@@ -22,8 +22,8 @@ export const AddnewEmployee:React.FC<addProps> = ({ isVisible, handleClose,setRe
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
-    let isImage: boolean = false;
-    const MuskImageID: number = 2;
+    // let isImage = false;
+    const MuskImageID = 2;
     const month = ["january","february","march","april","may","june","july","august","september","october","november","december"];
     const date = new Date();
 
@@ -54,7 +54,7 @@ export const AddnewEmployee:React.FC<addProps> = ({ isVisible, handleClose,setRe
 
     useEffect(() => {
         isDisable ? form.setFieldsValue({ leavesRemaining: 0 }) : null
-    }, [isDisable])
+    }, [form, isDisable])
 
     const onSwtichChange = (value: boolean): void => {
         setisCash(value);
@@ -64,7 +64,7 @@ export const AddnewEmployee:React.FC<addProps> = ({ isVisible, handleClose,setRe
         isCash ?
             form.setFieldsValue({ accountTitle: "Cash Salary", accountIBAN: ".......Cash Salary......", bankName: "Cash Salary" })
             : form.setFieldsValue({ accountTitle: "", accountIBAN: "", bankName: "" })
-    }, [isCash])
+    }, [form, isCash])
 
     const handleOk = async () => {
         try {

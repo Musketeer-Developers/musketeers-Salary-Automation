@@ -10,7 +10,6 @@ import { axiosInstance } from "../../authProvider";
 
 interface TableData {
   date: string;
-  // other properties...
 }
 
 export const Dailylog = ({ children }: PropsWithChildren) => {
@@ -69,7 +68,7 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
 
         if (monthID !== undefined) {
           const selectedMonth = monthlySalaries.find(
-            (item:any) => item.id == monthID
+            (item: any) => item.id == monthID
           );
 
           if (selectedMonth) {
@@ -183,8 +182,10 @@ export const Dailylog = ({ children }: PropsWithChildren) => {
                     dataIndex="date"
                     key="daily_date"
                     width={80}
-                    sorter={(a: TableData, b: TableData) => new Date(a.date)?.getTime() - new Date(b.date)?.getTime()}
-                    />
+                    sorter={(a: TableData, b: TableData) =>
+                      new Date(a.date)?.getTime() - new Date(b.date)?.getTime()
+                    }
+                  />
                   <Table.Column
                     title="Total Hours"
                     dataIndex="totalHours"

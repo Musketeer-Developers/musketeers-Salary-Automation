@@ -1,7 +1,6 @@
 import React from 'react';
 import { Modal, Button, Form, Divider, Typography, DatePicker, InputNumber } from 'antd';
 import { useNotification } from "@refinedev/core";
-import axios from 'axios';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import {API_URL} from '../../constants';
@@ -17,11 +16,9 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose, setRe
     const { id } = useParams<{ id: string }>();
     const { open, close } = useNotification();
     const [form] = Form.useForm();
-    const { Title } = Typography;
     const [checkDate, setcheckDate] = useState(false);
     const [manualHours, setManualHours] = useState<Number>(0);
     const [dailyWorkID, setdailyWorkID] = useState(0);
-    const [Count, setCount] = useState(0);
 
     const handleOk = async () => {
         try {
@@ -38,7 +35,7 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose, setRe
 
     interface FormData {
         workDate: moment.Moment;
-        manualHours: Number;
+        manualHours: number;
     }
 
     useEffect(() => {
@@ -66,7 +63,7 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose, setRe
             }
             update();
         }
-    }, [dailyWorkID])
+    }, [dailyWorkID, manualHours, open])
 
     async function Employee() {
         try {
@@ -87,7 +84,7 @@ const ManualHours: React.FC<ManualHoursProps> = ({ isVisible, handleClose, setRe
     async function putData(formData: FormData) {
         const date = formData.workDate?.format('YYYY-MM-DD');
         setManualHours(formData.manualHours);
-        let attributes = await Employee();
+        const attributes = await Employee();
         const MonthlySalaries = attributes.data.monthly_salaries;
         MonthlySalaries.map(async (item: any) => {
             try {
