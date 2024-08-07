@@ -104,7 +104,6 @@ export const EditEmployee = (props: Employee) => {
             handleCancel();
             await putData(values);
             props.setRefreshData(true);
-            form.resetFields();
         } catch (error) {
             console.error('Validation Failed:', error);
         }
