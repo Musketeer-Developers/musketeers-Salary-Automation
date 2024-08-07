@@ -373,7 +373,7 @@ export const EmployeeProfile = () => {
       title={
         <div style={{ display: "flex", alignItems: "center" }}>
           <BackButton />
-          <span style={{ marginLeft: "10px" }}>Accounts</span>
+          <span style={{ marginLeft: "10px" }}>Profile</span>
         </div>
       }
       headerButtons={() => null}
