@@ -6,8 +6,7 @@ import { Flex, Table } from "antd";
 import { useNavigate } from "react-router-dom";
 import { Account } from "../../types";
 import { API_URL } from "../../constants";
-import Holiday from "../add_buttons/add_holiday";
-import Month from "../add_buttons/add_month";
+import AddMonth from "../add_buttons/add_month";
 import HubstaffFile from "../add_buttons/add_hubstaffFile";
 import { axiosInstance } from "../../authProvider";
 import { AddnewEmployee } from "../add_new_employee/add_new_emp";
@@ -169,9 +168,6 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
               <CreateButton size="large" onClick={() => setVisibleModal("2")}>
                 Month
               </CreateButton>
-              <CreateButton size="large" onClick={() => setVisibleModal("1")}>
-                Holiday
-              </CreateButton>
               <CreateButton size="large" onClick={() => setVisibleModal("4")}>
                 New Employee
               </CreateButton>
@@ -183,11 +179,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
                 handleClose={handleClose}
                 setRefreshData={setRefreshData}
               />
-              <Holiday
-                isVisible={visibleModal === "1"}
-                handleClose={handleClose}
-              />
-              <Month
+              <AddMonth
                 isVisible={visibleModal === "2"}
                 handleClose={handleClose}
               />

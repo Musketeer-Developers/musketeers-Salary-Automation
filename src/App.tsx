@@ -18,6 +18,7 @@ import { authProvider } from "./authProvider";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import { Header, OverviewPageList, EmployeeProfile, Dailylog, EmployeeOverview, Invoice } from "./components/index";
 import { Login } from "./pages/Overview/login";
+import {Month} from "./pages/Overview/month";
 
 function App() {
   return (
@@ -73,7 +74,7 @@ function App() {
                         </div>
                       </ThemedLayoutV2>
                     } />
-                    <Route path='/allemployees' element={
+<Route path='/allemployees' element={
                       <ThemedLayoutV2 Header={() => null} Sider={() => null}>
                         <div
                           style={{
@@ -98,6 +99,20 @@ function App() {
                           <Invoice>
                             <Outlet />
                           </Invoice>
+                        </div>
+                      </ThemedLayoutV2>
+                    <Route path='/month' element={
+                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                        <div
+                          style={{
+                            maxWidth: "1280px",
+                            padding: "24px",
+                            margin: "0 auto",
+                          }}
+                        >
+                          <Month >
+                            <Outlet />
+                          </Month>
                         </div>
                       </ThemedLayoutV2>
                     } />

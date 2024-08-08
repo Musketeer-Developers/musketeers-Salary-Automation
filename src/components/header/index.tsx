@@ -14,45 +14,44 @@ import "./style.css";
 import { IconMoon } from "./icons/icon-moon";
 import { IconSun } from "./icons/icon-sun";
 import { useLogout } from "@refinedev/core";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 
 const { Text } = Typography;
-export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
+export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
+) => {
   const { mode, setMode } = useContext(ColorModeContext);
   const { mutate, isLoading } = useLogout();
-
-  const toggleMode = () => setMode(mode === "light" ? "dark" : "light");
-
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeKey, setactiveKey] = useState("");
-  const goToHomePage = () => {
-    console.log("go To Overview clicked");
-    navigate("/");
-  };
-  const goToAllEmployeesPage = () => {
-    console.log("go To Salary List clicked");
-    navigate("/allemployees");
-  };
+  const [activeKey, setActiveKey] = useState(getActiveKey(location.pathname));
+  const toggleMode = () => setMode(mode === "light" ? "dark" : "light");
+  useEffect(() => {
+    setActiveKey(getActiveKey(location.pathname)); // Update active key when the location changes
+  }, [location.pathname]);
 
-  const getActiveKey = () => {
-    switch (location.pathname) {
-      case "/":
+  function getActiveKey(pathname: string): string {
+    switch (pathname) {
+      case '/':
         return "1";
-      case "/allemployees":
+      case '/allemployees':
         return "2";
+      case '/month':
+        return "3";
       default:
-        return "1"; // default to home if the path does not match known routes
+        return "1";
     }
-  };
+  }
 
   const onChange = (key: string) => {
-    if (key == "1") {
-      goToHomePage();
-    } else if (key == "2") {
-      goToAllEmployeesPage();
+    setActiveKey(key); // Update the state to the new key
+    if (key === "1") {
+      navigate("/");
+    } else if (key === "2") {
+      navigate("/allemployees");
+    } else if (key === "3") {
+      navigate("/month");
     }
   };
 
@@ -65,6 +64,10 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
       key: "2",
       label: "Salary List",
     },
+    {
+      key: "3",
+      label: "Month",
+    },
   ];
 
   return (
@@ -74,30 +77,27 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
           <img
             src={logo}
             alt="Logo"
-            onClick={goToHomePage}
+            onClick={() => onChange("1")}
             style={{ cursor: "pointer", height: "40px" }}
           />
           <Text
             strong
             className="title"
-            onClick={goToHomePage}
+            onClick={() => onChange("1")}
             style={{ cursor: "pointer" }}
           >
             Automator
           </Text>
         </Space>
-        <Space
-          style={{
-            marginTop: "25px",
-            //  marginLeft: "200px"
-          }}
-        >
+        <Space style={{ marginTop: "25px",
+        //  marginLeft: "200px"
+          }} >
           <Tabs
             size="large"
-            defaultActiveKey={getActiveKey()}
+            activeKey={activeKey}
             items={items}
             onChange={onChange}
-            onTabClick={(key) => onChange(key)} // Handle tab click
+            onTabClick={(key) => onChange(key)} // Synchronize tab clicking
           />
         </Space>
         <Flex gap="50px" justify="flex-end">
