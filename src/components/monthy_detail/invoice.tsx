@@ -166,7 +166,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
             daysWorked: daysWorked,
             workingDays: workingDays,
             orignalWorkedHours: attributes?.workedHours,
-            workedHours: workedHours,
+            workedHours: workedHours.toFixed(2),
             hourlyRate: hourlyRate,
             paidLeavesHours: paidLeavesHours,
             paidLeaves: attributes?.paidLeaves,
@@ -312,7 +312,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
                         <strong>Worked Hours:</strong>
                       </Col>
                       <Col span={12}>
-                        {salary[0]?.workedHours.toFixed(2) || 0}
+                        {salary[0]?.workedHours || 0}
                       </Col>
                     </Row>
                     <hr />
@@ -354,6 +354,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
                       </Col>
                       <Col span={12}>
                         {salary[0]?.deductedAmountByAbsences || 0}
+                        
                       </Col>
                     </Row>
                   </Card>
