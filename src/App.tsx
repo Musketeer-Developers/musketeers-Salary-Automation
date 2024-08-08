@@ -18,7 +18,7 @@ import { authProvider } from "./authProvider";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import { Header, OverviewPageList, EmployeeProfile, Dailylog, EmployeeOverview, Invoice } from "./components/index";
 import { Login } from "./pages/Overview/login";
-import {Month} from "./pages/Overview/month";
+import { Month } from "./pages/Overview/month";
 
 function App() {
   return (
@@ -26,141 +26,142 @@ function App() {
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
-              <Refine
-                authProvider={authProvider}
-                notificationProvider={useNotificationProvider}
-                routerProvider={routerBindings}
-                options={{
-                  syncWithLocation: true,
-                  warnWhenUnsavedChanges: true,
-                  useNewQueryKeys: true,
-                  projectId: "5BDGdF-zJCTf9-YjUmiY",
-                }}
-              >
-                <Routes>
-                  <Route
-                    element={
-                      <Authenticated
-                        key="authenticated-routes"
-                        fallback={<CatchAllNavigate to="/login" />}
+            <Refine
+              authProvider={authProvider}
+              notificationProvider={useNotificationProvider}
+              routerProvider={routerBindings}
+              options={{
+                syncWithLocation: true,
+                warnWhenUnsavedChanges: true,
+                useNewQueryKeys: true,
+                projectId: "5BDGdF-zJCTf9-YjUmiY",
+              }}
+            >
+              <Routes>
+                <Route
+                  element={
+                    <Authenticated
+                      key="authenticated-routes"
+                      fallback={<CatchAllNavigate to="/login" />}
+                    >
+                      <ThemedLayoutV2
+                        Header={() => <Header />}
+                        Sider={() => null}
                       >
-                        <ThemedLayoutV2
-                          Header={() => <Header />}
-                          Sider={() => null}
-                        >
-                          <div
-                            style={{
-                              maxWidth: "1280px",
-                              margin: "0 auto",
-                            }}
-                          >
-                            <Outlet />
-                          </div>
-                        </ThemedLayoutV2>
-                      </Authenticated>
-                    }
-                  >
-                    <Route path='/' element={
-                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
                         <div
                           style={{
                             maxWidth: "1280px",
                             margin: "0 auto",
                           }}
                         >
-                          <OverviewPageList>
-                            <Outlet />
-                          </OverviewPageList>
+                          <Outlet />
                         </div>
                       </ThemedLayoutV2>
-                    } />
-<Route path='/allemployees' element={
-                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
-                        <div
-                          style={{
-                            maxWidth: "1280px",
-                            margin: "0 auto",
-                          }}
-                        >
-                          <EmployeeOverview >
-                            <Outlet />
-                          </EmployeeOverview>
-                        </div>
-                      </ThemedLayoutV2>
-                    } />
-                    <Route path='/allemployees/invoice/:id' element={
-                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
-                        <div
-                          style={{
-                            maxWidth: "1280px",
-                            margin: "0 auto",
-                          }}
-                        >
-                          <Invoice>
-                            <Outlet />
-                          </Invoice>
-                        </div>
-                      </ThemedLayoutV2>
-                    <Route path='/month' element={
-                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
-                        <div
-                          style={{
-                            maxWidth: "1280px",
-                            padding: "24px",
-                            margin: "0 auto",
-                          }}
-                        >
-                          <Month >
-                            <Outlet />
-                          </Month>
-                        </div>
-                      </ThemedLayoutV2>
-                    } />
-                    <Route path="/profile/:id" element={
-                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
-                        <div
-                          style={{
-                            maxWidth: "1280px",
-                            margin: "0 auto",
-                          }}
-                        >
-                          <EmployeeProfile />
-                        </div>
-                      </ThemedLayoutV2>
-                    } />
-                    <Route path='/daily/:id/:monthID/:activeParam' element={
-                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
-                        <div
-                          style={{
-                            maxWidth: "1280px",
-                            margin: "0 auto",
-                          }}
-                        >
-                          <Dailylog>
-                            <Outlet />
-                          </Dailylog>
-                        </div>
-                      </ThemedLayoutV2>
-                    } />
-                    <Route path="*" element={<ErrorComponent />} />
-                  </Route>
+                    </Authenticated>
+                  }
+                >
+                  <Route path='/' element={
+                    <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                      <div
+                        style={{
+                          maxWidth: "1280px",
+                          margin: "0 auto",
+                        }}
+                      >
+                        <OverviewPageList>
+                          <Outlet />
+                        </OverviewPageList>
+                      </div>
+                    </ThemedLayoutV2>
+                  } />
+                  <Route path='/allemployees' element={
+                    <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                      <div
+                        style={{
+                          maxWidth: "1280px",
+                          margin: "0 auto",
+                        }}
+                      >
+                        <EmployeeOverview >
+                          <Outlet />
+                        </EmployeeOverview>
+                      </div>
+                    </ThemedLayoutV2>
+                  } />
+                  <Route path='/allemployees/invoice/:id' element={
+                    <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                      <div
+                        style={{
+                          maxWidth: "1280px",
+                          margin: "0 auto",
+                        }}
+                      >
+                        <Invoice>
+                          <Outlet />
+                        </Invoice>
+                      </div>
+                    </ThemedLayoutV2>
+                  } />
+                  <Route path='/month' element={
+                    <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                      <div
+                        style={{
+                          maxWidth: "1280px",
+                          padding: "24px",
+                          margin: "0 auto",
+                        }}
+                      >
+                        <Month >
+                          <Outlet />
+                        </Month>
+                      </div>
+                    </ThemedLayoutV2>
+                  } />
+                  <Route path="/profile/:id" element={
+                    <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                      <div
+                        style={{
+                          maxWidth: "1280px",
+                          margin: "0 auto",
+                        }}
+                      >
+                        <EmployeeProfile />
+                      </div>
+                    </ThemedLayoutV2>
+                  } />
+                  <Route path='/daily/:id/:monthID/:activeParam' element={
+                    <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                      <div
+                        style={{
+                          maxWidth: "1280px",
+                          margin: "0 auto",
+                        }}
+                      >
+                        <Dailylog>
+                          <Outlet />
+                        </Dailylog>
+                      </div>
+                    </ThemedLayoutV2>
+                  } />
+                  <Route path="*" element={<ErrorComponent />} />
+                </Route>
 
+                <Route
+                  element={
+                    <Authenticated key="auth-pages" fallback={<Outlet />}>
+                      <NavigateToResource />
+                    </Authenticated>
+                  }
+                >
                   <Route
-                    element={
-                      <Authenticated key="auth-pages" fallback={<Outlet />}>
-                        <NavigateToResource />
-                      </Authenticated>
-                    }
-                  >
-                    <Route
-                      path="/login"
-                      element={<Login />}
-                    />
-                  </Route>
-                </Routes>
-                <RefineKbar />
-                <UnsavedChangesNotifier />
-              </Refine>
+                    path="/login"
+                    element={<Login />}
+                  />
+                </Route>
+              </Routes>
+              <RefineKbar />
+              <UnsavedChangesNotifier />
+            </Refine>
           </AntdApp>
         </ColorModeContextProvider>
       </RefineKbarProvider>
