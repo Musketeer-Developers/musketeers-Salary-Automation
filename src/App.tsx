@@ -50,7 +50,6 @@ function App() {
                           <div
                             style={{
                               maxWidth: "1280px",
-                              padding: "24px",
                               margin: "0 auto",
                             }}
                           >
@@ -65,7 +64,6 @@ function App() {
                         <div
                           style={{
                             maxWidth: "1280px",
-                            padding: "24px",
                             margin: "0 auto",
                           }}
                         >
@@ -80,7 +78,6 @@ function App() {
                         <div
                           style={{
                             maxWidth: "1280px",
-                            padding: "24px",
                             margin: "0 auto",
                           }}
                         >
@@ -95,7 +92,6 @@ function App() {
                         <div
                           style={{
                             maxWidth: "1280px",
-                            padding: "24px",
                             margin: "0 auto",
                           }}
                         >
@@ -110,7 +106,6 @@ function App() {
                         <div
                           style={{
                             maxWidth: "1280px",
-                            padding: "24px",
                             margin: "0 auto",
                           }}
                         >
@@ -123,7 +118,6 @@ function App() {
                         <div
                           style={{
                             maxWidth: "1280px",
-                            padding: "24px",
                             margin: "0 auto",
                           }}
                         >
