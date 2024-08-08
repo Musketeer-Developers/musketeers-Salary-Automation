@@ -1,8 +1,9 @@
 import React from "react";
-import { Modal, Button, Form, Divider, DatePicker } from "antd";
+import { Modal, Button, Form, Divider, Input, Table } from "antd";
 import { useNotification } from "@refinedev/core";
 import { API_URL } from "../../constants";
 import { axiosInstance } from "../../authProvider";
+import type { TableColumnsType } from 'antd';
 
 interface HolidayProps {
   isVisible: boolean;
@@ -14,6 +15,50 @@ interface Date {
 }
 
 const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
+  interface DataType {
+    key: React.Key;
+    name: string;
+  }
+  
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: 'All Employees',
+      dataIndex: 'name',
+      render: (text: string) => <a>{text}</a>,
+    },
+  ];
+  
+  const data: DataType[] = [
+    {
+      key: '1',
+      name: 'John Brown',
+    },
+    {
+      key: '2',
+      name: 'Jim Green',
+    },
+    {
+      key: '3',
+      name: 'Joe Black',
+    },
+    {
+      key: '4',
+      name: 'Disabled User',
+    },
+  ];
+  
+  // rowSelection object indicates the need for row selection
+  const rowSelection = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    },
+    // getCheckboxProps: (record: DataType) => ({
+    //   disabled: record.name === 'Disabled User', // Column configuration not to be checked
+    //   name: record.name,
+    // }),
+  };
+
+
   const { open } = useNotification();
   const [form] = Form.useForm();
 
@@ -77,13 +122,31 @@ const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
     >
       <Form form={form} layout="vertical">
         <Divider></Divider>
-        <Form.Item label="Date">
+        <Form.Item label="Holiday Name">
           <Form.Item
-            name={"date"}
-            rules={[{ required: true, message: "Please enter the Date" }]}
+            name={"name"}
+            rules={[{ required: true, message: "Please enter the event name" }]}
             noStyle
           >
-            <DatePicker style={{ width: "100%" }} />
+            <Input placeholder="holiday name" />
+          </Form.Item>
+        </Form.Item>
+        <Form.Item label="Employees" style={{ width: "100%" }}>
+          <Form.Item
+            name="employees"
+            rules={[{ required: true, message: 'Please select at least one employee!' }]}
+            noStyle
+          >
+            <Table
+              rowSelection={{
+                ...rowSelection,
+              }}
+              columns={columns}
+              dataSource={data}
+              pagination={false}
+              style={{}}
+            />
+
           </Form.Item>
         </Form.Item>
         <Divider></Divider>
