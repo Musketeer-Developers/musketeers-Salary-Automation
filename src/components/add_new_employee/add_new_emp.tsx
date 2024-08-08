@@ -16,14 +16,14 @@ export const AddnewEmployee:React.FC<addProps> = ({ isVisible, handleClose,setRe
     const { open, close } = useNotification();
     const [form] = Form.useForm();
     const { Option } = Select;
-    const [ImageID, setImageID] = useState(3);
+    const [ImageID, setImageID] = useState(7);
     const [isDisable, setisDisable] = useState(false);
     const [isCash, setisCash] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
     // let isImage = false;
-    const MuskImageID = 3;
+    const MuskImageID = 7;
     const month = ["january","february","march","april","may","june","july","august","september","october","november","december"];
     const date = new Date();
 

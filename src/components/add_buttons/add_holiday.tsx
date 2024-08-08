@@ -4,58 +4,41 @@ import { useNotification } from "@refinedev/core";
 import { API_URL } from "../../constants";
 import { axiosInstance } from "../../authProvider";
 import type { TableColumnsType } from 'antd';
+import moment from "moment";
+import { useEffect, useState } from 'react';
 
 interface HolidayProps {
   isVisible: boolean;
   handleClose: () => void;
+  selectedDate: moment.Moment;
+  setRefreshData: (refresh: boolean) => void;
 }
 
 interface Date {
   date: moment.Moment;
 }
 
-const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
-  interface DataType {
+const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose, selectedDate,setRefreshData }) => {
+  interface Employee {
     key: React.Key;
     name: string;
+    empID: string; // Assuming each employee has a unique ID
   }
-  
-  const columns: TableColumnsType<DataType> = [
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
+
+  const columns: TableColumnsType<Employee> = [
     {
       title: 'All Employees',
       dataIndex: 'name',
-      render: (text: string) => <a>{text}</a>,
+      key: 'name',
     },
   ];
-  
-  const data: DataType[] = [
-    {
-      key: '1',
-      name: 'John Brown',
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-    },
-    {
-      key: '4',
-      name: 'Disabled User',
-    },
-  ];
-  
-  // rowSelection object indicates the need for row selection
+
   const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: Employee[]) => {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
-    // getCheckboxProps: (record: DataType) => ({
-    //   disabled: record.name === 'Disabled User', // Column configuration not to be checked
-    //   name: record.name,
-    // }),
   };
 
 
@@ -67,20 +50,47 @@ const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
       const values = await form.validateFields();
       console.log("Received values of form: ", values);
       handleClose();
-      updateHoliday(values);
+      await putHoliday(values);
+      setRefreshData(true);
       form.resetFields();
     } catch (error) {
       console.error("Validation Failed:", error);
     }
   };
 
-  async function updateHoliday(formData: Date) {
+  interface EmployeeData {
+    empID: string;
+    empName: string;
+    isHoliday: boolean;
+  }
+
+  interface HolidayData {
+    date: string;
+    holidayName: string;
+    employees: EmployeeData[];
+  }
+
+
+  async function putHoliday(formData: HolidayData) {
+    let name;
+    if(formData.holidayName === undefined){
+      name="No holiday name provided";
+    }
+    else{
+      name=formData.holidayName;
+    }
     const data = {
-      date: formData.date?.format("YYYY-MM-DD"),
+      date: selectedDate.format("DD-MM-YYYY"),
+      holidayName: formData.holidayName,
+      employees: employees.map(emp => ({
+        empID: emp.empID,
+        empName: emp.name,
+        isHoliday: selectedKeys.includes(emp.key)
+      }))
     };
-    console.log(data);
+    console.log(JSON.stringify(data));
     try {
-      const response = await axiosInstance.post(
+      const response = await axiosInstance.put(
         `${API_URL}/month-data/add-holiday`,
         JSON.stringify(data),
         {
@@ -105,6 +115,44 @@ const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
     }
   }
 
+  async function getData() {
+    if (isVisible) {
+      try {
+        const response = await axiosInstance.get(`${API_URL}/month-data/get-holiday-info?date=${selectedDate.format("DD-MM-YYYY")}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log(response);
+        if (response.data) {
+          if (response.data.holidayName !== "No holiday name provided") {
+            form.setFieldsValue({
+              holidayName: response.data.holidayName,
+            });
+          }
+        }
+        const formattedData = response.data.employees.map((emp: any) => ({
+          key: emp.empID,
+          name: emp.empName,
+          empID: emp.empID,
+          isHoliday: emp.isHoliday
+        }));
+        setEmployees(formattedData);
+        const selected = formattedData.filter((emp: any) => emp.isHoliday).map((emp: any) => emp.key);
+        setSelectedKeys(selected);
+      } catch (error) {
+        console.error('Error posting data:', error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    getData();
+    form.resetFields();
+  }, [selectedDate, isVisible])
+
   return (
     <Modal
       forceRender
@@ -124,8 +172,8 @@ const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
         <Divider></Divider>
         <Form.Item label="Holiday Name">
           <Form.Item
-            name={"name"}
-            rules={[{ required: true, message: "Please enter the event name" }]}
+            name="holidayName"
+            // rules={[{ required: true, message: "Please enter the event name" }]}
             noStyle
           >
             <Input placeholder="holiday name" />
@@ -134,17 +182,19 @@ const Holiday: React.FC<HolidayProps> = ({ isVisible, handleClose }) => {
         <Form.Item label="Employees" style={{ width: "100%" }}>
           <Form.Item
             name="employees"
-            rules={[{ required: true, message: 'Please select at least one employee!' }]}
+            // rules={[{ required: true, message: 'Please select at least one employee!' }]}
             noStyle
           >
             <Table
               rowSelection={{
+                type: 'checkbox',
                 ...rowSelection,
+                selectedRowKeys: selectedKeys,
+                onChange: setSelectedKeys,
               }}
               columns={columns}
-              dataSource={data}
+              dataSource={employees}
               pagination={false}
-              style={{}}
             />
 
           </Form.Item>
