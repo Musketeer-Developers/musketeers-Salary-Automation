@@ -77,7 +77,7 @@ export const EditEmployee = (props: Employee) => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [inputValue, setInputValue] = useState('MUSK-');
     const { Title } = Typography;
-    const MuskImageID = 3;
+    const MuskImageID = 7;
 
     const handleStatusChange = (value: string): void => {
         setisDisable(value !== "Permanent");
