@@ -16,7 +16,7 @@ import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { authProvider } from "./authProvider";
 import { ColorModeContextProvider } from "./contexts/color-mode";
-import { Header, OverviewPageList, EmployeeProfile, Dailylog, EmployeeOverview } from "./components/index";
+import { Header, OverviewPageList, EmployeeProfile, Dailylog, EmployeeOverview, Invoice } from "./components/index";
 import { Login } from "./pages/Overview/login";
 import {Month} from "./pages/Overview/month";
 
@@ -51,7 +51,6 @@ function App() {
                           <div
                             style={{
                               maxWidth: "1280px",
-                              padding: "24px",
                               margin: "0 auto",
                             }}
                           >
@@ -66,7 +65,6 @@ function App() {
                         <div
                           style={{
                             maxWidth: "1280px",
-                            padding: "24px",
                             margin: "0 auto",
                           }}
                         >
@@ -76,12 +74,11 @@ function App() {
                         </div>
                       </ThemedLayoutV2>
                     } />
-                    <Route path='/allemployees' element={
+<Route path='/allemployees' element={
                       <ThemedLayoutV2 Header={() => null} Sider={() => null}>
                         <div
                           style={{
                             maxWidth: "1280px",
-                            padding: "24px",
                             margin: "0 auto",
                           }}
                         >
@@ -91,6 +88,19 @@ function App() {
                         </div>
                       </ThemedLayoutV2>
                     } />
+                    <Route path='/allemployees/invoice/:id' element={
+                      <ThemedLayoutV2 Header={() => null} Sider={() => null}>
+                        <div
+                          style={{
+                            maxWidth: "1280px",
+                            margin: "0 auto",
+                          }}
+                        >
+                          <Invoice>
+                            <Outlet />
+                          </Invoice>
+                        </div>
+                      </ThemedLayoutV2>
                     <Route path='/month' element={
                       <ThemedLayoutV2 Header={() => null} Sider={() => null}>
                         <div
@@ -111,7 +121,6 @@ function App() {
                         <div
                           style={{
                             maxWidth: "1280px",
-                            padding: "24px",
                             margin: "0 auto",
                           }}
                         >
@@ -124,7 +133,6 @@ function App() {
                         <div
                           style={{
                             maxWidth: "1280px",
-                            padding: "24px",
                             margin: "0 auto",
                           }}
                         >

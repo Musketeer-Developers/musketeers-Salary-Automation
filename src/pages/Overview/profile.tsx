@@ -399,8 +399,8 @@ export const EmployeeProfile = () => {
                   src={person.imageUrl || "https://via.placeholder.com/150"} // Updated to use dynamic image URL
                   style={{
                     borderRadius: "30px",
-                    maxWidth: "200px",
-                    height: "150px",
+                    maxWidth: "100px",
+                    height: "100px",
                   }}
                   alt="Employee"
                 />

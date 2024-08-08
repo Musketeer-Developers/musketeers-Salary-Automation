@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Account } from "../../types";
 import { API_URL } from "../../constants";
 import { EditButton, ExportButton } from "@refinedev/antd";
-import { EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined,ExportOutlined } from "@ant-design/icons";
 import { axiosInstance } from "../../authProvider";
 import Calculate from "../../components/add_buttons/calculateSalary";
 
@@ -108,6 +108,11 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
   const goToprofile = (id: number) => {
     console.log(`goToprofile of ${id} clicked`);
     navigate(`/profile/${id}`);
+  };
+  
+  const goToSalary = (id: number) => {
+    console.log(`goToprofile of ${id} clicked`);
+    navigate(`/allemployees/invoice/${id}`);
   };
 
   const exportToCSV = () => {
@@ -289,7 +294,7 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
             )}
           />
           <Table.Column
-            title="Profile"
+            title="Actions  "
             key="actions"
             fixed="right"
             align="center"
@@ -304,7 +309,15 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
                     hideText
                     icon={<EyeOutlined />}
                   />
+                <EditButton
+                  onClick={() => {
+                    goToSalary(record.id);
+                  }}
+                  hideText
+                  icon={<ExportOutlined />}
+                />
                 </Flex>
+                
               );
             }}
           />

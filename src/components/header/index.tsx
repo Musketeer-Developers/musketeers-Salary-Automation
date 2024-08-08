@@ -89,7 +89,9 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
             Automator
           </Text>
         </Space>
-        <Space style={{ marginTop: "25px", marginLeft: "200px" }} >
+        <Space style={{ marginTop: "25px",
+        //  marginLeft: "200px"
+          }} >
           <Tabs
             size="large"
             activeKey={activeKey}
@@ -99,7 +101,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = (
           />
         </Space>
         <Flex gap="50px" justify="flex-end">
-          <Input.Search placeholder="Search..." style={{ width: 200 }} />
+          {/* <Input.Search placeholder="Search..." style={{ width: 200 }} /> */}
           <Button
             className="mode-toggle-button"
             shape="circle"

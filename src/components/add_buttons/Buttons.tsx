@@ -1,5 +1,5 @@
 import React from "react";
-import { DownOutlined, PlusSquareOutlined } from "@ant-design/icons";
+import { CaretDownFilled, PlusSquareOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Button, Dropdown, Space } from "antd";
 import Absent from "./add_absent";
@@ -59,11 +59,14 @@ const ButtonsComponent: React.FC<ButtonsProps> = ({ setRefreshData }) => {
             type="primary"
             size="large"
             style={{
-              width: "155px",
+              width: "80px",
+              fontWeight: "bold",
+              fontSize: "14px",
             }}
           >
-            Add
-            <DownOutlined />
+            ADD
+            {/* <DownOutlined /> */}
+            <CaretDownFilled />
           </Button>
         </Dropdown>
       </Space>
