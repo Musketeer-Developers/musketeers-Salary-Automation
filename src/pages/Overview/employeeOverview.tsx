@@ -164,7 +164,8 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
               <CreateButton size="middle" onClick={() => setVisibleModal("1")}>
                 Calculate
               </CreateButton>
-              <ExportButton onClick={exportToCSV} />
+              <ExportButton
+               onClick={exportToCSV} />
               <Calculate
                 isVisible={visibleModal === "1"}
                 handleClose={handleClose}

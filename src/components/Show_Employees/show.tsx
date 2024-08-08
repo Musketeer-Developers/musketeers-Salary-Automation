@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { CreateButton, EditButton, List, NumberField } from "@refinedev/antd";
 import { useState, useEffect } from "react";
-import { EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined,ImportOutlined } from "@ant-design/icons";
 import { Flex, Table } from "antd";
 import { useNavigate } from "react-router-dom";
 import { Account } from "../../types";
@@ -16,7 +16,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshData, setRefreshData] = useState(false);
-
+  
   const handleClose = () => {
     setVisibleModal("");
   };
@@ -171,7 +171,7 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
               <CreateButton size="large" onClick={() => setVisibleModal("4")}>
                 New Employee
               </CreateButton>
-              <CreateButton size="large" onClick={() => setVisibleModal("3")}>
+              <CreateButton size="large" onClick={() => setVisibleModal("3")} icon={<ImportOutlined />}>
                 Import
               </CreateButton>
               <AddnewEmployee
