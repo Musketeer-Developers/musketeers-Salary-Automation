@@ -57,10 +57,10 @@ export const Invoice = ({ children }: PropsWithChildren) => {
 
     const fetchAllMonthlyReport = async () => {
       try {
-        const attributesEmployee = await fetchEmployee();
-        const paidLeaves = attributesEmployee.leavesRemaining;
+        // const attributesEmployee = await fetchEmployee();
         const emp = await fetchEmployee();
         const lastMonth = emp.monthly_salaries[emp.monthly_salaries.length - 2];
+        const paidLeaves = lastMonth.paidLeavesUsed;
         const workedHours = lastMonth.hoursLogged;
         const requiredHours = lastMonth.TotalHoursMonth;
         const monthID = lastMonth.id;
@@ -135,7 +135,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
           attributes?.numberOfWorkingDays - attributes?.numberOfHolidays;
         const requiredHours = attributes?.requiredHours;
         const daysWorked =
-          workingDays - attributes?.absences - attributes?.paidLeaves;
+          workingDays - attributes?.absences;
         const paidLeavesHours = attributes?.paidLeaves * 8;
         const workedHours = attributes?.workedHours - paidLeavesHours;
         const hourlyRate = attributes?.hourlyRate;
@@ -174,6 +174,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
             earnedAmountByHolidays: earnedAmountByHolidays.toFixed(2),
             earnedAmountByPaidLeaves: earnedAmountByPaidLeaves.toFixed(2),
             absentHours: absentHours,
+            absentDays: absentHours / 8,
             deductedAmountByAbsences: deductedAmountByAbsences.toFixed(2),
             daysByLate: daysByLate,
             deductedAmountByLate: deductedAmountByLate.toFixed(2),
@@ -346,7 +347,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
                       <Col span={12}>
                         <strong># of absences:</strong>
                       </Col>
-                      <Col span={12}>{salary[0]?.absentHours || 0}</Col>
+                      <Col span={12}>{salary[0]?.absentDays || 0}</Col>
                     </Row>
                     <Row>
                       <Col span={12}>
