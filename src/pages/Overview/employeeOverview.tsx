@@ -40,8 +40,8 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
       const empInfo = await Promise.all(
         empAttributes.map(async (item: any) => {
           const imageURL = API_URL.slice(0, -4) + item.image?.url;
-          console.log("name: ", item.Name);
-          console.log("item:", item);
+          // console.log("name: ", item.Name);
+          // console.log("item:", item);
           const lastmonthTotal = item.monthly_salaries;
           const len = lastmonthTotal.length;
           const lastmonth = lastmonthTotal[len-2]; // second last month data   (last month in array would be current month)
@@ -55,7 +55,7 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
           // console.log("medicalAllowance:", medicalAllowance);
           const netSalary =
             parseInt(grossSalaryEarned) + parseInt(medicalAllowance) - WHT;
-          console.log("netSalary:", netSalary);
+          // console.log("netSalary:", netSalary);
           // console.log("Month:", lastmonth.id);
           return {
             ...item,
@@ -80,11 +80,11 @@ export const EmployeeOverview = ({ children }: PropsWithChildren) => {
       const monthName =
         response.data.data.month_data.month.charAt(0).toUpperCase() +
         response.data.data.month_data.month.slice(1);
-      console.log("empInfo : ", empInfo);
+      // console.log("empInfo : ", empInfo);
       setData(empInfo);
       setMonthName(monthName);
       setLoading(false);
-      console.log("monthName:", monthName);
+      // console.log("monthName:", monthName);
     } catch (error) {
       console.log("Error while fetching data", error);
       setLoading(false);
