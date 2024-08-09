@@ -134,14 +134,14 @@ export const Invoice = ({ children }: PropsWithChildren) => {
         const workingDays =
           attributes?.numberOfWorkingDays - attributes?.numberOfHolidays;
         const requiredHours = attributes?.requiredHours;
-        const daysWorked =
-          workingDays - attributes?.absences;
+        const daysWorked = workingDays - attributes?.absences;
         const paidLeavesHours = attributes?.paidLeaves * 8;
-        const workedHours = attributes?.workedHours - paidLeavesHours;
+        const holidayHours = attributes?.numberOfHolidays * 8;
+        const workedHours =
+          attributes?.workedHours - paidLeavesHours - holidayHours;
         const hourlyRate = attributes?.hourlyRate;
         const earnedAmountByWork = hourlyRate * workedHours;
-        const earnedAmountByHolidays =
-          hourlyRate * attributes?.numberOfHolidays;
+        const earnedAmountByHolidays = hourlyRate * holidayHours;
         const earnedAmountByPaidLeaves = hourlyRate * paidLeavesHours;
         const absentHours = attributes?.absences * 8;
         const deductedAmountByAbsences = hourlyRate * absentHours;
@@ -151,7 +151,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
         const loanDeduction = attributes?.loan;
         const tax = attributes?.tax;
         const sumByEarnedHours = earnedAmountByWork + earnedAmountByHolidays;
-        const sumByDeductions = deductedAmountByAbsences + deductedAmountByLate;
+        const sumByDeductions = deductedAmountByLate;
         const sumAdjustment = earnedAmountByPaidLeaves - sumByDeductions;
         const totalSum = sumByEarnedHours + sumAdjustment;
         const medicalBeforeTax = totalSum / 1.1;
@@ -286,40 +286,38 @@ export const Invoice = ({ children }: PropsWithChildren) => {
                   <Card style={{ marginTop: "2px" }}>
                     <Row>
                       <Col span={12}>
-                        <strong>Total Work Days:</strong>
+                        <strong>Total Work Days :</strong>
                       </Col>
                       <Col span={12}>{salary[0]?.workingDays || 0}</Col>
                     </Row>
                     <Row>
                       <Col span={12}>
-                        <strong>Used Paid Leaves:</strong>
+                        <strong>Used Paid Leaves: </strong>
                       </Col>
                       <Col span={12}>{salary[0]?.paidLeaves || 0}</Col>
                     </Row>
                     <Row>
                       <Col span={12}>
-                        <strong>Worked Days:</strong>
+                        <strong>Worked Days :</strong>
                       </Col>
                       <Col span={12}>{salary[0]?.daysWorked || 0}</Col>
                     </Row>
                     <Row>
                       <Col span={12}>
-                        <strong>Total Required Hours:</strong>
+                        <strong>Total Required Hours :</strong>
                       </Col>
                       <Col span={12}>{salary[0]?.requiredHours || 0}</Col>
                     </Row>
                     <Row>
                       <Col span={12}>
-                        <strong>Worked Hours:</strong>
+                        <strong>Worked Hours :</strong>
                       </Col>
-                      <Col span={12}>
-                        {salary[0]?.workedHours || 0}
-                      </Col>
+                      <Col span={12}>{salary[0]?.workedHours || 0}</Col>
                     </Row>
                     <hr />
                     <Row>
                       <Col span={12}>
-                        <strong>Total earned by hours:</strong>
+                        <strong>Total earned by hours :</strong>
                       </Col>
                       <Col span={12}>{salary[0]?.earnedAmountByWork || 0}</Col>
                     </Row>
@@ -327,13 +325,13 @@ export const Invoice = ({ children }: PropsWithChildren) => {
                   <Card style={{ marginTop: "2px" }}>
                     <Row>
                       <Col span={12}>
-                        <strong># of public holidays:</strong>
+                        <strong>Public holidays :</strong>
                       </Col>
                       <Col span={12}>{salary[0]?.numberOfHolidays || 0}</Col>
                     </Row>
                     <Row>
                       <Col span={12}>
-                        <strong>Total earned by holidays:</strong>
+                        <strong>Total amount earned by holidays :</strong>
                       </Col>
                       <Col span={12}>
                         {salary[0]?.earnedAmountByHolidays || 0}
@@ -345,46 +343,37 @@ export const Invoice = ({ children }: PropsWithChildren) => {
                   <Card style={{ marginTop: "4px" }}>
                     <Row>
                       <Col span={12}>
-                        <strong># of absences:</strong>
+                        <strong>Number of days of absenence :</strong>
                       </Col>
                       <Col span={12}>{salary[0]?.absentDays || 0}</Col>
                     </Row>
-                    <Row>
-                      <Col span={12}>
-                        <strong>Total deduction by absences:</strong>
-                      </Col>
-                      <Col span={12}>
-                        {salary[0]?.deductedAmountByAbsences || 0}
-                        
-                      </Col>
-                    </Row>
                   </Card>
-                  <Card style={{ marginTop: "4px" }}>
+                  <Card style={{ marginTop: "16px" }}>
                     <Row>
                       <Col span={12}>
-                        <strong># of late arrival:</strong>
+                        <strong>Number of late arrival :</strong>
                       </Col>
                       <Col span={12}>{salary[0]?.daysByLate || 0}</Col>
                     </Row>
                     <Row>
                       <Col span={12}>
-                        <strong>Total deduction by late arrival:</strong>
+                        <strong>Total amount deducted :</strong>
                       </Col>
                       <Col span={12}>
                         {salary[0]?.deductedAmountByLate || 0}
                       </Col>
                     </Row>
                   </Card>
-                  <Card style={{ marginTop: "4px" }}>
+                  <Card style={{ marginTop: "16px" }}>
                     <Row>
                       <Col span={12}>
-                        <strong># of used Paid leaves:</strong>
+                        <strong>Number of used Paid leaves:</strong>
                       </Col>
                       <Col span={12}>{salary[0]?.paidLeaves || 0}</Col>
                     </Row>
                     <Row>
                       <Col span={12}>
-                        <strong>Total earned by used Paid leaves:</strong>
+                        <strong>Total amount earned :</strong>
                       </Col>
                       <Col span={12}>
                         {salary[0]?.earnedAmountByPaidLeaves || 0}
