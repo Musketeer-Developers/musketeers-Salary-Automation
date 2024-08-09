@@ -28,7 +28,7 @@ const Calculate: React.FC<CalculateProps> = ({
       const values = await form.validateFields();
       console.log("Received values of form: ", values);
       handleClose();
-      await initializeMonth(values);
+      await calculateSalary(values);
       setRefreshData(true);
       form.resetFields();
     } catch (error) {
@@ -36,16 +36,16 @@ const Calculate: React.FC<CalculateProps> = ({
     }
   };
 
-  async function initializeMonth(formData: FormData) {
-    const MonthData = {
+  async function calculateSalary(formData: FormData) {
+    const Data = {
       month: formData.month,
-      year: formData.year?.format("YYYY"),
+      year: Number(formData.year.format("YYYY")),
     };
-    console.log(MonthData);
+    console.log(Data);
     try {
       const response = await axiosInstance.post(
         `${API_URL}/monthly-salary/calculate-salary`,
-        JSON.stringify(MonthData),
+        JSON.stringify(Data),
         {
           headers: {
             "Content-Type": "application/json",
