@@ -64,6 +64,7 @@ export const Month: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const fetchValidMonths = async () => {
     try {
       const response = await axiosInstance.get(`${API_URL}/months-data`);
+      response.data.data.sort((a:any, b:any) => a.id - b.id);
       if (response.data.data.length > 0) {
         const startData = response.data.data[0];
         const endData = response.data.data[response.data.data.length - 1];
@@ -123,7 +124,16 @@ export const Month: React.FC<PropsWithChildren<{}>> = ({ children }) => {
       }
       current = new Date(current.setDate(current.getDate() + 1));
     }
+    current = new Date(start);
+    prevevent.sort();
     setEvents(prevevent);
+    // prevevent.length=0;
+    // setEvents(prevEvents => [...prevEvents, ...prevEvents]);
+    // setEvents(prevEvents => {
+    //   console.log('Adding new events:', prevEvents); // Debugging: Check what's being added
+    //   console.log('Previous events before adding:', prevEvents); // Debugging: Check existing events
+    //   return [...prevEvents, ...prevEvents];
+    // });
     setIsLoading(false);
   };
 
@@ -156,6 +166,7 @@ export const Month: React.FC<PropsWithChildren<{}>> = ({ children }) => {
             }}
           />}
           <FullCalendar
+            key={events.length}
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
             validRange={validRange}
