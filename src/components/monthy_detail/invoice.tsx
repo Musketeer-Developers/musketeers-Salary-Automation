@@ -310,6 +310,12 @@ export const Invoice = ({ children }: PropsWithChildren) => {
                     </Row>
                     <Row>
                       <Col span={12}>
+                        <strong>Hour Rate :</strong>
+                      </Col>
+                      <Col span={12}>{salary[0]?.hourlyRate || 0}</Col>
+                    </Row>
+                    <Row>
+                      <Col span={12}>
                         <strong>Worked Hours :</strong>
                       </Col>
                       <Col span={12}>{salary[0]?.workedHours || 0}</Col>
@@ -348,7 +354,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
                       <Col span={12}>{salary[0]?.absentDays || 0}</Col>
                     </Row>
                   </Card>
-                  <Card style={{ marginTop: "16px" }}>
+                  <Card style={{ marginTop: "26px" }}>
                     <Row>
                       <Col span={12}>
                         <strong>Number of late arrival :</strong>
@@ -364,7 +370,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
                       </Col>
                     </Row>
                   </Card>
-                  <Card style={{ marginTop: "16px" }}>
+                  <Card style={{ marginTop: "26px" }}>
                     <Row>
                       <Col span={12}>
                         <strong>Number of used Paid leaves:</strong>
