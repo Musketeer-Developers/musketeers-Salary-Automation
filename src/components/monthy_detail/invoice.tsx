@@ -180,6 +180,7 @@ export const Invoice = ({ children }: PropsWithChildren) => {
             deductedAmountByLate: deductedAmountByLate.toFixed(2),
             loanDeduction: loanDeduction.toFixed(2),
             tax: tax.toFixed(2),
+            numberOfHolidays: attributes?.numberOfHolidays,
             sumByEarnedHours: sumByEarnedHours.toFixed(2),
             sumByDeductions: sumByDeductions.toFixed(2),
             sumAdjustment: sumAdjustment.toFixed(2),
