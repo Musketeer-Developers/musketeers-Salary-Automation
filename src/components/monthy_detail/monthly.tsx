@@ -12,9 +12,9 @@ interface MonthlylogProps {
 
 export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
-  const [holidaysCount, setHolidaysCount] = useState(0);          //holidaysCount is being used in table (NO error)
-  const [paidLeaves, setPaidLeaves] = useState(0);          //paidLeaves is being used in table (NO error)
-  const [netSalary, setNetSalary] = useState(0);          //netSalary is being used in table (NO error)
+  const [holidaysCount, setHolidaysCount] = useState(0); //holidaysCount is being used in table (NO error)
+  const [paidLeaves, setPaidLeaves] = useState(0); //paidLeaves is being used in table (NO error)
+  const [netSalary, setNetSalary] = useState(0); //netSalary is being used in table (NO error)
 
   useEffect(() => {
     const fetchEmployee = async () => {
@@ -37,8 +37,6 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
       try {
         const attributes = await fetchEmployee();
         const monthlySalaries = attributes.monthly_salaries;
-        const paidLeaves = attributes.leavesRemaining;
-        setPaidLeaves(paidLeaves);
 
         const response = await axiosInstance.get(`${API_URL}/months-data`, {
           headers: {
@@ -58,11 +56,13 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
           const selectedMonth = monthlySalaries.find(
             (item: any) => item.id == monthID
           );
+          const paidLeaves = selectedMonth?.paidLeavesUsed;
           const netSalary =
             parseInt(selectedMonth?.grossSalaryEarned || 0) +
             parseInt(selectedMonth?.medicalAllowance || 0) -
             parseInt(selectedMonth?.WTH || 0);
           setNetSalary(netSalary);
+          setPaidLeaves(paidLeaves);
 
           const updatedSelectedMonth = {
             ...selectedMonth,
@@ -70,7 +70,6 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
             paidLeaves,
             netSalary,
           };
-
           setMonthlyData(updatedSelectedMonth ? [updatedSelectedMonth] : []);
         }
       } catch (error) {
@@ -99,13 +98,16 @@ export const Monthlylog = ({ id, monthID }: MonthlylogProps) => {
         >
           <Table
             dataSource={
-              monthlyData?.map((item) => ({ ...item, key: item.id })) || []
+              monthlyData?.map((item, index) => ({
+                ...item,
+                key: item.id || index,
+              })) || []
             }
-            rowKey="id"
+            rowKey="key"
             pagination={false}
           >
             <Table.Column
-              title="Remaining paid leaves till now"
+              title="Paid leaves used"
               dataIndex="paidLeaves"
               key="monthly_paidLeaves"
               width={80}
