@@ -165,11 +165,11 @@ export const ShowEmployees = ({ children }: PropsWithChildren) => {
         headerButtons={() => {
           return (
             <>
-              <CreateButton size="large" onClick={() => setVisibleModal("2")}>
-                Month
-              </CreateButton>
               <CreateButton size="large" onClick={() => setVisibleModal("4")}>
                 New Employee
+              </CreateButton>
+              <CreateButton size="large" onClick={() => setVisibleModal("2")}>
+                Month
               </CreateButton>
               <CreateButton size="large" onClick={() => setVisibleModal("3")} icon={<ImportOutlined />}>
                 Import
